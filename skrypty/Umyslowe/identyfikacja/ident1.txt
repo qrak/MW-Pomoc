@@ -1,0 +1,18 @@
+initevents
+
+ident:
+    event macro 1 0 .um identyfikacja
+
+czekaj:
+scanjournal 1
+if #TARGCURS = 1
+   {
+   event macro 22
+   wait 9s
+   goto ident
+   }
+if Juz_cos in #JOURNAL
+   goto ident
+goto czekaj
+    
+

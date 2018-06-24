@@ -1,0 +1,5 @@
+set #targcurs 1
+repeat
+until #targcurs = 1
+key ESC
+halt

@@ -1,0 +1,18 @@
+initevents
+start:
+scanjournal 1
+if [LoA] in #journal
+{
+goto s
+}
+else
+{
+goto start
+}
+s:
+sound C:\missile.wav
+event macro 4 0 Glupcy Asmoday'a pocalujcie mnie w zad!!
+wait 2s
+event macro 2 0 wypina tylek
+wait 4s
+goto start

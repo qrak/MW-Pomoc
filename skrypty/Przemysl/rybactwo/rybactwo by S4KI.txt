@@ -1,0 +1,29 @@
+;Autor: S4Ki
+
+set %skill 1
+;Tu wpisujesz skill jaki ma byc trenowany 0 - nic; 1 - ukrywanie
+
+initevents
+
+start:
+set #ltargetx #charPosX + 2 + #random % 4
+set #ltargetY #charPosY + #random % 6 - #random % 6
+set %a #ltargetx - #charPosX
+set %b #ltargety - #charPosY
+goto loop
+
+loop:
+if %licz = 2
+{
+if %skill = 1
+event macro 13 21
+set %licz 0
+}
+wait 5
+event macro 17
+wait 10
+event macro 22
+event macro 22
+set %licz %licz + 1
+wait 4s
+goto start

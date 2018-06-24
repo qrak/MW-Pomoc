@@ -1,0 +1,110 @@
+initevents
+set %ple #BACKPACKID
+set %profile 560_460
+
+start:
+finditem HAG C , %ple ; szuka narzedzie szewskie
+set #lobjectid #findid  ; ustawia je jako lastobject
+
+finditem  ddg_cui C ; szuka tkaniny/skory
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC
+sound D:\misile.wav
+halt
+}
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0
+
+stolarz:
+if #CONTSIZE = %profile
+{
+click 137 392   ; rob ostatnie ostatnie
+wait 1s
+goto pat
+}
+else
+{
+goto stolarz
+}
+
+pat:
+scanJournal 1
+if Uszyles_przedmiot || Uszylas_przedmiot in #journal
+{
+goto hid
+}
+if Zniszczyles_troche || Zniszczylas_troche in #journal
+{
+goto hid
+}
+if narzedzia_szewskie in #journal
+{
+sound D:\missile.wav
+halt
+}
+if Uszyles_Wyjatkowej || Uszylas_Wyjatkowej in #journal
+{
+goto hid
+set #sysmsgcol 1080
+event sysmessage USZYLES EXP
+sound C:\missile.wav
+halt
+}
+if Your_skill in #journal
+{
+goto hid
+}
+if Your_dexterity in #journal
+{
+goto hid
+}
+if Masz_za in #journal
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC
+sound D:\missile.wav
+halt
+}
+else
+{
+goto pat
+}
+
+hid:
+event macro 1 0 .um ukrywanie
+
+hid2:
+scanjournal 1
+if Cheeza: in #journal
+goto sell
+if Nie_udalo in #journal
+goto sell
+if Juz_cos in #journal
+goto sell
+if Your_skill_in_Ukrywanie in #journal
+goto sell
+else
+goto hid2
+
+sell:
+event macro 1 0 Chcialabym tu cos sprzedac
+
+sellgump:
+if #CONTSIZE = 283_248
+{
+click 219 145 d ; dwuklik na bandane
+wait 1
+wait 1
+click 219 145 d
+wait 1
+click 314 422 ;clik na ok
+goto start
+}
+else
+{
+goto sellgump
+}

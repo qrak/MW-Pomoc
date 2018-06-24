@@ -1,0 +1,227 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+initevents
+menu Clear
+menu window title #CHARNAME
+menu Window size 345 65
+menu Window color black
+menu Show
+menu Font color Red
+menu Font bgcolor black
+menu Font size 20
+menu Text reg010 5 0 HP
+menu Font color White
+menu Text reg020 5 30 ST
+menu Font color Blue
+menu Text reg030 120 0 MP
+menu Font color White
+menu Text reg040 120 30 WG
+menu Font color Yellow
+menu Text reg050 235 0 AR
+
+start:
+reg1:
+  if %reg1 = #hits
+  goto reg2
+  menu Font color Red
+  set %reg1 #hits
+  menu delete reg1
+  menu Text reg1 60 0 %reg1
+
+reg2:
+  if %reg2 = #stamina
+  goto reg3
+  menu Font color White
+  set %reg2 #stamina
+  menu delete reg2
+  menu Text reg2 60 30 %reg2
+
+reg3:
+  if %reg3 = #mana
+  goto reg4
+  menu Font color Blue
+  set %reg3 #mana
+  menu delete reg3
+  menu Text reg3 175 0 %reg3
+
+reg4:
+  if %reg4 = #weight
+  goto reg5
+  menu Font color White
+  set %reg4 #weight
+  menu delete reg4
+  menu Text reg4 175 30 %reg4
+
+reg5:
+  if %reg5 = #AR
+  goto start
+  menu Font color Yellow
+  set %reg5 #AR
+  menu delete reg5
+  menu Text reg5 290 0 %reg5
+
+goto start
+

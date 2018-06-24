@@ -1,0 +1,120 @@
+initevents
+
+set %cel #ltargetid
+finditem PBG C;
+set #lobjectid #findid
+
+start:
+finditem PBG C;
+set #lobjectid #findid
+
+if #str < 60
+{
+event macro 15 16
+target 100s
+event macro 23
+wait 5
+}
+finditem QWL C;    ;runka
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM RUNEK
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0
+finditem MMF C;    ;zwoje
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM JUZ ZWOJKOW
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 100s
+event macro 22 0
+finditem WTL C;      ;recall
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM RECALLI
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 100s
+event macro 22 0
+finditem YUL C;        ;gate
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM GATEOW
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 100s
+event macro 22 0
+
+czekaj:
+if Nie_udalo in #sysmsg
+   goto evall
+if Stworzyles in #sysmsg
+   goto evall
+if Nauczasz in #sysmsg
+   goto evall
+if Your_skill in #sysmsg
+   goto evall
+else
+   goto czekaj
+   
+   
+evall:
+set #ltargetid %cel
+event macro 13 1
+target 100s
+event macro 22
+goto eval
+
+eval:
+scanJournal 1
+if Cel_wyglada in #journal
+{
+goto sprawdzglod
+}
+if Your_skill in #journal
+{
+goto sprawdzglod
+}
+if Nie_jestes in #journal
+{
+goto sprawdzglod
+}
+else
+{
+goto eval
+}
+
+sprawdzglod:
+msg .glod$
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+else
+goto petla

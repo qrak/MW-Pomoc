@@ -1,0 +1,21 @@
+;Czas castu by Raist
+
+linespercycle 30
+set #sysmsgcol 1080
+start:
+scanjournal 1
+if ( In_Por_Ylem in #journal ) || ( Corp_Por in #journal ) || ( An_Ex_Por in #journal ) || ( Kal_Vas_Flam in #journal ) || ( Aboleo in #journal )  ;slowa czaru
+{
+set %czas0 #scnt2
+goto dalej
+}
+goto start
+
+dalej:
+if #targcurs = 1
+{
+set %czas #scnt2 - %czas0
+event sysmessage Czas wyniosl %czas dziesiatych sekundy.
+goto start
+}
+goto dalej

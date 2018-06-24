@@ -1,0 +1,43 @@
+;Autor: [nGz]
+;Najpierw zrob recznie miksa i anatomie, potem play
+initevents
+ignoreitem reset
+set %lt #ltargetid
+start:
+set %lol 1           	;<--Jesli nie chcesz zeby robilo anatomie ustaw tu zmienna %lol na 1
+loleq:
+finditem rqf
+if #findkind = -1
+   halt
+if #findkind = 1
+ {
+   ignoreitem #findid
+   goto loleq
+ }
+set #lobjectid #findid
+event macro 17
+wait 15
+click 512 58
+wait 130
+if %lol = 1
+   goto start
+eee:
+set %licz 0
+event macro 13 1
+loop:
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 5
+   goto eee
+goto loop
+dalej:
+set #ltargetid %lt
+event macro 22
+event macro 22
+event macro 22
+set %lol 1
+wait 2
+goto loleq

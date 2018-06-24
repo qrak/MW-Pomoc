@@ -1,0 +1,13 @@
+start:
+for %i 1 3
+{
+scanjournal %i
+if Silver_Sarid:_Eter in #journal
+{
+set #sysmsgcol 1080
+event sysmessage BOT COS CHCE!
+sound D:\skrypty\scream.wav
+wait 4s
+goto start
+}
+goto start

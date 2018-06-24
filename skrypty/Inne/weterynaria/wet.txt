@@ -1,0 +1,112 @@
+;Wet na dwa cele 1.6v Poprawki Piotr.
+;Skrypt leczy na zmianê dwa cele,
+;stopuje, gdy nie powiod³o siê leczenie,
+;atakuje, gdy zwierzaki s¹ zdrowe.
+initevents
+start:
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 60
+event sysmessage Pokaz pierwszy cel leczenia
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 60
+event sysmessage ANULOWANO
+halt
+}
+set %kon1 #ltargetid
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 60
+event sysmessage Pokaz drugi cel leczenia
+repeat
+onhotkey ESC
+goto wcis_esc2
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc2:
+set #sysmsgcol 60
+event sysmessage ANULOWANO
+halt
+}
+set %kon2 #ltargetid
+leczenie:
+finditem ZLF C ;bandaze
+if #findkind = -1
+   {
+   set #sysmsgcol 60
+   event sysmessage Brak bandazy, zatrzymuje skrypt
+   event macro 1 ^ stop
+   halt
+   }
+set #lobjectid #findid
+event macro 17 0 ;last object
+target 5s
+if #ltargetid = %kon1
+   {
+   set #ltargetid %kon2
+   goto celuj
+   }
+set #ltargetid %kon1
+goto celuj
+celuj:
+event macro 22 0 ;last target
+goto leczysz
+leczysz:
+scanjournal 1
+if Nie_udalo in #journal ;nie udalo sie wyleczyc zwierzaka, stopuje walke, bedzie leczyl tego samego zwierza
+   {
+   wait 1
+   event macro 1 ^ stop
+   if #ltargetid = %kon1
+      {
+      set #ltargetid %kon2
+      goto tensamkon
+      }
+   set #ltargetid %kon1
+   goto tensamkon
+   tensamkon:
+   goto leczenie
+   }
+Tris 23:52:51
+if ( Wyleczyles in #journal || Wyleczylas in #journal || Your_skill in #journal || Your_dexterity in #journal ) ;udalo sie wyleczyc zwierzaka, bedzie leczyc drugiego
+   {
+   wait 1
+   goto leczenie
+   }
+if To_zwierze in #journal ;zwierze w pelni zdrowe, ropozczyna walke
+   {
+   wait 1
+   event macro 1 ^ zabijcie
+   target 5s
+   if #ltargetid = %kon2
+      {
+      set #ltargetid %kon1
+      goto zabij
+      }
+   set #ltargetid %kon2
+   goto zabij
+   zabij:
+   event macro 22 0 ;last target
+   goto leczenie
+   }
+if Apokalipsa in #journal
+   {
+   wait 1
+   goto leczysz
+   }
+if Zapisywanie in #journal
+   {
+   event macro 1 ^ stop
+   wait 5s
+   goto leczenie
+   }
+if ( Juz_cos_robisz in #journal || It_begins_to_snow. in #journal )
+   {
+   goto leczenie
+   }
+goto leczysz

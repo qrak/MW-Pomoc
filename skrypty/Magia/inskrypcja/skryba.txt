@@ -1,0 +1,137 @@
+initevents
+set %cel #ltargetid
+set %profile 350_300
+
+start:
+
+finditem PBG C;
+set #lobjectid #findid
+finditem MMF C;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM JUZ ZWOJKOW
+sound C:\oneandonly.wav
+halt
+}
+else
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0 
+wait 10
+
+inskr:
+if #CONTSIZE = %profile
+{
+click 105 278
+goto pat
+}
+else
+{
+goto inskr
+}
+
+pat:
+scanJournal 1
+if Stworzyles_zwoj in #journal
+{
+wait 10
+goto mana
+}
+if Nauczasz in #journal
+{
+wait 10
+goto mana
+}
+if Nie_udalo in #journal
+{
+wait 10
+goto mana
+}
+if Masz_za in #journal
+{
+wait 10
+goto mana
+}
+if Your_skill in #journal
+{
+wait 10
+goto mana
+}
+
+else
+goto pat
+
+mana:
+wait 20
+if #mana < 11 ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+event macro 13 46
+goto sprawdzmedit
+}
+else
+{
+goto dalej
+}
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+wait 5
+goto dalej
+}
+if Nie_mozesz in #journal
+{
+wait 6s
+goto mana
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+dalej:
+wait 20
+set #ltargetid %cel
+event macro 13 16
+target 100s
+event macro 22
+goto eval
+
+eval:
+scanJournal 1
+if Cel_jest in #journal
+{
+wait 10
+goto bless
+}
+if Nie_udalo in #journal
+{
+wait 10
+goto bless
+}
+else
+{
+goto eval
+}
+
+bless:
+if #str = 45   ;tu wstawiasz wartosc swojej sily zeby pisal na blessie
+{
+event macro 15 16
+target 100s
+event macro 23
+wait 4s
+goto mana
+}
+else
+{
+goto start
+}

@@ -1,0 +1,34 @@
+Raist: (16:00)
+;Makro na liczenie resnietych czarow by Raist v1.0
+;Makro liczy rowniez czas kolejnych gainow
+
+
+set #sysmsgcol 1080
+event sysmessage Makro na liczenie zresowanych czarow odpalone
+set %jrnl #jindex
+start:
+set %czas #scnt
+set %ile 0
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Czujesz_swoja_odpornosc in #journal
+         {
+         set %ile %ile + 1
+         set #sysmsgcol 1090
+         event sysmessage Resniete czary: %ile
+         }
+      if Your_skill_in_Odpornosc in #journal
+         {
+         set %czasgaina #scnt - %czas
+         set #sysmsgcol 1100
+         event sysmessage Resnniete czary na gain: %ile
+         event sysmessage Czas gaina: %czasgaina sekund
+         goto start
+         }
+      }
+   }
+

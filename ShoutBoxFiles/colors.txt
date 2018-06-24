@@ -1,0 +1,8 @@
+blue | blue
+red | red
+purple | purple
+orange | orange
+yellow | yellow
+grey | grey
+green | green
+teal | #099

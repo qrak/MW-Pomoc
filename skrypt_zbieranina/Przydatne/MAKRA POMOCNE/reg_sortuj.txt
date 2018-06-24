@@ -1,0 +1,22 @@
+initevents
+set %ple #BACKPACKID
+ignoreitem XNJNRYD
+
+start:
+onhotkey zzz
+gosub uklada_regi
+goto start
+
+
+uklada_regi:
+finditem CKF_ZJF C_ , %ple ;woreczek lub plecak
+set %plecak #findid
+
+
+podnies:
+ if #lLiftedKind = 1
+  goto podnies
+  exevent drag #findid #findstack
+ exevent dropc %Worek
+ wait 2
+

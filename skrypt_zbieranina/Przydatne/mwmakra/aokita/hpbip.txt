@@ -1,0 +1,12 @@
+initevents
+
+start:
+if #hits < 20
+{
+set #sysmsgcol 1080
+event sysmessage MASZ #hits HP
+sound C:\missile.wav
+wait 3s
+goto start
+}
+

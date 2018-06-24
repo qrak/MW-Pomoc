@@ -1,0 +1,14 @@
+wait 60s
+set %i 0
+for %i 1 15
+{
+key pgdn
+wait 2
+}
+wait 60s
+set %i 0
+for %i 1 15
+{
+key home
+wait 2
+}

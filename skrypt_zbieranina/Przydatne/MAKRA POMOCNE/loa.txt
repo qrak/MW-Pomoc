@@ -1,0 +1,18 @@
+initevents
+start:
+scanjournal 1
+if [LoA] in #journal
+{
+goto sgoto s
+}
+else
+{
+goto start
+}
+s:
+sound D:\skrypty\start.wav
+wait 4s
+goto start
+
+
+

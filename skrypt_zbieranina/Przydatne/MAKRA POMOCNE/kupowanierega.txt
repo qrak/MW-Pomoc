@@ -1,0 +1,192 @@
+;Macro bY SabiK (malutkie modyfikacje by Raist)
+;kupowanie.txt
+;Wersja 1.2
+;Skrypt kupuje zaznaczone przedmioty (regi, jedzenie, strza³y, be³ty)
+;Po nacisniêciu klawisza skrypt mówi 'Chce cos kupic' i kupuje wybrane przedmioty
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %key f11      ;Tutaj ustaw klawisz, ktory uruchami skrypt
+set %sieci 1
+set %siarka 1
+set %wilcze 0
+set %mandra 1
+set %zenszen 1
+set %czosnek 1
+set %mech 1
+set %perly 1
+set %butle 0
+set %jedzenie 0       ;kupuje chleb, salatke, ciasteczka
+set %strzaly 0
+set %belty 0
+set %ile 0
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set %ilosc %butle + %sieci + %siarka + %wilcze + %mandra + %zenszen + %czosnek + %mech + %perly
+if %jedzenie = 1
+   set %ilosc %butle + %sieci + %siarka + %wilcze + %mandra + %zenszen + %czosnek + %mech + %perly + 3
+if %strzaly = 1 || %belty = 1
+{
+   if %belty = 1 && %strzaly = 0
+   {
+      set %ilosc %butle + %sieci + %siarka + %wilcze + %mandra + %zenszen + %czosnek + %mech + %perly + %belty
+      goto starcik
+   }
+   if %belty = 0 && %strzaly = 1
+   {
+      set %ilosc %butle + %sieci + %siarka + %wilcze + %mandra + %zenszen + %czosnek + %mech + %perly + %strzaly
+      goto starcik
+   }
+   set %ilosc %butle + %sieci + %siarka + %wilcze + %mandra + %zenszen + %czosnek + %mech + %perly + %strzaly + %belty
+}
+starcik:
+set #sysmsgcol 1082
+event sysmessage Skrypt [kupowanie] odpalony (by SabiK)
+wait 1
+
+start:
+onhotkey %key
+  {
+   event macro 1 ^ Chcialbym tu cos kupic
+   goto start2
+  }
+goto start
+
+
+start2:
+if #contsize = 283_248
+   goto start3
+goto start2
+start3:
+onhotkey %key
+{
+   set #sysmsgcol 1082
+   event sysmessage Skrypt wraca do poczatku
+   goto start
+}
+getShopInfo
+if ( #shopItemType = RZF ) && ( %sieci = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = SZF ) && ( %siarka = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = WZF ) && ( %wilcze = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = MZF ) && ( %mandra = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = JZF ) && ( %zenszen = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = KZF ) && ( %czosnek = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = JUF ) && ( %mech = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %mech1 1
+goto start1
+}
+if ( #shopItemType = KUF ) && ( %perly = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = MGG ) && ( %jedzenie = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = SLI ) && ( %jedzenie = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = JGI ) && ( %jedzenie = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = RWF ) && ( %strzaly = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = LNK ) && ( %belty = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+if ( #shopItemType = WUF ) && ( %butle = 1 )
+{
+click 285 85 d
+click 285 85 d
+setShopItem #shopItemID #shopItemMax
+set %ile %ile + 1
+goto start1
+}
+start1:
+if %ile = %ilosc
+   goto koniec
+if #shopCurPos = #shopCnt
+   goto koniec
+click 393 207
+goto start3
+
+koniec:
+click 363 428
+set %ile 0
+goto start
+

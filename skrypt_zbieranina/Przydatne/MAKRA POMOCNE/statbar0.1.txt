@@ -1,0 +1,54 @@
+initevents
+event macro 8 2
+set %maxmana #mana
+linespercycle 40
+Menu clear
+Menu hideEUO
+Menu show
+Menu window size 200 64
+Menu window title cEen statbar
+Menu window color black
+Menu font bgcolor black
+Menu font color red
+Menu font size 8
+Menu font style B
+Menu font name Arial
+top:
+if %hits <> ( ( 100 * #hits ) / #maxhits ) * 2
+{
+set %hits ( ( 100 * #hits ) / #maxhits ) * 2
+set %percent %hits / 2
+menu delete hits
+Menu button hits 1 1 %hits 20 HITS = #hits % ,  %percent
+}
+if %mana <> ( ( 100 * #mana ) / %maxmana ) * 2
+{
+set %mana ( ( 100 * #mana ) / %maxmana ) * 2
+set %mpercent %mana / 2
+menu delete mana
+Menu button mana 1 22 %mana 20 MANA = #mana % ,  %mpercent
+}
+if #hits < #maxhits / 2
+Menu window color red
+if c in #charstatus
+Menu window color green
+if c in #charstatus && #hits < #maxhits / 2
+Menu window color black
+gosub enemy #enemyid
+goto top
+
+sub enemy
+if #enemyid = n/a 2
+menu delete enemy
+return
+if %enemy <> #enemyid
+{
+wait 5
+set %enemy #enemyid
+}
+if %enemyhits <>  #enemyhits * 2 3
+set %enemyhits #enemyhits * 2
+menu delete enemy
+Menu button enemy 1 44  %enemyhits 20  ENEMY - #enemyhits , %
+return
+

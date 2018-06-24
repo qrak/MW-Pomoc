@@ -1,0 +1,142 @@
+;Kombo monitorujace by Raist v 1.0
+
+set %wital 0 ;0 - bless wampa 1 - wital
+set %dex 50  ;wpisz swoj dex bez blessa
+set %ar 54   ;wpisz swoj ar bez prota
+;-------------------------------------------------------------
+set %jrnl #jindex
+set %bless 0
+set %blesstime #scnt + 90000
+set %blessw 0
+set %blesswtime #scnt + 90000
+set %prot 0
+set %prottime #scnt + 90000
+set %hp #hits
+set %czas 0
+
+start:
+if #hits <> %hp
+   {
+   if #hits > 125 || #hits = 0  || #ar = 0
+      goto start2
+   set %dmg %hp - #hits
+   if %dmg < 0
+      {
+      set %dmg ( %dmg * ( -1 ) )
+      set #sysmsgcol 1264
+      event sysmessage Odzyskales %dmg hp
+      set %hp #hits
+      goto start2
+      }
+   set #sysmsgcol 1063
+   event sysmessage Straciles %dmg hp
+   set %hp #hits
+   }
+start2:
+if #jindex > %jrnl
+   {
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+   if Czujesz_sie_dobrze. in #journal
+      {
+      set #sysmsgcol 1080
+      event sysmessage JEDZ
+      sound C:\missile.wav
+      }
+   }
+if %blesstime < #scnt
+   {
+   if #dex >= ( %dex + 26 )
+      {
+      set %blesstime #scnt + 5400
+      }
+   if #dex < ( %dex + 26 )
+      {
+      set #sysmsgcol 1080
+      event sysmessage BLESS PADNIE ZA 30 SEKUND
+      set %blesstime #scnt + 900
+      }
+   }
+if %blesswtime < #scnt && %wital = 0
+   {
+   set #sysmsgcol 1080
+   event sysmessage BLESS WAMPA PADNIE ZA 30 SEKUND
+   set %blesswtime #scnt + 90000
+   }
+if %prottime < #scnt
+   {
+   set #sysmsgcol 1080
+   event sysmessage PROT PADNIE ZA 30 SEKUND
+   set %prottime #scnt + 900
+   }
+if #dex > %dex && %bless = 1
+   {
+   if #dex >= ( %dex + 26 )
+      {
+      set #sysmsgcol 1090
+      event sysmessage Bless nocy - nie odmierzam
+      set %blesstime #scnt + 5400
+      set %bless 0
+      }
+   if #dex < ( %dex + 26 )
+      {
+      set #sysmsgcol 1090
+      event sysmessage Odmierzam bless
+      set %blesstime #scnt + 900
+      set %bless 0
+      }
+   }
+if #MAXHITS <> #str && %blessw = 1 && %wital = 0
+   {
+   set #sysmsgcol 1090
+   event sysmessage Odmierzam bless wampa
+   set %blesswtime #scnt + 570
+   set %blessw 0
+   }
+if #AR >= %ar && %prot = 1
+   {
+   set #sysmsgcol 1090
+   event sysmessage Odmierzam prota
+   set %prottime #scnt + 900
+   set %prot 0
+   }
+if %czas < #scnt2
+{
+if #hits < 50
+   {
+   set #sysmsgcol 1080
+   event sysmessage MASZ #hits HP
+   set %czas #scnt2 + 40
+   }
+if #dex <= %dex && #hits < 126
+   {
+   set #sysmsgcol 1080
+   event sysmessage Bless
+   set %czas #scnt2 + 40
+   set %bless 1
+   }
+if #MAXHITS = #str && #hits < 126
+   {
+   if %wital = 0
+      {
+      set #sysmsgcol 1080
+      event sysmessage Bless wampira
+      set %czas #scnt2 + 40
+      set %blessw 1
+      }
+   if %wital = 1
+      {
+      set #sysmsgcol 1080
+      event sysmessage Brak witala
+      set %czas #scnt2 + 40
+      }
+   }
+if #AR < %ar && #hits < 126
+   {
+   set #sysmsgcol 1080
+   event sysmessage Prot
+   set %czas #scnt2 + 40
+   set %prot 1
+   }
+}
+goto start

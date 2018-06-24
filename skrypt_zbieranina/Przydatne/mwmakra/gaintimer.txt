@@ -1,0 +1,426 @@
+;autor: Redrack
+;Skrypt sluzy do odmierzania czasu i przewidywania kolejnych gain'ow poszczegolnych skilli
+;Mozna wybrac do 6 umiejetnosci z listy wszystkich skill'i dostepnych na shardzie MW
+;Aby skrypt poprawnie dzialal, nalezy miec ustawione wyswietlanie informacji o wzroscie umiejetnosci o kazde 0.1%
+;W tym celu nalezy wejsc Options->Miscellaneous(4. od gory, z prawej strony) i zaznaczyc "1" na pasku pod napisem "Inform me when my skills improve this much (in tenths)"
+;Po wlaczeniu odmierzania i przed pierwszym gain'em skill'a nie wolno zakladac magikow do umiejetnosci, gdyz skrypt moze policzyc to jako pierwszy gain
+;W razie problemow lub ewentualnych brakow prosze o kontakt ze mna na ircu (nick: Redrack lub Redrack|AW)
+
+initevents
+introduce:
+set #sysmsgcol 1100
+set #menuButton N/A
+set %pauze N/A
+set %used 0
+for %numb 1 6
+{
+   set %skill . %numb ------
+   set %timea . %numb -- , #spc
+   set %timeb . %numb #spc , -- , #spc
+   set %timec . %numb #spc , --
+   set %lefta . %numb -- , #spc
+   set %leftb . %numb #spc , -- , #spc
+   set %leftc . %numb #spc , --
+}
+
+menu clear
+menu window title Stoper gain'owy #spc v1.9
+menu window size 250 345
+menu window color btnface
+menu font name arial
+menu font size 11
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text textskill 49 5 Wybierz umiejetnosci:
+menu text textskill 49 95 Odmierzanie gain'ow:
+menu font size 9
+menu font bgcolor white
+menu font style
+menu combo create skill 25 30 200
+menu combo add skill -- TYP: Walka --         ; 1
+menu combo add skill Barbarzynstwo            ; 2
+menu combo add skill Fanatyzm                 ; 3
+menu combo add skill Gorliwosc                ; 4
+menu combo add skill Kensai                   ; 5
+menu combo add skill Lucznictwo               ; 6
+menu combo add skill Obrona                   ; 7
+menu combo add skill Paladynizm               ; 8
+menu combo add skill Taktyka                  ; 9
+menu combo add skill Walka mieczami           ; 10
+menu combo add skill Walka obuchami           ; 11
+menu combo add skill Walka szpadami           ; 12
+menu combo add skill Walka piesciami          ; 13
+menu combo add skill -- TYP: Magia --         ; 14
+menu combo add skill Druidyzm                 ; 15
+menu combo add skill Inskrypcja               ; 16
+menu combo add skill Magia                    ; 17
+menu combo add skill Medytacja                ; 18
+menu combo add skill Nekromancja              ; 19
+menu combo add skill Odpornosc na magie       ; 20
+menu combo add skill Umagicznianie            ; 21
+menu combo add skill Wampiryzm                ; 22
+menu combo add skill -- TYP: Rzemioslo --     ; 23
+menu combo add skill Alchemia                 ; 24
+menu combo add skill Druciarstwo              ; 25
+menu combo add skill Gotowanie                ; 26
+menu combo add skill Kartografia              ; 27
+menu combo add skill Kowalstwo                ; 28
+menu combo add skill Krawiectwo               ; 29
+menu combo add skill Malarstwo                ; 30
+menu combo add skill Stolarstwo               ; 31
+menu combo add skill Tkactwo                  ; 32
+menu combo add skill Tworzenie lukow          ; 33
+menu combo add skill -- TYP: Przemysl --      ; 34
+menu combo add skill Drwalstwo                ; 35
+menu combo add skill Gornictwo                ; 36
+menu combo add skill Rolnictwo                ; 37
+menu combo add skill Rybactwo                 ; 38
+menu combo add skill Zielarstwo               ; 39
+menu combo add skill -- TYP: Umyslowe --      ; 40
+menu combo add skill Anatomia                 ; 41
+menu combo add skill Identyfikacja            ; 42
+menu combo add skill Madrosc                  ; 43
+menu combo add skill Rozmowa z duchami        ; 44
+menu combo add skill Wiedza o broni           ; 45
+menu combo add skill Wiedza o zwierzetach     ; 46
+menu combo add skill -- TYP: Bard --          ; 47
+menu combo add skill Muzykalnosc              ; 48
+menu combo add skill Oczarowanie              ; 49
+menu combo add skill Prowokacja               ; 50
+menu combo add skill Uspokajanie              ; 51
+menu combo add skill -- TYP: Inne --          ; 52
+menu combo add skill Likantropia              ; 53
+menu combo add skill Obozowanie               ; 54
+menu combo add skill Okradanie                ; 55
+menu combo add skill Oswajanie                ; 56
+menu combo add skill Sledzenie                ; 57
+menu combo add skill Ukrywanie                ; 58
+menu combo add skill Usuwanie pulapek         ; 59
+menu combo add skill Uzdrawianie              ; 60
+menu combo add skill Weterynaria              ; 61
+menu combo add skill Wlamywanie               ; 62
+menu combo add skill Wykrywanie               ; 63
+menu combo add skill Zagladanie               ; 64
+menu combo add skill Zakradanie               ; 65
+menu combo add skill Zatruwanie               ; 66
+menu combo add skill Zebranie                 ; 67
+menu combo select skill 0
+menu font size 8
+menu font bgcolor btnface
+menu text textskill 24 118 Odmierzane
+menu text textskill 23 130 umiejetnosci:
+menu text textskill 147 118 Czas
+menu text textskill 145 130 gain'a:
+menu text textskill 194 118 Nastepny
+menu text textskill 206 130 gain:
+menu HideEUO
+
+change:
+menu font size 8
+for %numb 1 6
+{
+   set %wciecie ( 136 + ( 25 * %numb ) )
+   menu text skill , %numb 10 %wciecie %skill . %numb
+   menu text time , %numb 140 %wciecie %timea . %numb , : , %timeb . %numb , : , %timec . %numb
+   menu text left , %numb 197 %wciecie %lefta . %numb , : , %leftb . %numb , : , %leftc . %numb
+}
+menu font size 10
+if %used <> 6
+{
+   menu button accept 50 60 150 20 Zatwierdz umiejetnosc!
+   menu button metter 10 315 115 20 Odmierzaj gain'y
+   menu button reset 135 315 105 20 RESET
+}
+
+start:
+if #menubutton = reset
+   goto introduce
+if #menubutton = metter || %used = 6
+{
+   if %used = 0
+   {
+      event sysmessage Nie wybrales zadnej umiejetnosci, nie mozesz odpalic stopera!
+      set #menubutton N/A
+      goto start
+   }
+   wait 1
+   set %used 6
+   menu delete accept
+   menu delete metter
+   menu delete reset
+   menu button anmetter 23 315 140 20 Przerwij odmierzanie!
+   menu button pauze 172 315 55 20 PAUZA
+   liczenie:
+   for %numb 1 6
+   {
+      if Your_skill_in_ , %skill . %numb , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill . %numb , _wzrosla_o in #sysmsg
+      {
+         if %l . %numb = N/A
+         {
+            set %czas . %numb #scnt
+            set %l . %numb 1
+            wait 1
+            event sysmessage Odmierzasz gain'a dla: %skill . %numb
+            goto liczenie
+         }
+         if 0.1% in #sysmsg && ( #scnt - %czas . %numb ) > 10
+         {
+            set %timea . %numb ( #scnt - %czas . %numb ) / 3600
+            set %timeb . %numb ( ( #scnt - %czas . %numb ) - ( %timea . %numb * 3600 ) ) / 60
+            set %timec . %numb ( ( #scnt - %czas . %numb ) - ( %timea . %numb * 3600 ) -  ( %timeb . %numb * 60 ) )
+            if %timea . %numb < 10
+               set %timea . %numb 0 , %timea . %numb
+            if %timeb . %numb < 10
+               set %timeb . %numb 0 , %timeb . %numb
+            if %timec . %numb < 10
+               set %timec . %numb 0 , %timec . %numb
+            str right #time 2
+            set %leftc . %numb #strres
+            str mid #time 3 2
+            set %leftb . %numb #strres
+            str left #time 2
+            set %lefta . %numb #strres
+            if ( %leftc . %numb + %timec . %numb ) > 59
+               set %leftb . %numb %leftb . %numb + 1
+            if ( %leftb . %numb + %timeb . %num ) > 59
+               set %lefta . %numb %lefta . %numb + 1
+            set %leftc . %numb ( %leftc . %numb + %timec . %numb ) - ( ( %leftc . %numb + %timec . %numb ) / 60 ) * 60
+            set %leftb . %numb ( %leftb . %numb + %timeb . %numb ) - ( ( %leftb . %numb + %timeb . %numb ) / 60 ) * 60
+            set %lefta . %numb ( %lefta . %numb + %timea . %numb ) - ( ( %lefta . %numb + %timea . %numb ) / 24 ) * 24
+            if %lefta . %numb < 10
+               set %lefta . %numb 0 , %lefta . %numb
+            if %leftb . %numb < 10
+
+               set %leftb . %numb 0 , %leftb . %numb
+            if %leftc . %numb < 10
+               set %leftc . %numb 0 , %leftc . %numb
+            set %czas . %numb #scnt
+            wait 1
+            event sysmessage Czas gain'a wyniosl:
+            set #sysmsgcol 1090
+            event sysmessage %timea . %numb , : , %timeb . %numb , : , %timec . %numb
+            set #sysmsgcol 1100
+            event sysmessage Najprawdopodobniej nastepny gain bedzie:
+            set #sysmsgcol 1090
+            event sysmessage %lefta . %numb , : , %leftb . %numb , : , %leftc . %numb
+            set #sysmsgcol 1100
+            goto change
+         }
+      }
+   }
+   if #menubutton = metter || #menubutton = play
+      goto liczenie
+   if #menubutton = pauze
+   {
+      set %xscnt #scnt
+      menu button play 172 315 55 20 PLAY
+      secun:
+      if #menubutton = pauze
+      {
+         if #scnt - %xscnt = %pauze && %pauze <> N/A
+            goto secun
+         set %pauze #scnt - %xscnt
+         set %pa %pauze / 3600
+         set %pb ( %pauze - ( %pa * 3600 ) ) / 60
+         set %pc ( %pauze - ( %pa * 3600 ) -  ( %pb * 60 ) )
+         if %pa < 10
+            set %pa 0 , %pa
+         if %pb < 10
+            set %pb 0 , %pb
+         if %pc < 10
+            set %pc 0 , %pc
+         menu text textpauze 50 65 Pauza trwa juz: %pa , : , %pb , : , %pc
+         goto secun
+      }
+      wait 1
+      if #menubutton = play
+      {
+         for %numb 1 6
+         {
+            if %lefta . %numb <> -- , #spc
+            {
+               if ( %leftc . %numb + %pc ) > 59
+                  set %leftb . %numb %leftb . %numb + 1
+               if ( %leftb . %numb + %pb ) > 59
+                  set %lefta . %numb %lefta . %numb + 1
+               set %leftc . %numb ( %leftc . %numb + %pc ) - ( ( %leftc . %numb + %pc ) / 60 ) * 60
+               set %leftb . %numb ( %leftb . %numb + %pb ) - ( ( %leftb . %numb + %pb ) / 60 ) * 60
+               set %lefta . %numb ( %lefta . %numb + %pa ) - ( ( %lefta . %numb + %pa ) / 24 ) * 24
+               if %lefta . %numb < 10
+                  set %lefta . %numb 0 , %lefta . %numb
+               if %leftb . %numb < 10
+                  set %leftb . %numb 0 , %leftb . %numb
+               if %leftc . %numb < 10
+                  set %leftc . %numb 0 , %leftc . %numb
+            }
+         }
+         menu delete textpauze
+         set %pauze N/A
+         set #scnt %xscnt
+         goto change
+      }
+   }
+   if #menubutton = anmetter
+      goto introduce
+   if #menubutton = closed
+   {
+      menu hide
+      event sysmessage Okno stopera zostalo zamkniete, skrypt zostaje wylaczony...
+      halt
+   }
+   goto liczenie
+}
+if #menubutton = accept
+{
+   menu getnum skill
+   if #menures = 2
+      set %skill Barbarzynstwo
+   if #menures = 3
+      set %skill Fanatyzm
+   if #menures = 4
+      set %skill Gorliwosc
+   if #menures = 5
+      set %skill Kensai
+   if #menures = 6
+      set %skill Lucznictwo
+   if #menures = 7
+      set %skill Obrona
+   if #menures = 8
+      set %skill Paladynizm
+   if #menures = 9
+      set %skill Taktyka
+   if #menures = 10
+      set %skill Walka_mieczami
+   if #menures = 11
+      set %skill Walka_obuchami
+   if #menures = 12
+      set %skill Walka_szpadami
+   if #menures = 13
+      set %skill Walka_piesciami
+   if #menures = 15
+      set %skill Druidyzm
+   if #menures = 16
+      set %skill Inskrypcja
+   if #menures = 17
+      set %skill Magia
+   if #menures = 18
+      set %skill Medytacja
+   if #menures = 19
+      set %skill Nekromancja
+   if #menures = 20
+      set %skill Odpornosc_na_magie
+   if #menures = 21
+      set %skill Umagicznianie
+   if #menures = 22
+      set %skill Wampiryzm
+   if #menures = 24
+      set %skill Alchemia
+   if #menures = 25
+      set %skill Druciarstwo
+   if #menures = 26
+      set %skill Gotowanie
+   if #menures = 27
+      set %skill Kartografia
+   if #menures = 28
+      set %skill Kowalstwo
+   if #menures = 29
+      set %skill Krawiectwo
+   if #menures = 30
+      set %skill Malarstwo
+   if #menures = 31
+      set %skill Stolarstwo
+   if #menures = 32
+      set %skill Tkactwo
+   if #menures = 33
+      set %skill Tworzenie_lukow
+   if #menures = 35
+      set %skill Drwalstwo
+   if #menures = 36
+      set %skill Gornictwo
+   if #menures = 37
+      set %skill Rolnictwo
+   if #menures = 38
+      set %skill Rybactwo
+   if #menures = 39
+      set %skill Zielarstwo
+   if #menures = 41
+      set %skill Anatomia
+   if #menures = 42
+      set %skill Identyfikacja
+   if #menures = 43
+      set %skill Madrosc
+   if #menures = 44
+      set %skill Rozmowa_z_duchami
+   if #menures = 45
+      set %skill Wiedza_o_broni
+   if #menures = 46
+      set %skill Wiedza_o_zwierzetach
+   if #menures = 48
+      set %skill Muzykalnosc
+   if #menures = 49
+      set %skill Oczarowanie
+   if #menures = 50
+      set %skill Prowokacja
+   if #menures = 51
+      set %skill Uspokajanie
+   if #menures = 53
+      set %skill Likantropia
+   if #menures = 54
+      set %skill Obozowanie
+   if #menures = 55
+      set %skill Okradanie
+   if #menures = 56
+      set %skill Oswajanie
+   if #menures = 57
+      set %skill Sledzenie
+   if #menures = 58
+      set %skill Ukrywanie
+   if #menures = 59
+      set %skill Usuwanie_pulapek
+   if #menures = 60
+      set %skill Uzdrawianie
+   if #menures = 61
+      set %skill Weterynaria
+   if #menures = 62
+      set %skill Wlamywanie
+   if #menures = 63
+      set %skill Wykrywanie
+   if #menures = 64
+      set %skill Zagladanie
+   if #menures = 65
+      set %skill Zakradanie
+   if #menures = 66
+      set %skill Zatruwanie
+   if #menures = 67
+      set %skill Zebranie
+   wait 1
+   if #menures = N/A || %skill = N/A || %skill = %skill1 || %skill = %skill2 || %skill = %skill3 || %skill = %skill4 || %skill = %skill5
+   {
+      event sysmessage Wybrana umiejetnosc jest blednie wskazana lub jest juz mierzona... sprobuj ponownie!
+      set #menubutton N/A
+      goto start
+   }
+   wait 1
+   for %numb 1 6
+   {
+      if %skill . %numb = ------
+      {
+         set %skill . %numb %skill
+         set %used %numb
+         goto finish
+      }
+   }
+   finish:
+   set #menubutton N/A
+   set %skill N/A
+   goto change
+}
+if #menubutton = closed
+{
+   menu hide
+   event sysmessage Okno stopera zostalo zamkniete, skrypt zostaje wylaczony...
+   halt
+}
+goto start
+

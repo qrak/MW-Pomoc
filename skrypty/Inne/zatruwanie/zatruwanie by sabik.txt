@@ -1,0 +1,203 @@
+;Skrypt bY SabiK
+;zatruwanie.txt
+;Wersja 1.4
+;Po wskazaniu pojemnika z przedmiotami, skrypt zatruwa/odtruwa kazdy przedmiot
+;Po zatruciu/odtruciu wszystkich przedmiotow skrypt sie wylacza i wyswietla komunikat
+;Jest mozliwosc ciaglego trucia/odtruwania jednego przedmiotu
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %trucie 2  ;Tu ustaw czy skrypt ma truc czy odtruwac [1 - trucie, 2 - odtruwanie]
+set %liczba 0  ;Tu ustaw czy maja byc trute/odtruwanie wszystkie przedmioty czy tylko jeden nonstop [1 - wszystkie, 0 - jeden]
+;-------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [zatruwanie] odpalony (by SabiK)
+wait 1
+
+if ( %trucie <> 1 && %trucie <> 2 ) || ( %liczba <> 0 && %liczba <> 1 )
+   gosub wylacz zle_wybrano
+if %liczba = 0
+   gosub jeden_przedmiot
+if %liczba = 1
+   gosub pojemnik
+
+start:
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+event macro 1 0 .um zatruwanie
+set %licz #scnt2 + 20
+repeat
+onhotkey esc
+   gosub wylacz esc
+if anulowano in #sysmsg
+   gosub wylacz anulowano
+if %licz < #scnt2
+   goto start
+until #targcurs = 1
+if %trucie = 1
+{
+   finditem avf C
+   if #findkind = -1
+      gosub wylacz nie_ma_truty
+   set #ltargetid #findid
+   event macro 22
+}
+else
+{
+   finditem nuf C
+   if #findkind = -1
+      gosub wylacz nie_ma_odtruty
+   set #ltargetid #findid
+   event macro 22
+}
+set %licz #scnt2 + 20
+repeat
+onhotkey esc
+   gosub wylacz esc
+if anulowano in #sysmsg
+   gosub wylacz anulowano
+if %licz < #scnt2
+   goto start
+until #targcurs = 1
+if %liczba = 1
+{
+   if %ile <> 1
+      finditem * C_ , %pojemnik
+   if #findkind = -1
+      gosub wylacz zatruto_wszystko
+   set #ltargetid #findid
+   event macro 22
+}
+else
+{
+   if #findkind = -1
+      gosub wylacz nie_znaleziono_przedmiotu
+   set #ltargetid %przedmiot
+   lt:
+   event macro 22
+}
+set %licz #scnt2 + 30
+repeat
+scanjournal 1
+if Nie_zatrujesz_tego in #journal || Nie_ochronisz_tego in #journal
+   goto nie_zatrujesz
+if nie_udalo_ci_sie in #journal
+   goto start
+if udalo_ci_sie in #journal
+   goto udalo_sie
+until %licz <= #scnt2
+if #targcurs = 1
+   goto lt
+goto start
+udalo_sie:
+if %liczba = 1
+   ignoreitem #findid
+goto start
+
+nie_zatrujesz:
+set #sysmsgcol 1080
+if %liczba = 0
+{
+   if %trucie = 1
+   event sysmessage Nie da sie zatruc tego przedmiotu! Skrypt wylaczono.
+   else
+   event sysmessage Nie da sie ochronic tego przedmiotu! Skrypt wylaczono.
+   halt
+}
+else
+{
+   if %trucie = 1
+   event sysmessage Nie da sie zatruc tego przedmiotu! Przedmiot ignorowano.
+   else
+   event sysmessage Nie da sie ochronic tego przedmiotu! Przedmiot ignorowano.
+   ignoreitem #ltargetid
+}
+goto start
+
+;///////// SUBS ///////////
+sub jeden_przedmiot
+jeden_przedmiot:
+set #targcurs 1
+set #sysmsgcol 1281
+if %trucie = 1
+event sysmessage Wskaz przedmiot, ktory chcesz truc.
+else
+event sysmessage Wskaz przedmiot, ktory chcesz ochronic.
+set %licz #scnt2 + 100
+repeat
+onhotkey esc
+   gosub wylacz esc
+if anulowano in #sysmsg
+   gosub wylacz anulowano
+if %licz < #scnt2
+   goto jeden_przedmiot
+until #targcurs = 0
+if #ltargetid = n/a
+{
+   set #sysmsgcol 1080
+   event sysmessage Zle wskazano przedmiot!
+   goto jeden_przedmiot
+}
+set %przedmiot #ltargetid
+return
+
+sub pojemnik
+pojemnik:
+set #targcurs 1
+set #sysmsgcol 1281
+if %trucie = 1
+event sysmessage Wskaz pojemnik, w ktorym znajduja sie przedmioty do trucia.
+else
+event sysmessage Wskaz pojemnik, w ktorym znajduja sie przedmioty do odtruwania.
+set %licz #scnt2 + 100
+repeat
+onhotkey esc
+   gosub wylacz esc
+if anulowano in #sysmsg
+   gosub wylacz anulowano
+if %licz < #scnt2
+   goto pojemnik
+until #targcurs = 0
+if #ltargetid = n/a
+{
+   set #sysmsgcol 1080
+   event sysmessage Zle wskazano pojemnik!
+   goto pojemnik
+}
+set %pojemnik #ltargetid
+return
+
+sub wylacz
+set #sysmsgcol 1080
+if #targcurs = 1
+   key esc
+if %1 = esc
+   event sysmessage Wcisnieto Esc! Skrypt wylaczono.
+if %1 = anulowano
+   event sysmessage Anulowano! Skrypt wylaczono.
+if %1 = zle_wybrano
+   event sysmessage Zle ustawienie zmiennych! Skrypt wylaczono.
+if %1 = nie_ma_truty
+   event sysmessage Nie znaleziono trutki! Skrypt wylaczono.
+if %1 = nie_ma_odtruty
+   event sysmessage Nie znaleziono odtrutki! Skrypt wylaczono.
+if %1 = nie_znaleziono_przedmiotu
+{
+   if %trucie = 1
+   event sysmessage Nie znalezniono przedmiotu do trucia! Skrypt wylaczono.
+   else
+   event sysmessage Nie znalezniono przedmiotu do ochrony! Skrypt wylaczono.
+}
+set #sysmsgcol 1281
+if %1 = zatruto_wszystko
+{
+   if %trucie = 1
+   event sysmessage Zatruto wszystkie przedmioty! Skrypt wylaczono.
+   else
+   event sysmessage Ochroniono wszystkie przedmioty! Skrypt wylaczono.
+}
+halt

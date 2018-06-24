@@ -1,0 +1,391 @@
+;KRAWIECTWO by Raist
+;Skrypt szyje zestaw nieutwardzany exp maga, utw maga, utw samuraja
+;tnie nie expy, moze robic hida podczas szycia
+;kolejnosc szycia 1-tunika 2-nogawice 3-naramienniki
+;4-rekawiczki 5-karczek 6-czapka 7-sandaly
+;kolejnosc szycia samuraja 1-utw do 2-utw suneate 3-utw hiro sode
+;4-utw mempo 5-utw kabuto 6-utw rekawiczki 7-sandaly samuraja
+;kolejnosc szycia maga utw 1-tunika 2-nogawice 3-naramienniki
+;4-rekawiczki 5-karczek 6-czapka 7-sandaly
+;Czyli np. jezeli mamy tunike i nogawice dajemy %gdzie = 3
+;aby kontynuowac od naramiennikow
+;-----------------------------
+set %samuraj 0     ;0-set maga nieutwardzany 1-set samuraja utwardzany 2-set maga utwardzany
+set %hid 0         ;0-bez hida 1-z hidem 2-z detectem
+set %gdzie 1       ;od jakiego przedmiotu ma zaczynac
+set %dex 45        ;ile dexa ma twoj krawiec bez butli
+;-----------------------------
+initevents
+set %jrnl #jindex
+set %ple #BACKPACKID
+set %profile 560_460
+set %zmiana 1
+set %skora 0
+
+
+goto tnij
+dexbutla:
+if #dex = %dex
+{
+   finditem yuf C
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage NIE MASZ BUTLI DEXA
+      goto dalej
+   }
+   set #lobjectid #findid
+   event macro 17 0
+   wait 1s
+}
+dalej:
+if %zmiana = 1
+{
+   if %gdzie = 1
+   {
+      if %samuraj = 1
+      {
+         set %klik1 341
+         set %klik2 364
+         set %klik3 279
+         set %klik4 306
+      }
+      if %samuraj = 0
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 279
+         set %klik4 306
+      }
+      if %samuraj = 2
+      {
+         set %klik1 222
+         set %klik2 132
+         set %klik3 179
+         set %klik4 306
+      }
+   }
+   if %gdzie = 2
+   {
+      if %samuraj = 1
+      {
+         set %klik1 341
+         set %klik2 364
+         set %klik3 179
+         set %klik4 306
+      }
+      if %samuraj = 0
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 179
+         set %klik4 306
+      }
+      if %samuraj = 2
+      {
+         set %klik1 222
+         set %klik2 132
+         set %klik3 479
+         set %klik4 210
+      }
+   }
+   if %gdzie = 3
+   {
+      if %samuraj = 1
+      {
+         set %klik1 341
+         set %klik2 364
+         set %klik3 379
+         set %klik4 210
+      }
+      if %samuraj = 0
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 479
+         set %klik4 210
+      }
+      if %samuraj = 2
+      {
+         set %klik1 222
+         set %klik2 132
+         set %klik3 379
+         set %klik4 210
+      }
+   }
+   if %gdzie = 4
+   {
+      if %samuraj = 1
+      {
+         set %klik1 341
+         set %klik2 364
+         set %klik3 279
+         set %klik4 210
+      }
+      if %samuraj = 0
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 379
+         set %klik4 210
+      }
+      if %samuraj = 2
+      {
+         set %klik1 222
+         set %klik2 132
+         set %klik3 279
+         set %klik4 210
+      }
+   }
+   if %gdzie = 5
+   {
+      if %samuraj = 1
+      {
+         set %klik1 341
+         set %klik2 364
+         set %klik3 179
+         set %klik4 210
+      }
+      if %samuraj = 0
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 279
+         set %klik4 210
+      }
+      if %samuraj = 2
+      {
+         set %klik1 222
+         set %klik2 132
+         set %klik3 179
+         set %klik4 210
+      }
+   }
+   if %gdzie = 6
+   {
+      if %samuraj = 1
+      {
+         set %klik1 224
+         set %klik2 132
+         set %klik3 279
+         set %klik4 211
+      }
+      if %samuraj = 0 || %samuraj = 2
+      {
+         set %klik1 124
+         set %klik2 132
+         set %klik3 179
+         set %klik4 210
+      }
+   }
+   if %gdzie = 7
+   {
+      if %samuraj = 1
+      {
+         set %klik1 429
+         set %klik2 132
+         set %klik3 438
+         set %klik4 211
+      }
+      if %samuraj = 0 || %samuraj = 2
+      {
+         set %klik1 429
+         set %klik2 132
+         set %klik3 169
+         set %klik4 212
+      }
+   }
+   if %gdzie = 8
+      goto koniec
+}
+
+start:
+set #lobjectid GRIAJVD  ; wpisz id narzedzi
+finditem  ddg_cui C ; szuka tkaniny/skory
+if #findkind = -1
+{
+set %skora 1
+goto tnij
+}
+set #ltargetid #findid
+event macro 17 0
+target 1s
+event macro 22 0
+set %czas #scnt2 + 40
+stolarz:
+if #CONTSIZE = %profile
+set %jrnl #jindex
+waist 10
+{
+   if %zmiana = 1
+   {
+      wait 10
+      set %czas #scnt2 + 20
+      click %klik1 %klik2
+      wait 20
+      screen2:
+      if #CONTSIZE = %profile
+      {
+         wait 5
+         set %czas #scnt2 + 80
+         click %klik3 %klik4
+         set %zmiana = 0
+         wait 1s
+         goto pat
+      }
+      if %czas < #scnt2
+         goto pat
+      else
+          goto pat
+   }
+   wait 10
+   set %czas #scnt2 + 80
+   click 137 392   ; rob ostatnie ostatnie
+   wait 1s
+   goto pat
+}
+if %czas < #scnt2
+   goto pat
+else
+{
+   goto stolarz
+}
+pat:
+if #jindex > %jrnl
+   {
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+   if ( Uszyles_przedmiot in #journal ) || ( Uszylas_przedmiot in #journal ) || ( Zniszczyles_troche in #journal ) || ( Zniszczylas_troche in #journal )
+      {
+      goto hid
+      }
+   if ( Uszyles_Wyjatkowej in #journal ) || ( Uszylas_Wyjatkowej in #journal )
+      {
+      set %gdzie %gdzie + 1
+      set %zmiana 1
+      goto tnij
+      }
+   if Masz_za in #journal
+      {
+      set %skora 1
+      goto tnij
+      }
+   if By_to_zrobic_potrzebujesz in #journal
+      {
+      set #sysmsgcol 1080
+      event sysmessage NIE MASZ KOTLA Z OLEJEM
+      halt
+      }
+   if W_plecaku_nie_ma in #journal
+      goto tnij
+   if narzedzia_szewskie in #journal
+      {
+      sound c:\missile.wav
+      set #sysmsgcol 1080
+      event sysmessage NARZEDZIA SIE ROZPADAJA
+      }
+   }
+   if %czas < #scnt2
+      goto hid
+   goto pat
+hid:
+if %hid = 0
+   goto dexbutla
+if %hid = 1
+   {
+   event macro 1 0 .um ukrywanie
+   set %czas #scnt2 + 10
+   goto hid2
+   }
+if %hid = 2
+   {
+   event macro 1 0 .um wykrywanie
+   set %czas #scnt2 + 10
+   goto hid3
+   }
+
+
+hid2:
+scanjournal 1
+if #charname , :_*ukryl in #journal
+goto dexbutla
+if Nie_udalo in #journal
+goto dexbutla
+if Juz_cos in #journal
+goto dexbutla
+if Your_skill_in_Ukrywanie in #journal
+goto dexbutla
+if %czas < #scnt2
+goto dexbutla
+else
+goto hid2
+
+hid3:
+scanjournal 1
+if #charname , :_*ukryl in #journal
+goto dexbutla
+if Nie_znalazlas in #journal || Nie_znalazles in #journal
+goto dexbutla
+if Juz_cos in #journal
+goto dexbutla
+if Your_skill_in_Wykrywanie in #journal
+goto dexbutla
+if %czas < #scnt2
+goto dexbutla
+else
+goto hid3
+
+tnij:
+ignoreitem reset
+wait 10
+tnij2:
+finditem KAG ; szuka nozyczek
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage NIE MASZ NOZYCZEK
+   halt
+}
+set #lobjectid #findid  ; ustawia je jako lastobject
+finditem SBP_ALH_YKH_MLH_OSK_ZZR_XKH_DCP_PCP_NWO_TBP_MWO_SSK_QSK_YSK_ATK_JKH_KCP_NJL_NVI_KKH_PKH_VKH_QKH_TES_EWI_TCP_LLH_HCM_FWL_DCI_FCI_PAM_LDI_VDI_BDP_YBP_UCP C_ , #backpackid
+if #findkind = -1
+{
+   if %skora = 1
+   {
+      set #sysmsgcol 1080
+      event sysmessage KONIEC SKOREK
+      sound C:\missile.wav
+      halt
+   }
+   goto dexbutla
+}
+event property #findid
+if Wyjatkowej , #spc , Jakosci in #property
+{
+   ignoreitem #findid
+   goto tnij2
+}
+set %skora 0
+set #ltargetid #findid
+event macro 17 0
+set %czas #scnt + 30
+wait 10
+
+lamimy:
+event macro 22 0
+set %czas #scnt2 + 30
+pat2:
+if Pocielas in #sysmsg || Pociales in #sysmsg
+goto tnij2
+if Nie_udalo in #sysmsg
+goto tnij2
+if %czas < #scnt2
+goto tnij2
+goto pat2
+
+
+koniec:
+set #sysmsgcol 1080
+event sysmessage ZESTAW GOTOWY
+sound C:\missile.wav
+halt

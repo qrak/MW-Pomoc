@@ -1,0 +1,18 @@
+initevents
+
+start:
+event macro 1 0 Chcialabym tu cos sprzedac
+
+sellgump:
+if #CONTSIZE = 283_248
+{
+click 219 145 d ; dwuklik na bandane
+wait 1
+click 314 422 ;clik na ok
+wait 2s
+goto start
+}
+else
+{
+goto sellgump
+}

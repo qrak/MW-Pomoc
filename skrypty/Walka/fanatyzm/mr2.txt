@@ -1,0 +1,145 @@
+;Autor: created by ngz
+;Wersja: 1.1
+;Wlacz opcje w EasyUO Enable Event Sysmessage(Options-->Configuration).
+;Ustawiasz co ktory czar ma medytowac(%mczar). Jak
+;%mczar jest rowne 2 to bedzie rzucac 2 razy czar i medytowac. Mozesz tez ustawic(%skill)
+;czy ma robic Evala lub Ukrywanie. Jezeli wybierzesz Evala(%skill 1) to po wcisnieciu play skrypt
+;poprosi Cie o wskazanie celu do cwiczenia Madrosci(NIE musisz tego robic przed wlaczaniem skryptu).
+set %skill 0                    <---- TUTAJ ustawiasz czy ma robic evala lub ukrywanie czy tez nie(0-nic,1-madrosc,2-ukrywanie)
+set %mczar 45                 <---- TUTAJ ustawiasz co ktory czar ma medytowac(1-x)
+initevents
+set %wjt 0
+start:
+set %rund 0
+if %skill <> 1
+  goto hid2
+if %wjt = 1
+  goto eval
+set %licz 0
+event macro 13 16
+petl:
+set %licz %licz + 1
+if #targcurs = 1
+{
+  wait 2
+  wskter:
+  set #sysmsgcol 1152
+  event sysmessage Wskaz teraz na czym ma byc robiona Madrosc
+  set %licz 0
+  goto petl2
+}
+if %licz > 50
+  goto start
+goto petl
+petl2:
+set %licz %licz + 1
+set %wjt 1
+if #targcurs = 0
+  goto wskaz
+if %licz > 300
+  goto wskter
+goto petl2
+wskaz:
+wait 10
+set %lte #ltargetid
+if Anulowano in #sysmsg
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie wskazano celu!
+  set %wjt 0
+}
+goto spell
+eval:
+set %licz 0
+event macro 13 16
+loop3:
+set #ltargetkind 1
+set #ltargetid %lte
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+ goto tarlast
+if %licz > 5
+  goto eval
+goto loop3
+tarlast:
+event macro 22
+event macro 22
+event macro 22
+goto spell
+hid2:
+if %skill <> 2
+  goto sciana
+hid:
+set %licz 0
+event macro 13 21
+loop2:
+scanjournal 1
+set %licz %licz + 1
+wait 1
+wait 1
+if #charstatus = H
+  goto spell
+if nie_udalo_Ci_sie_tu in #journal
+  goto spell
+if %licz > 10
+  goto hid
+goto loop2
+spell:
+wait 2
+sciana:
+set %mana #mana
+set %czas #scnt2 + 60
+event macro 1 ^ .rzuc m piekielny sztorm
+loop:
+if Brakuje_Ci_skladnikow in #sysmsg
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie masz skladnikow
+  halt
+}
+if Brakuje_Ci_many in #sysmsg
+  goto czekaj
+scanjournal 1
+if Czar_sie_nie_udal in #sysmsg
+{
+  if Czar_sie_nie_udal in #journal
+     goto dalej
+}
+if #mana < %mana
+  goto dalej
+if %czas < #scnt2
+  goto sciana
+goto loop
+dalej:
+set %rund %rund + 1
+wait 5
+if %mczar > %rund
+  goto sciana
+czekaj:
+wait 40
+medyt:
+set %licz 0
+event macro 13 46
+medyt2:
+set %licz %licz + 1
+if Rozpoczynasz_medytacje in #sysmsg
+  goto koncz
+if Nie_brakuje_Ci in #sysmsg
+  goto start
+if %licz > 28
+  goto medyt
+goto medyt2
+koncz:
+if Konczysz_medytacje in #sysmsg
+{
+  wait 5
+  goto start
+}
+if Nie_mozesz_sie_skoncentrowac in #sysmsg
+{
+  wait 30
+  goto medyt
+}
+goto koncz

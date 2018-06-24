@@ -1,0 +1,18 @@
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_ in #journal
+         {
+         if You_see:_dungeon in #journal || You_see:_[Zly_ in #journal || You_see:_Sacul in #journal || You_see:_Thorg in #journal || You_see:_[Zabojca in #journal
+         goto start
+         event macro 1 0 STRAZ!!! Pobudka
+         wait 4s
+         }
+      }
+   }
+

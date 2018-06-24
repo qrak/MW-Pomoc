@@ -1,0 +1,41 @@
+; HID + Stealth by Raist
+; wkomentarzak podana jest linijka w ktorej trzeba
+;wpisac imie postaci
+
+initevents
+goto hid
+
+start:
+set %czas #scnt2 + 90
+czekaj:
+onhotkey F6 alt
+{
+set #sysmsgcol 1080
+event sysmessage makrona deta zatrzymane
+halt
+}
+if %czas < #scnt2
+goto hid
+goto czekaj
+hid:
+event macro 1 0 .um wykrywanie
+set %czas #scnt2 + 10
+
+sprawdz:
+wait 10
+scanjournal 1
+if Juz_cos_robisz. in #journal
+{
+goto hid
+}
+if ( Nie_znalazles in #journal ) || ( Nie_znalazlas in #journal )
+{
+goto start
+}
+if Your_skill_ in #journal
+goto start
+if %czas < #scnt2
+goto hid
+goto sprawdz
+
+

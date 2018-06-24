@@ -1,0 +1,76 @@
+;Beeper by Raist v 1,0
+
+initevents
+set %timer 0
+
+start:
+if #CONTNAME = generic_gump
+{
+set %czas ( #scnt2 + 30 )
+czekaj:
+if %czas < #scnt2
+{
+   if #CONTNAME = generic_gump
+      {
+      if %timer = 0
+      {
+      set %czas2 #scnt2 + 350 ;OPOZNIENIE 350 = 35sekund
+      }
+      goto dzwiek
+      }
+   goto start
+}
+goto czekaj
+}
+if #CONTNAME = waiting_gump && #contsize = 203_121
+{
+wait 10
+if #clixres = 800
+click 404 330
+if #clixres = 640
+click 318 269
+goto loguj
+}
+set %timer 0
+goto start
+
+loguj:
+if #contname = MainMenu_gump
+{
+msg xxxxxxxxx   ;<--WPISZ SWOJE HASLO NA KONTO
+wait 10
+key enter
+wait 10
+goto serwer
+}
+else
+goto loguj
+
+serwer:
+if #contname = normal_gump
+{
+click 622 448
+wait 10
+goto postac
+}
+else
+goto serwer
+
+postac:
+if #contname = Login_gump
+{
+click 622 448
+wait 5s
+sound C:\missile.wav ;SCIEZKA DO DZWIEKU
+goto start
+}
+else
+goto postac
+
+dzwiek:
+if %czas2 < #scnt2
+terminate uo
+set %timer 1
+sound C:\missile.wav ;SCIEZKA DO DZWIEKU
+goto start
+

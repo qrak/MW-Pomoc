@@ -1,0 +1,1190 @@
+;Autor: [nGz] modificate by Goblin
+;Wersja: 3.7
+;Wlacz Enable Event Sysmessage, aby widziec powiadomienia
+;(Tools>Options>General>Enable Event Sysmessage).
+;Kombinacje opcji do zaznaczenia:
+;1.Jesli chcesz przetapiac expy to zwykla opcja przetapiana tez musi byc zaznaczona.
+;2.Opcja Kuj do expa z Przetapianiem - kuje az do wykucia expa(jesli zaznaczysz Przetapiaj
+;expy to tez przetopi tego expa!). Pole edycji za napisem 'Kuj do expa' okresla ile tych expow
+;chcemy.
+;3.Opcja Kuj do expa bez Przetapiania - jesli skonczy sie ruda a expa nadal nie ma to skrypt
+;sie i tak zatrzyma, nie bedzie przetapial tych zwyklych itemow. Jesli wyjdzie exp zanim
+;sie ruda skonczy to zatrzyma sie po jego wykuciu, pozostawiajac wszystkie itemy.
+;4.Opcja Kuj plyte - wybieramy rude, wybieramy przedmiot z przedzialu 1-7 i naciskamy start.
+;Skrypt wtedy kuje pokolei czesci plyty od tej co zaznaczyliscie wzwyz(razem z pawezem),
+;czyli jesli chcemy cala plyte to wybieramy karczek, jesli chcemy np cala plyte bez karczka
+;i rekawic plytowych to wbieramy przedmiot nr 3(naramienniki).
+;Przy zaznaczonej opcji Kuj plyte, reszte opcji nie trzeba ruszac ani nastawiac - nie sa brane
+;pod uwage - skrypt je sam ustawi(czyli na kucie do 1 expa z przetapianiem zwyklym).
+;To chyba wszystko, jakies pytania - irc.
+;Wszelkie bugi zglaszac na prv na ircu
+;EasyUO wersja 1.42.00AB do pobrania - http://hoth.amu.edu.pl/~guniu/EasyUO00AB.rar
+;Wcisnij poprostu play, a pojawi sie menu delux ;-D
+;========================
+set #lpc 2000
+initevents
+menu hide
+menukowala:
+set %kolr 0
+set %przed 0
+set %ile_jest_expow 0
+set %byl_przy_piecu 0
+set %jest_exp3 0
+menu clear
+menu window color btnface
+menu window size 265 260
+menu window title Menu Kowala by [nGz] v3.6
+menu font name verdana
+menu shape prostokat1 6 135 145 41 3 7 1 black 2 black
+menu shape prostokat2 6 175 145 26 3 7 1 black 2 black
+menu shape prostokat3 6 200 145 25 3 7 1 black 2 black
+menu shape prostokat4 150 135 109 66 3 7 1 black 2 black
+menu shape kreska1 17 156 1 10 3 7 1 black 2 black
+menu shape kreska2 17 165 6 1 3 7 1 black 2 black
+;========== Rudy
+menu font size 7
+menu font color black
+menu font bgcolor white
+menu font style
+menu combo create crudy 10 10 100
+menu combo add crudy Rudy:
+menu combo add crudy ---------------
+menu combo add crudy 1.Zelazo
+menu combo add crudy 2.Braz
+menu combo add crudy 3.Kalcyt
+menu combo add crudy 4.Miedz
+menu combo add crudy 5.Piryt
+menu combo add crudy 6.Malachit
+menu combo add crudy 7.Rusty
+menu combo add crudy 8.Rose
+menu combo add crudy 9.Stara Miedz
+menu combo add crudy 10.Shadow
+menu combo add crudy 11.Srebro
+menu combo add crudy 12.Zloto
+menu combo add crudy 13.Blackrock
+menu combo add crudy 14.Agapit
+menu combo add crudy 15.Valoryt
+menu combo add crudy 16.Veryt
+menu combo add crudy 17.Mytheril
+menu combo add crudy 18.Bloodrock
+menu combo add crudy 19.Azuryt
+menu combo add crudy 20.Royal
+menu combo add crudy 21.Mistyk
+menu combo select crudy 1
+;============ Przedmioty
+menu combo create cprzed 120 10 135
+menu combo add cprzed Przedmioty:
+menu combo add cprzed ----------------------
+menu combo add cprzed 1.Plyt. karczek
+menu combo add cprzed 2.Plyt. rekawice
+menu combo add cprzed 3.Plyt. naramienniki
+menu combo add cprzed 4.Plyt. nogawice
+menu combo add cprzed 5.Plyt. zbroja
+menu combo add cprzed 6.Helm plyt.
+menu combo add cprzed 7.Pawez
+menu combo add cprzed 8.Katana
+menu combo add cprzed 9.Wielki miecz
+menu combo add cprzed 10.Rekawice pier.
+menu combo add cprzed 11.Naramienniki pier.
+menu combo add cprzed 12.Nogawice pier.
+menu combo add cprzed 13.Tunika pier.
+menu combo add cprzed 14.Czepiec
+menu combo add cprzed 15.Nogawice kolcze
+menu combo add cprzed 16.Kolczuga
+menu combo add cprzed 17.Zamkniety helm
+menu combo add cprzed 18.Trojkatna tarcza
+menu combo add cprzed 19.Sztylet
+menu combo add cprzed 20.Kris
+menu combo add cprzed 21.Wojenne widly
+menu combo add cprzed 22.Halabarda
+menu combo add cprzed 23.Wlocznia
+menu combo add cprzed 24.Bitewny miecz
+menu combo add cprzed 25.Dlugi miecz
+menu combo add cprzed 26.Ogromny miecz
+menu combo add cprzed 27.Polokragle ostrze
+menu combo add cprzed 28.Pika
+menu combo add cprzed 29.Podwojne ostrza
+menu combo add cprzed 30.Kosa
+menu combo add cprzed 31.Laska z ostrzem
+menu combo add cprzed 32.Lanca
+menu combo add cprzed 33.Sai
+menu combo add cprzed 34.Daisho
+menu combo add cprzed 35.No-dachi
+menu combo add cprzed 36.Wakizashi
+menu combo add cprzed 37.Kama
+menu combo add cprzed 38.Lajatang
+menu combo add cprzed 39.Tetsubo
+menu combo add cprzed 40.Plyt. kabuto
+menu combo add cprzed 41.Plyt. mempo
+menu combo add cprzed 42.Plyt. hiro sode
+menu combo add cprzed 43.Plyt. suneate
+menu combo add cprzed 44.Plyt. Do
+menu combo add cprzed 45.Okragla tarcza
+menu combo add cprzed 46.Wojenny Mlot
+menu combo add cprzed 47.berlo
+menu combo add cprzed 48.elfia meczeta
+menu combo add cprzed 49.runiczne ostrze
+menu combo add cprzed 50.ozdobny topor
+menu combo select cprzed 1
+;============== Skille
+menu font size 8
+menu combo create cskill 50 110 110
+menu combo add cskill Zaden
+menu combo add cskill Anatomia
+menu combo add cskill Wiedza o broni
+menu combo add cskill Ukrywanie
+menu combo add cskill Identyfikacja
+menu combo select cskill 1
+;============== Ilosc expow
+menu font size 7
+menu edit iloscexpow 113 178 30 1
+;============== Ilosc wykutych expow
+menu font bgcolor btnface
+menu font color blue
+menu text ilwykexpow 9 206 Ilosc wykutych expow:
+menu font color black
+;============== Numer expow wykutych
+sub liczba_wykutych_expow
+  menu font color red
+  menu font size 7
+  menu font style
+  menu delete liczba_w_e
+  menu text liczba_w_e 126 206 %ile_jest_expow
+  menu font style b
+  menu font size 10
+  menu font color black
+ return
+;============== Przetop
+menu check cprzeexp 25 157 98 18 0 Przetapiaj expy
+menu font size 10
+menu check cprzet 10 138 87 18 1 Przetapiaj
+;============== Kuj do expa
+menu check cexp 10 179 99 18 1 Kuj do expa
+;============== Kuj plyte
+menu check ckujpt 160 138 80 18 0 Kuj Plyte
+;============== Anuluj
+menu button anuluj 189 229 70 25 Anuluj
+;============== Skill
+menu font style b
+menu text tskill 10 112 Skill:
+;============== Numer wykutych expow
+
+;============== Wybierz
+menu button wybierz 92 35 80 22 Wybierz
+;============== Nr Rudy:
+menu text tnrrudy 57 65 Nr Rudy:
+;============== Nr Przedmiotu:
+menu text tnrprzed 10 85 Nr Przedmiotu:
+;==============
+goto wybierz
+menupokaz:
+menu show
+set #lpc 10
+przyciski:
+set #menubutton n/a
+przycis:
+if #menubutton <> n/a
+   goto #menubutton
+goto przycis
+;=============
+closed:
+halt
+anuluj:
+menu hide
+halt
+;=============
+bstart:
+menu font color black
+menu delete bstart
+menu button bstop 6 229 70 25 STOP
+goto bstart2
+;=============
+wybierz:
+menu get crudy
+set %kolr #menures - 2
+menu get cprzed
+set %przed #menures - 2
+menu delete tkolr
+menu delete tprzed
+menu font color green
+if %kolr > 0
+   menu text tkolr 125 65 %kolr
+if %przed > 0
+   menu text tprzed 125 85 %przed
+menu font color red
+if %kolr < 1
+   menu text tkolr 125 65 0
+if %przed < 1
+   menu text tprzed 125 85 0
+bstop:
+gosub liczba_wykutych_expow
+menu font color green
+if %kolr < 1 || %przed < 1
+   menu font color red
+menu delete bstart
+menu delete bstop
+menu button bstart 6 229 70 25 START
+if #menubutton = closed
+   goto menupokaz
+if #menubutton = bstop
+   set %ile_jest_expow 0
+goto przyciski
+;=====================================
+czesci_plyty:
+if %przed = 7
+ {
+   set #sysmsgcol 1264
+   event sysmessage Skonczono kuc czesci plyty
+   goto bstop
+ }
+set %no_plyty %przed + 3
+menu combo select cprzed %no_plyty
+menu get cprzed
+set %przed #menures - 2
+menu font color green
+menu delete tprzed
+menu text tprzed 125 85 %przed
+set %jest_exp3 1
+;=====================================
+bstart2:
+gosub liczba_wykutych_expow
+set #menubutton n/a
+menu get cskill
+set %skill #menures - 1
+menu get cprzeexp
+set %przet_expy 0
+if #menures = -1
+   set %przet_expy 1
+menu get cprzet
+set %przetop 1
+if #menures = 0
+ {
+   set %przetop 0
+   set %przet_expy 0
+   menu font color black
+   menu font size 7
+   menu font style
+   menu delete cprzeexp
+   menu check cprzeexp 25 157 98 18 0 Przetapiaj expy
+   menu font style b
+   menu font size 10
+ }
+menu get cexp
+set %kujdoexpa 1
+if #menures = 0
+   set %kujdoexpa 0
+set %kuj_plyte 0
+menu get ckujpt
+if #menures = -1
+ {
+   if %przed > 7 || %przed < 1
+    {
+      set #sysmsgcol 1080
+      event sysmessage Musisz wybrac przedmiot od 1 do 7 !
+      goto bstop
+    }
+   set %kuj_plyte 1
+   set %przetop 1
+   set %przet_expy 0
+   set %kujdoexpa 1
+   set %ile_ma_byc_expow 1
+   menu font color black
+   menu font style
+   menu font size 7
+   menu get cprzeexp
+   if #menures = -1
+    {
+      menu delete cprzeexp
+      menu check cprzeexp 25 157 98 18 0 Przetapiaj expy
+    }
+   menu getnum iloscexpow 0
+   if #menures <> 1
+    {
+      menu delete iloscexpow
+      menu font bgcolor white
+      menu edit iloscexpow 113 178 30 1
+      menu font bgcolor btnface
+    }
+   menu font size 10
+   menu get cprzet
+   if #menures = 0
+    {
+      menu delete cprzet
+      menu check cprzet 10 138 87 18 1 Przetapiaj
+    }
+   menu get cexp
+   if #menures = 0
+    {
+      menu delete cexp
+      menu check cexp 10 179 99 18 1 Kuj do expa
+    }
+   menu font style b
+ }
+if %kujdoexpa = 1 && %kuj_plyte = 0
+ {
+   menu getnum iloscexpow 0
+   if #menures < 1
+    {
+      set #sysmsgcol 1080
+      event sysmessage Zly numer w polu 'Kuj do expa'
+      goto bstop
+    }
+   set %ile_ma_byc_expow #menures
+ }
+set %rud 0
+set %iler 0
+;set %jest_exp 0
+set %jest_exp2 0
+set %jest_exp4 0
+set %x3 0
+set %y3 0
+if %kolr = 1 2
+   set %rkol 0
+   set %rud zelaza
+if %kolr = 2 2
+   set %rkol 1118
+   set %rud brazu
+if %kolr = 3 2
+   set %rkol 1546
+   set %rud kalcytu
+if %kolr = 4 2
+   set %rkol 1548
+   set %rud miedzi
+if %kolr = 5 2
+   set %rkol 1720
+   set %rud pirytu
+if %kolr = 6 2
+   set %rkol 2130
+   set %rud malachitu
+if %kolr = 7 2
+   set %rkol 1541
+   set %rud rusty
+if %kolr = 8 2
+   set %rkol 1637
+   set %rud rose
+if %kolr = 9 2
+   set %rkol 1420
+   set %rud starejmiedzi
+if %kolr = 10 2
+   set %rkol 1107
+   set %rud shadowa
+if %kolr = 11 2
+   set %rkol 1301
+   set %rud srebra
+if %kolr = 12 2
+   set %rkol 1121
+   set %rud zlota
+if %kolr = 13 2
+   set %rkol 1109
+   set %rud blackrocka
+if %kolr = 14 2
+   set %rkol 1024
+   set %rud agapitu
+if %kolr = 15 2
+   set %rkol 2001
+   set %rud valorytu
+if %kolr = 16 2
+   set %rkol 1424
+   set %rud verytu
+if %kolr = 17 2
+   set %rkol 1320
+   set %rud mytherilu
+if %kolr = 18 2
+   set %rkol 1309
+   set %rud bloodrocka
+if %kolr = 19 2
+   set %rkol 1247
+   set %rud azurytu
+if %kolr = 20 2
+   set %rkol 1209
+   set %rud royala
+if %kolr = 21 2
+   set %rkol 1102
+   set %rud mistyka
+if %przed = 1 6
+   set %iler 10
+   set %typp nsh
+   set %x 316
+   set %y 131
+   set %x2 189
+   set %y2 209
+if %przed = 2 6
+   set %iler 12
+   set %typp ish
+   set %x 316
+   set %y 131
+   set %x2 330
+   set %y2 209
+if %przed = 3 6
+   set %iler 18
+   set %typp msh
+   set %x 316
+   set %y 131
+   set %x2 469
+   set %y2 209
+if %przed = 4 6
+   set %iler 20
+   set %typp lsh
+   set %x 316
+   set %y 131
+   set %x2 188
+   set %y2 305
+if %przed = 5 6
+   set %iler 25
+   set %typp hsh
+   set %x 316
+   set %y 131
+   set %x2 329
+   set %y2 305
+if %przed = 6 6
+   set %iler 15
+   set %typp osh
+   set %x 375
+   set %y 131
+   set %x2 177
+   set %y2 301
+if %przed = 7 6
+   set %iler 18
+   set %typp cik
+   set %x 434
+   set %y 129
+   set %x2 479
+   set %y2 209
+if %przed = 8 6
+   set %iler 8
+   set %typp omh
+   set %x 122
+   set %y 362
+   set %x2 380
+   set %y2 178
+if %przed = 9 6
+   set %iler 14
+   set %typp bph
+   set %x 237
+   set %y 360
+   set %x2 479
+   set %y2 200
+if %przed = 10 6
+   set %iler 10
+   set %typp kmh
+   set %x 121
+   set %y 131
+   set %x2 216
+   set %y2 209
+if %przed = 11 6
+   set %iler 14
+   set %typp ylh
+   set %x 119
+   set %y 131
+   set %x2 369
+   set %y2 209
+if %przed = 12 6
+   set %iler 16
+   set %typp imh
+   set %x 119
+   set %y 131
+   set %x2 220
+   set %y2 305
+if %przed = 13 6
+   set %iler 18
+   set %typp wlh
+   set %x 119
+   set %y 131
+   set %x2 368
+   set %y2 305
+if %przed = 14 6
+   set %iler 10
+   set %typp dph
+   set %x 238
+   set %y 131
+   set %x2 218
+   set %y2 209
+if %przed = 15 6
+   set %iler 18
+   set %typp aph
+   set %x 238
+   set %y 131
+   set %x2 367
+   set %y2 209
+if %przed = 16 6
+   set %iler 20
+   set %typp zoh
+   set %x 238
+   set %y 131
+   set %x2 216
+   set %y2 305
+if %przed = 17 6
+   set %iler 15
+   set %typp esh
+   set %x 377
+   set %y 131
+   set %x2 477
+   set %y2 209
+if %przed = 18 6
+   set %iler 16
+   set %typp aik
+   set %x 431
+   set %y 132
+   set %x2 178
+   set %y2 301
+if %przed = 19 6
+   set %iler 3
+   set %typp tsf
+   set %x 121
+   set %y 361
+   set %x2 179
+   set %y2 179
+if %przed = 20 6
+   set %iler 8
+   set %typp vrh
+   set %x 121
+   set %y 362
+   set %x2 478
+   set %y2 199
+if %przed = 21 6
+   set %iler 12
+   set %typp srh
+   set %x 422
+   set %y 362
+   set %x2 377
+   set %y2 181
+if %przed = 22 6
+   set %iler 20
+   set %typp yth
+   set %x 424
+   set %y 360
+   set %x2 158
+   set %y2 244
+if %przed = 23 6
+   set %iler 12
+   set %typp ltf
+   set %x 424
+   set %y 362
+   set %x2 267
+   set %y2 178
+if %przed = 24 6
+   set %iler 10
+   set %typp atf
+   set %x 237
+   set %y 362
+   set %x2 278
+   set %y2 199
+if %przed = 25 6
+   set %iler 12
+   set %typp ktf
+   set %x 238
+   set %y 362
+   set %x2 377
+   set %y2 179
+if %przed = 26 6
+   set %iler 16
+   set %typp upo
+   set %x 240
+   set %y 362
+   set %x2 180
+   set %y2 180
+if %przed = 27 6
+   set %iler 16
+   set %typp npo
+   set %x 241
+   set %y 362
+   set %x2 378
+   set %y2 239
+if %przed = 28 6
+   set %iler 15
+   set %typp cuo
+   set %x 423
+   set %y 362
+   set %x2 158
+   set %y2 304
+if %przed = 29 6
+   set %iler 10
+   set %typp buo
+   set %x 421
+   set %y 364
+   set %x2 268
+   set %y2 243
+if %przed = 30 6
+   set %iler 15
+   set %typp guo
+   set %x 423
+   set %y 362
+   set %x2 380
+   set %y2 243
+if %przed = 31 6
+   set %iler 14
+   set %typp zto
+   set %x 423
+   set %y 362
+   set %x2 487
+   set %y2 243
+if %przed = 32 6
+   set %iler 18
+   set %typp opo
+   set %x 423
+   set %y 362
+   set %x2 270
+   set %y2 303
+if %przed = 33 6
+   set %iler 12
+   set %typp qbp
+   set %x 125
+   set %y 362
+   set %x2 281
+   set %y2 258
+if %przed = 34 6
+   set %iler 18
+   set %typp cbp
+   set %x 241
+   set %y 362
+   set %x2 179
+   set %y2 238
+if %przed = 35 6
+   set %iler 16
+   set %typp tap
+   set %x 241
+   set %y 362
+   set %x2 478
+   set %y2 261
+if %przed = 36 6
+   set %iler 8
+   set %typp vap
+   set %x 124
+   set %y 358
+   set %x2 378
+   set %y2 238
+if %przed = 37 6
+   set %iler 12
+   set %typp obp
+   set %x 350
+   set %y 362
+   set %x2 479
+   set %y2 197
+if %przed = 38 6
+   set %iler 20
+   set %typp ibp
+   set %x 424
+   set %y 362
+   set %x2 379
+   set %y2 304
+if %przed = 39 6
+   set %iler 20
+   set %typp fbp
+   set %x 520
+   set %y 362
+   set %x2 122
+   set %y2 360
+   set %x3 378
+   set %y3 303
+if %przed = 40 6
+   set %iler 15
+   set %typp rbp
+   set %x 520
+   set %y 362
+   set %x2 121
+   set %y2 130
+   set %x3 188
+   set %y3 210
+if %przed = 41 6
+   set %iler 10
+   set %typp pwo
+   set %x 520
+   set %y 362
+   set %x2 121
+   set %y2 130
+   set %x3 330
+   set %y3 210
+if %przed = 42 6
+   set %iler 18
+   set %typp wbp
+   set %x 520
+   set %y 362
+   set %x2 121
+   set %y2 130
+   set %x3 467
+   set %y3 210
+if %przed = 43 6
+   set %iler 20
+   set %typp ecp
+   set %x 520
+   set %y 362
+   set %x2 121
+   set %y2 130
+   set %x3 182
+   set %y3 302
+if %przed = 44 6
+   set %iler 25
+   set %typp lwo
+   set %x 520
+   set %y 362
+   set %x2 121
+   set %y2 130
+   set %x3 329
+   set %y3 305
+if %przed = 45 6
+   set %iler 25
+   set %typp gik
+   set %x 435
+   set %y 131
+   set %x2 281
+   set %y2 208
+if %przed = 46 6
+   set %iler 25
+   set %typp auh
+   set %x 520
+   set %y 362
+   set %x2 128
+   set %y2 362
+   set %x3 480
+   set %y3 210
+if %przed = 47 6
+   set %iler 25
+   set %typp AUO
+   set %x 520
+   set %y 362
+   set %x2 128
+   set %y2 362
+   set %x3 278
+   set %y3 305
+if %przed = 48 6
+   set %iler 25
+   set %typp NFR
+   set %x 240
+   set %y 360
+   set %x2 282
+   set %y2 259
+if %przed = 49 6
+   set %iler 25
+   set %typp EFR
+   set %x 240
+   set %y 360
+   set %x2 380
+   set %y2 312
+if %przed = 50 6
+   set %iler 25
+   set %typp OFR
+   set %x 350
+   set %y 361
+   set %x2 180
+   set %y2 305
+set #sysmsgcol 1080
+if #menubutton <> n/a
+   goto #menubutton
+if %rud = 0
+ {
+   event sysmessage Zly numer rudy
+   goto bstop
+ }
+if %iler = 0
+ {
+   event sysmessage Zly numer przedmiotu
+   goto bstop
+ }
+set %ostp 0
+set %wjt 0
+;=====================================
+start:
+set %sysm 0
+ignoreitem reset
+if %skill <> 0 && %ostp = 1
+   wait 15
+mlot:
+if #menubutton <> n/a
+   goto #menubutton
+finditem tlh C_ , #charid
+if #findkind = -1
+ {
+   finditem gbg C_ , #charid
+   if #findkind = -1
+    {
+      set %sysm 3
+      if %jest_exp4 = 1
+         goto sysstop
+      goto przetop2
+    }
+ }
+set %lo #findid
+if %skill <> 2
+   goto identyfikacja
+wiedza:
+set %licz 0
+event macro 13 4
+loop3:
+set #ltargetkind 1
+set #ltargetid #findid
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+  goto nexte
+if %licz > 5
+   goto wiedza
+goto loop3
+identyfikacja:
+if %skill <> 4
+   goto ominw
+ident:
+set %licz 0
+event macro 13 3
+petlaident:
+set #ltargetkind 1
+set #ltargetid #findid
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+  goto nexte
+if %licz > 5
+   goto ident
+goto petlaident
+ominw:
+if %skill <> 1
+   goto hid
+if %wjt = 1
+   goto anat
+set %licz 0
+event macro 13 1
+petl:
+set %licz %licz + 1
+if #targcurs = 1
+ {
+   wait 2
+   wskter:
+   set #sysmsgcol 1152
+   event sysmessage Wskaz teraz na czym ma byc robiona Anatomia
+   set %licz 0
+   goto petl2
+ }
+if %licz > 50
+   goto ominw
+goto petl
+petl2:
+set %licz %licz + 1
+set %wjt 1
+if #targcurs = 0
+   goto wskaz
+if %licz > 300
+   goto wskter
+goto petl2
+wskaz:
+wait 10
+set %lta #ltargetid
+if Anulowano in #sysmsg
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie wskazano celu!
+   set %wjt 0
+ }
+goto kowa
+anat:
+set %licz 0
+event macro 13 1
+if #menubutton <> n/a
+   goto #menubutton
+loop4:
+set #ltargetkind 1
+set #ltargetid %lta
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+  goto nexte
+if %licz > 5
+   goto anat
+goto loop4
+nexte:
+event macro 22
+event macro 22
+event macro 22
+hid:
+if %skill <> 3
+   goto kowa
+hid2:
+set %licz 0
+event macro 13 21
+if #menubutton <> n/a
+   goto #menubutton
+loop5:
+scanjournal 1
+set %licz %licz + 1
+wait 1
+wait 1
+if #charstatus = H
+   goto kowa
+if ukryl in #journal
+   goto kowa
+if nie_udalo_Ci_sie_ukryc in #journal
+   goto kowa
+if %licz > 7
+   goto hid2
+goto loop5
+;=====================================
+kowa:
+if #menubutton <> n/a
+   goto #menubutton
+if %kujdoexpa = 1 && %ile_ma_byc_expow <= %ile_jest_expow
+   goto przetop2
+wait 1
+finditem zag_kbg
+if #findkind = -1
+ {
+   set %sysm %sysm + 4
+   if %jest_exp4 = 1
+    {
+      set %byl_przy_piecu 1
+      goto sysstop
+    }
+   if %jest_exp3 = 1
+    {
+      set %jest_exp3 0
+      goto sysstop
+    }
+   goto przetop2
+ }
+if #finddist > 1
+ {
+   set %sysm 1
+   ignoreitem #findid
+   goto kowa
+ }
+wait 2
+set %jest_exp3 0
+zelazo:
+finditem enk C
+if #findkind = -1
+ {
+   set %sysm %sysm + 1
+   if %jest_exp4 = 1 || %byl_przy_piecu = 1
+    {
+      set %byl_przy_piecu 0
+      set %ile_jest_expow 0
+      goto sysstop
+    }
+   goto przetop2
+ }
+if #findcol <> %rkol
+ {
+   ignoreitem #findid
+   goto zelazo
+ }
+set %lt #findid
+if #findstack < %iler
+ {
+   set %sysm 1
+   ignoreitem #findid
+   goto zelazo
+ }
+set %jest_exp2 0
+set %jest_exp4 0
+set %byl_przy_piecu 0
+goto ustawlt
+;=====================================
+przetop2:
+str lower %rud
+set #sysmsgcol 1264
+if %przetop = 0
+ {
+   event sysmessage Nie przetapiam
+   set %ile_jest_expow 0
+   goto sysstop
+ }
+finditem %typp C
+if #findkind = -1
+ {
+   event sysmessage Nie znaleziono przedmiotu do przetopienia
+   set %ile_jest_expow 0
+   sysstop:
+   if #menubutton <> n/a
+      goto #menubutton
+   if %ostp = 1 && ( %sysm = 1 || %sysm = 2 )
+    {
+      event sysmessage Skonczyla sie ruda
+      goto bstop
+    }
+   set #sysmsgcol 1080
+   if %sysm = 1
+      event sysmessage Nie znaleziono #strres
+   if %sysm = 2
+      event sysmessage Za malo #strres
+   if %sysm = 3
+      event sysmessage Nie znaleziono mlotka
+   if %sysm = 4
+      event sysmessage Nie znaleziono kowadla
+   if %sysm = 5
+      event sysmessage Stoisz za daleko kowadla
+   goto bstop
+ }
+przetop3:
+if #menubutton <> n/a
+   goto #menubutton
+finditem jbg_ouj_kuj_wtj_hvj_suj G_1
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   if %ostp = 1 && ( %sysm = 1 || %sysm = 2 )
+    {
+      set #sysmsgcol 1264
+      event sysmessage Skonczyla sie ruda
+      set #sysmsgcol 1080
+      goto nie_znaleziono_pieca:
+    }
+   if %sysm = 1
+      event sysmessage Nie znaleziono #strres
+   if %sysm = 2
+      event sysmessage Za malo #strres
+   if %sysm = 3
+      event sysmessage Nie znaleziono mlotka
+   if %sysm = 4
+      event sysmessage Nie znaleziono kowadla
+   if %sysm = 5
+      event sysmessage Stoisz za daleko kowadla
+   nie_znaleziono_pieca:
+   wait 1
+   event sysmessage Nie znaleziono pieca lub stoisz za daleko
+   goto bstop
+ }
+set %idpiec #findid
+set %idprz 0
+set %licz 0
+set %cpwj_jest 1
+set %jest_exp4 0
+if #menubutton <> n/a
+   goto #menubutton
+event sysmessage Przetapiam przedmioty
+przetop:
+scanjournal 1
+set %licz %licz + 1
+finditem %typp C
+if #findkind = -1
+ {
+   if %jest_exp2 = 1 && %kujdoexpa = 1 && %ile_ma_byc_expow <= %ile_jest_expow
+    {
+      set %ile_jest_expow 0
+      if %kuj_plyte = 1
+         goto czesci_plyty
+      set #sysmsgcol 1264
+      event sysmessage Skonczono
+      goto bstop
+    }
+   wait 2
+   goto start
+ }
+if #menubutton <> n/a
+   goto #menubutton
+set %jest_exp2 0
+if Chcesz_przetopic_Wyjatkowej_jakosci_ in #journal && %cpwj_jest = 0
+ {
+   set %licz2 0
+   tabliczka_prz_exp:
+   set %licz2 %licz2 + 1
+   if %licz2 > 100
+      goto bstop
+   if #contname <> generic_gump || #contsize <> 188_118
+      goto tabliczka_prz_exp
+   if %przet_expy = 0
+    {
+      ignoreitem #findid
+      click 125 95
+      set %jest_exp4 1
+    }
+   else
+      click 70 95
+   set %jest_exp2 1
+   set %cpwj_jest 1
+ }
+if %licz > 60
+   goto znow
+if #findid = %idprz
+   goto przetop
+set %idprz #findid
+set %licz2 0
+znow:
+set %cpwj_jest 0
+set %licz2 %licz2 + 1
+if %licz2 > 3
+   click 125 95
+set %licz 0
+set #lobjectid %idpiec
+event macro 17
+loop2:
+if #menubutton <> n/a
+   goto #menubutton
+set #ltargetkind 1
+set #ltargetid #findid
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto targ
+if %licz > 6
+   goto znow
+goto loop2
+targ:
+event macro 22
+event macro 22
+event macro 22
+set %licz 0
+goto przetop
+;=====================================
+ustawlt:
+set %licz 0
+set #lobjectid %lo
+if #menubutton <> n/a
+   goto #menubutton
+event macro 17
+if %ostp = 0
+ {
+   wait 14
+   click %x %y
+   wait 8
+   if #menubutton <> n/a
+      goto #menubutton
+   click %x2 %y2
+   wait 8
+   click %x3 %y3
+ }
+if %ostp = 1
+ {
+   wait 14
+   if #menubutton <> n/a
+      goto #menubutton
+   click 135 390
+ }
+loop:
+if #menubutton <> n/a
+   goto #menubutton
+set #ltargetkind 1
+set #ltargetid %lt
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 10
+   goto ustawlt
+goto loop
+dalej:
+event macro 22
+event macro 22
+event macro 22
+set %ostp 1
+set %licz #scnt + 9
+wyk_przedmiot_loop:
+scanjournal 1
+if s_przedmiot_i_wlozyl in #journal || s_troche_sztab in #journal
+   goto start
+if s_wyjatkowej_jakosci_przedmiot_i_wlozyl in #journal
+ {
+   ;set %jest_exp 1
+   set %ile_jest_expow %ile_jest_expow + 1
+   gosub liczba_wykutych_expow
+   goto start
+ }
+if Oddaliles_sie. in #journal || Oddalilas_sie. in #journal
+   goto bstop
+if #menubutton <> n/a
+   goto #menubutton
+if %licz < #scnt
+   goto start
+goto wyk_przedmiot_loop
+

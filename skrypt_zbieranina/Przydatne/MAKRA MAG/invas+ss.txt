@@ -1,0 +1,23 @@
+set %czas #scnt2
+
+start:
+if #str < 70
+{
+set #sysmsgcol 1080
+event sysmessage MAGIK STR
+sound C:\missile.wav
+wait 20
+}
+if #hits < #maxhits
+{
+event macro 15 28 ;in vas mani
+target 5s
+event macro 23 ;target self
+wait 20
+}
+if %czas < #scnt2
+{
+event macro 1 0 .um rozmowa z duchami
+set %czas #scnt2 + 90
+}
+goto start

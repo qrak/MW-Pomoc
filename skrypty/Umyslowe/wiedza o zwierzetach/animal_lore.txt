@@ -1,0 +1,9 @@
+initevents
+
+start:
+event macro 13 2
+target 5s
+event macro 22
+wait 9s
+wait 5
+goto start

@@ -1,0 +1,23 @@
+;Autor: Demetrius
+initevent
+set %butla_barba ICMZICE     ;tutaj wpisz ID butli na ktorej trenujesz
+
+event sysmessage Skrypt na butle barbarzynca + czerwona
+
+start:
+if #stamina < 25 ;ponizej jakiego poziomu staminy mam pic czerwona butelke
+{
+finditem ZUF
+set #lobjectid #findid
+event macro 17
+event macro 2 0 Pije Czerwona
+wait 1s
+}
+
+finditem %butla_barba
+set #lobjectid #findid
+event macro 17
+event macro 2 0 Zaczyna wariowac
+wait 6s ; czas oczekiwania do nastepnego wypicia butelki
+
+goto start

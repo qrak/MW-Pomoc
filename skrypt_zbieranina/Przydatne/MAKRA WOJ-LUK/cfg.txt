@@ -1,0 +1,207 @@
+initevents
+set %band 0
+start1:
+if #charstatus = H
+goto start1
+if #charstatus = HG
+goto start1
+set %useba 0
+set %licz #scnt2 + 146
+start:
+ignoreitem reset
+if %useba = 1
+goto butle
+if #hits < #maxhits
+{
+bandaze:
+finditem zlf
+if #findkind = -1
+{
+set %band 1
+goto butle
+}
+if #findkind = 1
+{
+ignoreitem #findid
+goto bandaze
+}
+set %hp #hits + 3
+set #lobjectid #findid
+event macro 17
+scanjournal 1
+wait 2
+if I_am_frozen in #journal
+goto start1
+target
+tself:
+event macro 23
+wait 1
+event macro 23
+if #sysmsg = I_am_already_doing_something_else.
+goto start1
+if Kogo_Chcial in #sysmsg
+goto tself
+set %useba 1
+set %licz #scnt2 + 146
+}
+butle:
+ignoreitem reset
+onhotkey f4 ;mix odswierzenia pod F4
+gosub czerwona
+onhotkey f5 ;mix odswierzenia pod F5
+gosub odtrutka
+;onhotkey xxx ;mix truty pod F11
+; gosub trutka
+onhotkey f7 ;wybuch w siebie pod F7
+gosub wybuchself
+onhotkey Insert ;mix sily pod Insert
+gosub sily
+onhotkey Delete ;mix dexa pod Delete
+gosub dexa
+onhotkey f6 ;mix leczenia pod F6
+gosub leczenia
+czekaj:
+if #hits > %hp
+goto start1
+if #sex = 1
+{
+if #sysmsg = Przestalas_sie_leczyc.
+goto start1
+if #sysmsg = Wyleczylas_sie.
+goto start1
+if #sysmsg = Wyleczylas_sie_kompletnie.
+goto start1
+}
+if #sex = 0
+{
+if #sysmsg = Przestales_sie_leczyc.
+goto start1
+if #sysmsg = Wyleczyles_sie.
+goto start1
+if #sysmsg = Wyleczyles_sie_kompletnie.
+goto start1
+}
+if #sysmsg = Nie_udalo_ci_sie_wyleczyc_tej_osoby.
+goto start1
+if #sysmsg = Anulowano.
+goto start1
+if Your_skill_in_Healing in #sysmsg
+goto start1
+if #hits = #maxhits
+goto start1
+if %licz < #scnt2
+goto start1
+goto start
+sub czerwona
+finditem zuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa odswierzenia
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Wypiles miksa odswierzenia
+return
+goto start
+Ajfel (20:59)
+sub trutka
+finditem avf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa trutki
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Wypiles miksa trutki
+return
+goto start
+sub sily
+finditem xuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa sily
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Wypiles miksa sily
+return
+goto start
+sub dexa
+finditem yuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa dexa
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Wypiles miksa dexa
+return
+goto start
+sub leczenia
+finditem uuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa leczenia
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa leczenia
+return
+goto start
+sub odtrutka
+finditem nuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa odtrutki
+return
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa odtrutki
+return
+goto start
+sub wybuchself
+finditem tuf C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa wybuchowego
+return
+}
+wyb:
+set %licz 0
+set #lobjectid #findid
+event macro 17
+petla:
+set %licz %licz + 1
+if #targcurs = 1
+goto dalej
+if %licz > 35
+goto wyb
+goto petla
+dalej:
+event macro 23
+event macro 23
+event macro 23
+omin:
+set #sysmsgcol 1264
+event sysmessage Rzuciles w siebie miksa wybuchowego
+return
+goto start

@@ -1,0 +1,64 @@
+;Skrypt bY SabiK
+;zakradanie-liczenie.txt
+;Wersja 1.3
+;Skrypt liczy wykonane kroki, po uzyciu zakradania
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %kroki 11        ;Tutaj ustaw liczbe krokow, ktora mozesz zrobic
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 63
+event sysmessage Skrypt [zakradanie-liczenie] odpalony (by SabiK)
+wait 1
+set %jrnl #jindex
+
+repeat
+start:
+if H notin #charstatus
+   goto start
+if #jindex > %jrnl
+{
+   set %jrnl %jrnl + 1
+   scanjournal 1
+}
+until #charname , :_Teraz_poruszasz_sie_po_kryjomu in #journal
+reset:
+set %krok %kroki
+stealth:
+set %x #charposx
+set %y #charposy
+repeat
+if H notin #charstatus
+{
+   set #sysmsgcol 88
+   event sysmessage Odkryles siebie!
+   goto start
+}
+if #jindex > %jrnl
+{
+   set %jrnl %jrnl + 1
+   scanjournal 1
+   if #charname , :_Teraz_poruszasz_sie_po_kryjomu in #journal
+      goto reset
+}
+until %x <> #charposx || %y <> #charposy
+set %krok %krok - 1
+set #sysmsgcol 88
+if %krok = 0
+event sysmessage Wykonano ostatni krok!
+else
+event sysmessage Pozostalo %krok krokow.
+if %krok = 0 || H notin #charstatus
+{
+   if H notin #charstatus
+   {
+      set #sysmsgcol 88
+      event sysmessage Odkryles siebie!
+      goto start
+   }
+   goto start
+}
+goto stealth
+
+

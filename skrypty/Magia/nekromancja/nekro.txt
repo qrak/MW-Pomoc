@@ -1,0 +1,93 @@
+
+initevents
+set #sysmsgcol 1082
+event sysmessage
+wait 1
+start:
+
+if #mana < 9
+   goto medyt
+
+czar:
+event macro 3 ^ Talus Loricatus
+target 10s
+event macro 23 0
+goto start
+
+medyt:
+event macro 13 46
+set %med 0
+czekaj_medyt:
+set %med %med + 1
+if Rozpoczynasz_medytacje in #sysmsg
+   goto koncz
+if Nie_brakuje_Ci_many in #sysmsg
+   goto start
+if %med > 40
+   goto medyt
+goto czekaj_medyt
+
+koncz:
+if #mana = #maxmana
+{
+   jedzenie:
+   finditem hnd_bnd_twi_fwi_ywi_qqd_bdf_zpe_uwi_rqe_axi_aqd_gud_qud_uqe_nwi_yrd_zpd_cwe C
+   set #lobjectid #findid
+   event macro 17
+   wait 20
+   goto start
+}
+if Konczysz_medytacje in #sysmsg
+{
+   if #mana = #maxmana
+   {
+   jedzenie:
+   finditem hnd_bnd_twi_fwi_ywi_qqd_bdf_zpe_uwi_rqe_axi_aqd_gud_qud_uqe_nwi_yrd_zpd_cwe C
+   set #lobjectid #findid
+   event macro 17
+   wait 20
+   goto start
+   }
+   wait 20
+   goto medyt
+}
+if Nie_brakuje_Ci_many in #sysmsg
+{
+   jedzenie:
+   finditem hnd_bnd_twi_fwi_ywi_qqd_bdf_zpe_uwi_rqe_axi_aqd_gud_qud_uqe_nwi_yrd_zpd_cwe C
+   set #lobjectid #findid
+   event macro 17
+   wait 20
+   goto start
+}
+if Nie_mozesz_sie_skoncentrowac in #sysmsg
+{
+   if #mana = #maxmana
+   {
+   jedzenie:
+   finditem hnd_bnd_twi_fwi_ywi_qqd_bdf_zpe_uwi_rqe_axi_aqd_gud_qud_uqe_nwi_yrd_zpd_cwe C
+   set #lobjectid #findid
+   event macro 17
+   wait 20
+   goto start
+   }
+   wait 20
+   goto medyt
+}
+if Straciles_koncentracje in #sysmsg
+{
+   if #mana = #maxmana
+   {
+   jedzenie:
+   finditem hnd_bnd_twi_fwi_ywi_qqd_bdf_zpe_uwi_rqe_axi_aqd_gud_qud_uqe_nwi_yrd_zpd_cwe C
+   set #lobjectid #findid
+   event macro 17
+   wait 20
+   goto start
+   }
+   wait 20
+   goto medyt
+}
+if Your in #sysmsg
+   goto koncz
+goto koncz

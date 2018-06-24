@@ -1,0 +1,33 @@
+; HID + Stealth by Raist
+; wkomentarzak podana jest linijka w ktorej trzeba
+;wpisac imie postaci
+
+initevents
+start:
+
+set %czas #scnt2 + 85
+czekaj:
+if %czas < #scnt2
+goto hid
+goto czekaj
+hid:
+event macro 1 0 .um anatomia
+set %czas #scnt2 + 20
+
+sprawdz:
+scanjournal 1
+if Juz_cos_robisz. in #journal
+{
+wait 5
+goto hid
+}
+if #targcurs = 1
+{
+event macro 22 0
+goto start
+}
+if %czas < #scnt2
+goto hid
+goto sprawdz
+
+

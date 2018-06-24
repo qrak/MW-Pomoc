@@ -1,0 +1,91 @@
+;Autor: [nGz]
+;Tepe strzaly wlozyc do pojemnika innego niz twoj plecak.
+;Ukrywa sie lub robi anatomie.
+;Anatomie robi na ostatnim celu wskazanym przed wlaczeniem skryptu.
+set %Co_robic 2         ;1-strzaly, 2-belty
+set %skill 2            ;0-nic, 1-hid, 2-anatomia
+set %zegar 0
+set %Runda 0
+set %LtID #ltargetid
+set %menukind 0
+if #cliver = 5.0.1c
+  set %menukind ojyc
+if #cliver = 5.0.1d
+  set %menukind akyc
+;if %menukind = 0
+  ;halt
+start:
+if %skill = 1
+  gosub ukrywanie
+if %skill = 2
+  gosub anatomia
+jedzenie:
+;------ narazie nie ma...
+koniec_jedzenia:
+finditem slk C
+if #findkind = -1
+  halt
+exevent drag #findid 1
+exevent dropc #backpackid
+set %Tepa_strz #findid
+piora:
+finditem vlk C
+if #findkind = -1
+  halt
+set #lobjectid #findid
+event macro 17
+set %timer #scnt2 + 9
+repeat
+if %timer < #scnt2
+  goto piora
+until #targcurs = 1 || #contkind = %menukind || #contname = objpicker_gump
+set #ltargetid %Tepa_strz
+event macro 22
+set %timer #scnt2 + 20
+repeat
+if %timer < #scnt2
+  goto piora
+until #contkind = %menukind || #contname = objpicker_gump
+klikaj:
+if %Co_robic = 1
+  click 60 60 x 2
+if %Co_robic = 2
+  click 105 60 x 2
+set %timer #scnt2 + 7
+repeat
+if %timer < #scnt2
+  goto klikaj
+until #contkind <> %menukind && #contname <> objpicker_gump
+repeat
+finditem %Tepa_strz
+until #findkind = -1
+if %Runda = 0
+{
+  set %Runda 1
+  goto jedzenie
+}
+else
+  set %Runda 0
+goto start
+sub ukrywanie
+hiding_sub:
+event macro 1 0 .um ukr
+set %timer #scnt2 + 2
+repeat
+if %timer < #scnt2
+  goto hiding_sub
+scanjournal 1
+until H in #charstatus || nie_udalo_Ci_sie_ukryc in #journal
+return
+sub anatomia
+anatka_sub:
+event macro 1 0 .um ana
+set %timer #scnt2 + 2
+repeat
+if %timer < #scnt2
+  goto anatka_sub
+until #targcurs = 1
+set #ltargetid %LtID
+event macro 22
+return
+

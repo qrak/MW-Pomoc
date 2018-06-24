@@ -1,0 +1,500 @@
+;Bindy by Raist
+;otwieranie drzwi - przerobione z makra nGz
+;Podstawowe triki maga
+initevents
+linespercycle 20
+
+repeat
+ignoreitem reset
+onHotKey F2 alt   ;wsiadanie na widmo
+gosub widmo
+onHotKey F3 alt   ;butla corp
+gosub bcorp
+onHotKey F4 alt   ;butla flam
+gosub bflam
+onHotKey F9       ;telep do domu
+gosub telep
+onHotKey F10      ;drzwi
+gosub drzwi
+onHotkey F12      ;nozyczki
+gosub nozyczki
+onHotKey F3       ;zolta
+gosub zolta
+onHotKey F4       ;czerwony pot
+gosub czerwona
+onHotKey F5       ;pomarancz
+gosub pomarancz
+onHotKey F6       ;pot many
+gosub manapot
+onHotKey F2   	  ;maly fiolet + an ex
+gosub malyfiolet
+onHotKey c alt    ;next target
+gosub targnext
+onHotKey F11 alt  ;KLAWISZ DO UZUPELNIANIA REGOW
+gosub uzupelniaj
+onHotKey F12 alt  ;KLAWISZ DO ODKLADANIA REGOW
+gosub odkladaj
+until #false
+
+sub widmo
+event macro 1 0 Stop
+event macro 1 0 za mna
+set #lobjectid OLCMRB
+event macro 17 0
+return
+
+sub telep
+event macro 1 0 dobra to ja zawijam
+finditem YHXAPOD C ;TU WPISZ id RUNEBOOKA
+set #lobjectid #findid
+event macro 17 0 ;last object
+set %czas #scnt2 + 20
+czeka:
+if #CONTSIZE = 436_259
+{
+event macro 2 0 zawija
+click 249 208  ;TU WPISZ POZYCJE GDZIE MA KLIKNAC NA RUNKE
+return
+}
+if %czas < #scnt2
+return
+goto czeka
+
+
+sub drzwi
+set %czas #scnt2 + 20
+ignoreitem reset
+drzwi:
+finditem XG_ZG_TG_VG_FH_HH_BH_DH_AY_ZX_CY_BY_XGB_ZGB_JHB_LHB_FHB_HHB_RHB_THB_NHB_PHB_ZHB_BIB_VHB_XHB_HIB_JIB_DIB_FIB_PIB_RIB_LIB_NIB_ZDB_BEB_VDB_XDB_HEB_JEB_DEB_FEB_PEB_REB_LEB_NEB_XEB_ZEB_TEB_VEB_FFB_HFB_FJC_IJC_HJC_SJC_RJC_UJC_TJC_OJC_NJC_QJC_PJC_YOC_XOC_APC_ZOC_UOC_TOC_WOC_VOC_GPC_FPC_IPC_HPC_CPC_BPC_EPC_DPC_OPC_NPC_QPC_PPC_KPC_JPC_MPC_LPC_WPC_VPC_YPC_XPC_SPC_RPC_UPC_TPC_EQC_DQC_GQC_FQC_AQC_ZPC_CQC_BQC_MQC_LQC_OQC_NQC_IQC_HQC_KQC_JQC_UQC_TQC_WQC_VQC_QQC_PQC_SQC_RQC_CRC_BRC_ERC_DRC_YQC_XQC_ARC_ZQC_MMC_LMC_OMC_NMC_IMC_HMC_KMC_JMC_UMC_TMC_WMC_VMC_QMC_PMC_SMC_RMC_CNC_BNC_ENC_DNC_YMC_XMC_ANC_ZMC_KNC_JNC_MNC_LNC_GNC_FNC_INC_HNC_SNC_RNC_UNC_TNC_ONC_NNC_QNC_PNC_AOC_ZNC_COC_BOC_WNC_VNC_YNC_XNC_IOC_HOC_KOC_JOC_EOC_IPJ_HPJ_RPL_UPL_TPL_OPL_NPL_QPL_PPL_AQL_ZPL_CQL_BQL_WPL_VPL_YPL_XPL_IQL_HQL_KQL_JQL_EQL_DQL_GQL_FQL_QQL_PQL_SQL_RQL_MQL_LQL_OQL_NQL_YQL_XQL_ARL_ZQL_UQL_ZZL_CAM_BAM_MAM_LAM_OAM_NAM_IAM_HAM_KAM_JAM_UAM_TAM_WAM_VAM_QAM_FUN_QUN_PUN_SUN_RUN_MUN_GRO_IRO_EWP_DWP_KWP_JWP_HAQ_KAQ_JAQ_UAQ_TAQ_WAQ_VAQ_QAQ  G_2 ;
+if #findkind = -1
+finditem DUU_TTU_XTU_RTU_PAQ_SAQ_RAQ_CBQ_BBQ_EBQ_DBQ_YAQ_XAQ_ABQ_ZAQ_KBQ_JBQ_MBQ_LBQ_GBQ_UED_TED_WED_VED_GFD_FFD_IFD_HFD_CFD_BFD_EFD_DFD_OFD_NFD_QFD_PFD_VFD_YFD_XFD_SFD_RFD_UFD_TFD_GBD_FBD_IBD_HBD_CBD_BBD_EBD_DBD_OBD_KBD_JBD_MBD_LBD_WBD_VBD_YBD_XBD_SBD_RBD_UBD_TBD_ECD_DCD_GCD_FCD_KCD_JCD_UCD_TCD_WCD_VCD_QCD_PCD_SCD_RCD_CDD_BDD_EDD_DDD_YCD_XCD_RZN_UZN_TZN_EAO_DAO_GAO_FAO_AAO_ZZN_CAO_BAO_MAO_LAO_OAO_ZHO G_2 ;
+if #findkind = 1 && ( ( #findz - #charposz ) > 15 || ( #findz - #charposz ) < -15 )
+{
+  ignoreitem #findid
+  goto drzwi
+}
+if #findkind = 1 && ( ( #findz - #charposz ) < 16 && ( #findz - #charposz ) > -16 )
+{
+  set #lobjectid #findid
+  event macro 17
+  wait 5
+  return
+}
+if %czas < #scnt2
+{
+  return
+}
+goto drzwi_petla
+
+sub bcorp
+szukaj2:
+finditem TUF C ;wybuch
+if #FINDBAGID = #BACKPACKID
+{
+ignoreitem #findid
+goto szukaj2
+}
+if #findkind <> -1
+{
+set #lobjectid #findid
+event macro 17 0 ;last object
+target 2s
+key z alt ;wpisz klawisz pod ktory mmasz last target
+}
+event macro 15 41 ;corp por
+return
+
+sub bflam
+szukaj3:
+finditem TUF C ;wybuch
+if #FINDBAGID = #BACKPACKID
+{
+ignoreitem #findid
+goto szukaj3
+}
+if #findkind <> -1
+{
+set #lobjectid #findid
+event macro 17 0 ;last object
+target 2s
+key z alt ;zamien 'z alt' na klawisz pod ktorym masz last target
+}
+event macro 15 50 ;flamestrike
+return
+
+sub nozyczki
+finditem TSF_GFR C_ , #charid ; znajduje nozyk w paperdollu
+if #findkind = -1
+return
+set #lobjectid #findid
+event macro 17
+finditem yfm G_1 ;znajduje zwloki
+set #ltargetid #findid
+target 1s
+key z alt ;zamien 'z alt' na klawisz pod ktorym masz last target
+return
+
+sub zolta
+finditem UUF C ;Heal
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz zoltych
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl zoltych
+return
+
+sub czerwona
+finditem ZUF C ;czerwony pot
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz czerwieni
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl czerwieni
+return
+
+sub pomarancz
+finditem NUF C ;pomarancz
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz pomaranczy
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl pomaranczy
+return
+
+sub manapot
+finditem PUF C ;pot many
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz niebieskich
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl niebieskich
+return
+
+sub malyfiolet
+finditem TUF C_ , #BACKPACKID ;maly fiolet
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz malych fioletow
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl malych fioletow
+target 1s
+event macro 23 0
+event macro 15 37 ;paraliz
+return
+
+sub targnext
+start2:
+ event macro 26 0
+ finditem #ltargetid
+ if #ltargetid = #charid
+ return
+ if #ltargetid = EUUFEB || #ltargetid = MXGRIB || #ltargetid = ADWACB || #ltargetid = XCVQF || #ltargetid = HMIKR || #ltargetid = BSDZLB || #ltargetid = VCAIB || #ltargetid = XQNLU || #ltargetid = HRGJEB || #ltargetid = AYMVEB || #ltargetid = XEGJHB
+ goto start2
+ if #findrep = 4
+ return
+ if #findrep = 5
+ return
+ if ( #findtype = IS ) || ( #findtype = HS ) || ( #findtype = AV ) || ( #findtype = XU )
+ {
+  if ( #findrep = 2 ) || ( #findrep = 7 )
+  goto start2
+  if ( #findrep = 6 ) || ( #findrep = 1 )
+  goto sprnpc
+ return
+ }
+ else
+ goto start2
+sprnpc:
+event property #findid
+if ( ( #spc , - , #spc ) in #property ) || ( Uzdrowiciel in #property ) || ( pustyni in #property ) || ( ( drow , #spc ) in #property ) || ( ( khaldun ) in #property )
+goto start2
+return
+ ;EUUFEB-mag garba
+ ;VCAIB-drak
+ ;XQNLU-kamyk
+ ;HRGJEB-lucas
+ ;AYMVEB-vaincre
+ ;XEGJHB-godrik
+ ;BSDZLB-kwiatek
+ 
+sub uzupelniaj
+ignoreitem reset
+ignoreitem XNJNRYD    ;WPISZ ID WORKA WAMP DRU WILK
+set %ziolo 320        ;ILOSC STANDARDOWYCH ZIOL DO PRZENIESIENIA
+set %szafir 35        ;ILOSC SZAFIROW
+set %demo 15          ;ILOSC KOSCI DEMONA
+set %krew 40          ;ILOSC KRWI
+set %wrzos 10         ;ILOSC CZARNEGO WRZOSU
+set %fiolet 10        ;ILOSC FIOLETOW
+set %zolta 25         ;ILOSC ZOLTYCH
+set %czerwona 25      ;ILOSC CZERWONYCH
+set %pomarancz 10     ;ILOSC POMARANCZY
+set %mana 3           ;ILOSC MIKSTUR MANY
+set %rubin  0         ;ILOSC RUBINOW
+set %otoczak 0        ;ILOSC OTOCZKAOW
+set %gdzie 0          ;start od rega 0
+set #targcurs 1       ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z ktorego chcesz przelozyc ziolo
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple1 #ltargetid  ;ustawia plecak z zapasem regow
+set #lobjectid #ltargetid
+set %czas #scnt2 + 20
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+finditem CKF_ZJF C_ , #BACKPACKID ;znajduje worek lub plecakw plecaku glownym
+if #findkind = -1
+   {
+   set %ple2 #backpackid
+   goto start
+   }
+set %ple2 #findid ;ustawia plecak ktory ma uzupelniac
+start:
+set %gdzie %gdzie + 1  ;inkrementacja - skacze po kolejnych regach
+if %gdzie = 1      ;standardowe 8 regow maga
+   set %reg MZF
+if %gdzie = 2
+   set %reg SZF
+if %gdzie = 3
+   set %reg KZF
+if %gdzie = 4
+   set %reg JZF
+if %gdzie = 5
+   set %reg RZF
+if %gdzie = 6
+   set %reg WZF
+if %gdzie = 7
+   set %reg KUF
+if %gdzie = 8
+   set %reg JUF
+if %gdzie = 9
+   {
+   set %reg FVF        ;szafiry
+   set %ziolo %szafir
+   }
+if %gdzie = 10
+   {
+   set %reg OZF         ;kosci demona
+   set %ziolo %demo
+   }
+if %gdzie = 11
+   {
+   set %reg DUF       ;fiolki krwi
+   set %ziolo %krew
+   }
+if %gdzie = 12
+   {
+   set %reg HUF        ;czarnywrzos
+   set %ziolo %wrzos
+   }
+if %gdzie = 13
+   {
+   set %reg HVF        ;rubin
+   set %ziolo %rubin
+   }
+if %gdzie = 14
+   {
+   set %reg FUF        ;otoczak
+   set %ziolo %otoczak
+   }
+if %gdzie = 15
+   {
+   set %reg TUF         ;wybuch
+   set %ziolo %fiolet
+   }
+if %gdzie = 16
+   {
+   set %reg UUF          ;zolta
+   set %ziolo %zolta
+   }
+if %gdzie = 17
+   {
+   set %reg ZUF           ;czerwona
+   set %ziolo %czerwona
+   }
+if %gdzie = 18
+   {
+   set %reg NUF             ;pomaranczowa
+   set %ziolo %pomarancz
+   }
+if %gdzie = 19
+   {
+   set %reg PUF        ;potek many
+   set %ziolo %mana
+   }
+if %gdzie = 20
+   goto koniec
+przenoszenie:
+finditem %reg C_ , %ple2 ;znajduje ziolo w plecaku
+set %nies %ziolo - #findstack ;wylicza ile brakuje
+if %nies = 0 ;kiedy ma nie przenosic
+   goto start
+if %nies < 0 ;kiedy ma odlozyc
+   {
+   set %nies #findstack - %ziolo
+   exdrag1:
+   exevent drag #findid %nies ;podnies
+   set %czas #scnt2 + 25
+   repeat
+   if %czas < #scnt2
+      goto exdrag1
+   finditem %reg C_ , %ple2 ;znajduje ziola w twoim plecaku
+   until #findstack = %ziolo
+   finditem %reg C_ , %ple1
+   set %temp #findstack
+   exdrop1:
+   exevent dropc %ple1 ;odloz
+   set %czas #scnt2 + 25
+   repeat
+   if %czas < #scnt2
+      goto exdrop1
+   finditem %reg C_ , %ple1 ;znajduje ziola w plecaku z zapasami
+   until #findstack <> %temp
+   goto start
+   }
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+if #findkind = -1 ;kiedy nie masz zapasow ziol
+   {
+   set #sysmsgcol 1080
+   event sysmessage Nie znalazlem ziola, pomijam
+   goto start
+   }
+set %tmp #findstack - %nies
+if %tmp < 0
+   {
+   set %tmp 0
+   set %nies #findstack
+   }
+exdrag2:
+exevent drag #findid %nies ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag2
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+until #findstack = %tmp
+finditem %reg C_ , %ple2
+set %tmp #findstack + %nies
+exdrop2:
+exevent dropc %ple2 ;odloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop2
+finditem %reg C_ , %ple2
+until #findstack = %tmp
+goto start
+koniec:
+set #sysmsgcol 1063
+event sysmessage Skonczylem przekladac
+return
+
+sub odkladaj
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak do ktorego chcesz odlozyc ziola i kamienie
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc2
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc2:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple #ltargetid
+set #lobjectid #ltargetid
+set %czas #scnt2 + 10
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+lecimy:
+finditem wlf_szf_rzf_mzf_kzf_wzf_juf_jzf_ozf_vzf_yzf_tzf_qzf_duf_pzf_fuf_euf_nzf_huf_eag_guf_iuf_kuf_uzf_dag_eth_lzf_rvf_mwf_evf_bvf_gvf_ovf_fvf_hvf_vuf_wuf C_ , #backpackid ;
+if #findkind = -1
+{
+set #sysmsgcol 1063
+event sysmessage Odlozone
+return
+}
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exdrag3:
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag3
+finditem %id_przen C_ , #backpackid ;
+until #findkind = -1
+finditem %typ_przen C_ , %ple
+set %tmp #findstack
+exdrop3:
+exevent dropc %ple ;odloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop3
+finditem %typ_przen C_ , %ple
+until #findstack <> %tmp
+goto lecimy
+

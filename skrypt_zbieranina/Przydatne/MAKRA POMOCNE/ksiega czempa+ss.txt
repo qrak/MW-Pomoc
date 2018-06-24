@@ -1,0 +1,32 @@
+;by Kwiatek
+;makro klika w ksiege czempa i uzywa umiejetnosci
+;rozmowa z duchami
+initevents
+ugabuga:
+finditem DYM G_2
+if #findkind = -1
+{
+set #sysmsgcol 1152
+event sysmessage STOISZ ZA DALEKO OD KSIEGI
+}
+set %ksiazka #findid
+start:
+onhotkey F6 alt
+halt
+set #lobjectid %ksiazka
+event macro 17 0 ;last object
+wait 1
+set %czas #scnt2 + 10
+click 475 302
+wait 1s
+event macro 1 0 .um rozmowa z duchami
+rozmawia:
+scanjournal 1
+if Juz_cos in #journal
+   goto rozmowa
+if Porozumiales in #journal || Nie_udalo in #journal || Your_skill in #journal
+{
+set %czas #scnt2 + 90
+goto start
+}
+goto ugabuga

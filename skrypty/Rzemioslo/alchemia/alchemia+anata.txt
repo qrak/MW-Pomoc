@@ -1,0 +1,52 @@
+initevents
+set %cel #ltargetid
+set %profile 540_420
+
+
+start:
+
+finditem RQF C;   ;znajduje mozdzierz
+if #findkind = -1     ;ztrzymuje sie gdy nie masz mozdzierza
+   {
+   set #sysmsgcol 1063        ;ustawia kolor wiadomosci
+   event sysmessage NIE MAM MOZDZIERZA     ;wyswietla komunikat
+   halt
+   }
+set #lobjectid #findid
+
+event macro 17 0;last object uzywa mozdzierza
+
+miks1:
+if #CONTSIZE = %profile      ;czeka na gump alchemii
+{
+click 508 62                 ;robi ostatnia miksture
+wait 6s
+goto miks2
+}
+else
+{
+goto miks1
+}
+
+miks2:
+event macro 17 0       ;last object uzywa mozdzierza
+
+czekaj:
+if #CONTSIZE = %profile    ;czeka na gump alchemii
+{
+click 508 62      ;robi ostatnia miksture
+wait 6s
+goto anata
+}
+else
+{
+goto czekaj
+}
+
+anata:
+set #ltargetid %cel ;ustawia ostatni cel na anate
+event macro 13 1   ;anata
+target 50s    ;czeka na celownik do oceny anaty
+event macro 22 0  ;last target
+wait 1s
+goto start    ;powrot do poczatku

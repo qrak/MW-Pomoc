@@ -1,0 +1,45 @@
+set %nici #lobjectid
+set %narzedzia #ltargetid
+start:
+if #weight > 800
+{
+set #lobjectid PFGYMDE
+event macro 17 0
+wait 10
+lecimy:
+finditem mag_oag_lag_zzf C_ , #backpackid ;
+if #findkind = -1
+{
+goto start
+}
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 10
+repeat
+finditem %id_przen C_ , #backpackid ;
+until ( #findkind = -1 ) || ( %czas < #scnt2 )
+finditem %typ_przen C_ , %ple
+set %tmp #findstack
+exevent dropc PFGYMDE ;odloz
+set %czas #scnt2 + 10
+repeat
+finditem #findtype C_ , %ple
+until ( #findstack <> %tmp ) || ( %czas < #scnt2 )
+goto lecimy
+}
+set #lobjectid %nici
+set #ltargetid %narzedzia
+event macro 17 0
+target 3s
+event macro 22 0
+set %czas #scnt2 + 70
+zwijam:
+scanjournal 1
+if Stworzyles in #journal
+goto start
+if %czas < #scnt2
+goto start
+else
+goto zwijam

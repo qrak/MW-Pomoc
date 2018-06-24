@@ -1,0 +1,81 @@
+set %leczenie 0
+set #scnt2 0
+loop:
+if ( #ENEMYID <> N/A ) && ( #targcurs = 1 ) && ( #enemyhits > 200 )
+{
+ ;set #ltargetid #enemyid
+ ;event macro 22
+}
+
+
+if ( #HITS = #MAXHITS ) || ( ( #HITS < #MAXHITS ) && ( #scnt2 > 50))
+   set %leczenie 0
+   czolem:
+if ( ( #HITS < #MAXHITS ) && ( %leczenie = 0 ) )
+{
+    gosub bandarz
+}
+wait 20
+if ( #enemyid <> N/A )
+finditem #enemyid
+if ( #enemyid <> N/A ) && ( #finddist < 9 ) && ( %leczenie = 0 ) && ( #scnt > 12 )
+{
+ set #scnt 0
+ set #ltargetid #enemyid
+ event macro 22
+ gosub anatomia
+ }
+goto loop
+
+
+sub bandarz
+{
+ set %leczenie 1
+ finditem  ZLF
+ set #lobjectid #findid
+ cz1:
+ event macro 17
+ set #scnt2 0
+ cz2:
+ wait 15
+ if ( #targcurs = 1 )
+ {
+    event macro 23
+    goto end
+ }
+ if ( #scnt2 < 100 )
+    goto cz2
+ if ( #targcurs <> 1 ) && ( #scnt2 > 200 )
+    goto cz1
+    set #scnt2 0
+ end:
+}
+return
+
+
+sub lag
+{
+ wait 1s
+   if ( #targcurs = 1 )
+  event macro 23
+  else
+  gosub lag
+}
+return
+
+sub anatomia
+{
+if ( #enemyid <> N/A )
+event macro 13 1
+set #ltargetid #enemyid
+set #lTargetKind 1
+target 5s
+event macro 22
+}
+}
+return
+onhotkey f3
+{
+ %leczenie = 0
+ goto czolem
+}

@@ -1,0 +1,76 @@
+;Autor: [nGz]
+;================
+
+;================
+set #targcurs 1
+set #sysmsgcol 1152
+System_msg:
+event sysmessage Wskaz przedmiot do zatruwania.
+repeat
+onhotkey ESC
+  goto Wcisnieto_ESC
+until #targcurs = 0
+onhotkey ESC
+{
+  Wcisnieto_ESC:
+  event sysmessage Nie wskazales przedmiotu.
+  halt
+}
+set %Id_przedmiotu #ltargetid
+Zatruwanie:
+finditem qmj
+if #findkind = -1
+  halt
+set %Id_mikstury #findid
+event macro 1 0 .um zat
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto Zatruwanie
+until #targcurs = 1
+Celuj_miksture:
+set #ltargetid %Id_mikstury
+event macro 22
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto Celuj_miksture
+until #targcurs = 0
+repeat
+until #targcurs = 1
+Celuj_przedmiot:
+set #ltargetid %Id_przedmiotu
+event macro 22
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto Celuj_przedmiot
+until #targcurs = 0
+set %Timer #scnt2 + 50
+repeat
+if %Timer < #scnt2
+  break
+scanjournal 1
+until Udalo_Ci_sie_zatruc_przedmiot in #journal || Nie_udalo_Ci_sie_zatruc_przedmiotu in #journal || Nie_udalo_Ci_sie_i_zatrul in #journal
+if Nie_udalo_Ci_sie_i_zatrul in #journal
+{
+  finditem dci
+  if #findkind = 0
+  {
+    set %Id_miksow #findid
+    set %Stack_miksow #findstack
+    Lykaj_miksa:
+    set #lobjectid %Id_miksow
+    event macro 17
+    set %Timer #scnt2 + 5
+    repeat
+    if %Timer < #scnt2
+      goto Lykaj_miksa
+    finditem %Id_miksow
+    until #findstack < %Stack_miksow
+  }
+}
+goto Zatruwanie
+
+
+

@@ -1,0 +1,92 @@
+set *zywiol 0
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_Zywiolak_ziemi in #journal
+         {
+         set *zywiol 1
+         repeat
+         wait 1
+         until *zywiol = 0
+         finditem NPF C_ , #charid ;kilofek
+         if #findkind = -1
+            goto mieczj
+         set %dwu #findid
+         dragdwu1:
+         exevent Drag %dwu
+         set %czas #scnt2 + 20
+         repeat
+         if %czas < #scnt2
+            goto dragdwu1
+         finditem %dwu C ;
+         until #findkind = -1
+         dropdwu1:
+         exevent Dropc #backpackid
+         set %czas #scnt2 + 20
+         repeat
+         if %czas < #scnt2
+            goto dropdwu1
+         finditem %dwu C ;
+         until #findkind <> -1
+         mieczj:
+         finditem AUO C_ , #backpackid  ;szuka jednorecznej w plecaku
+         if #findkind = -1
+            {
+            set #sysmsgcol 1080
+            event sysmessage Nie znalazlem broni jednorecznej
+            goto start
+            }
+            set %jedno #findid
+            mieczdrag1:
+            exevent Drag %jedno
+            set %czas #scnt2 + 20
+            repeat
+            if %czas < #scnt2
+               goto mieczdrag1
+            finditem %jedno C ;
+            until #findkind = -1
+            mieczdrop1:
+            exevent Droppd
+            set %czas #scnt2 + 20
+            repeat
+            if %czas < #scnt2
+               goto mieczdrop1
+            finditem %jedno C ;
+            until #findkind <> -1
+            tarczaj:
+            finditem CIK C_ , #charid  ;szuka tarczy na paperdollu
+            if #findkind <> -1
+               goto start
+            finditem CIK C_ , #backpackid  ;szuka paweza w plecaku
+            if #findkind = -1
+            {
+            set #sysmsgcol 1080
+            event sysmessage Nie znalazlem tarczy
+            return
+            }
+            set %tarcza #findid
+            tarczadrag1:
+            exevent Drag %tarcza
+            set %czas #scnt2 + 20
+            repeat
+            if %czas < #scnt2
+               goto tarczadrag1
+            finditem %tarcza C ;
+            until #findkind = -1
+            tarczadrop1:
+            exevent Droppd
+            set %czas #scnt2 + 20
+            repeat
+            if %czas < #scnt2
+               goto tarczadrop1
+            finditem %tarcza C ;
+            until #findkind <> -1
+            goto start
+         }
+      }
+   }

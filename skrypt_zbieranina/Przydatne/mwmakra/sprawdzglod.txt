@@ -1,0 +1,20 @@
+;Kontrola poziomu glodu by Raist
+
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Czujesz_sie_dobrze in #journal
+      {
+      set #sysmsgcol 1080
+      event sysmessage JEDZ
+      sound C:\missile.wav
+      wait 4s
+      goto start
+      }
+      }
+   }

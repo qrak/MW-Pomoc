@@ -1,0 +1,287 @@
+initevents
+linespercycle 20
+menu Clear
+menu window title #CHARNAME
+menu font name times
+menu Window size 345 135
+menu Window color black
+menu Show
+menu Font color Red
+menu Font bgcolor black
+menu Font size 20
+menu Text reg010 5 0 HP
+menu Font color Yellow
+menu Text reg020 235 0 ST
+menu Font color Blue
+menu Text reg030 120 0 MP
+menu Font color White
+menu Text reg040 180 27 WG
+menu Font color White
+menu Text reg050 50 27 AR
+menu shape linia 0 58 345 2 0 0 0 white 0 white
+menu Font color White
+menu Font size 10
+menu Text reg050 5 60 Mand
+menu Text reg060 5 75 Siar
+menu Text reg070 5 90 Czos
+menu Text reg080 5 105 Zens
+menu Text reg050 5 120 Siec
+menu Text reg060 90 60 Jago
+menu Text reg070 90 75 Perl
+menu Text reg080 90 90 Mech
+menu Text reg090 90 105 Szaf
+menu Text reg100 90 120 Demo
+menu Text reg110 175 60 Krew
+menu Text reg120 175 75 Wrzos
+menu Text reg130 175 90 Rubin
+menu Text reg140 175 105 Otocz
+menu Text reg150 175 120 Piora
+menu Text reg160 260 60 Nieto
+menu Text reg170 260 75 Obsyd
+menu Text reg180 260 90 Surow
+menu Text reg190 260 105 Zyzna
+start:
+finditem CKF_ZJF C_ , #BACKPACKID ;woreczek lub plecak
+if #findkind = -1
+{
+ set %plecak #backpackid
+ goto reg1
+}
+set %plecak #findid
+reg1:
+  if %reg1 = #hits
+  goto reg2
+  menu Font size 20
+  menu Font color Red
+  set %reg1 #hits
+  menu delete reg1
+  menu Text reg1 60 0 %reg1
+reg2:
+  if %reg2 = #stamina
+  goto reg3
+  menu Font size 20
+  menu Font color Yellow
+  set %reg2 #stamina
+  menu delete reg2
+  menu Text reg2 290 0 %reg2
+reg3:
+  if %reg3 = #mana
+  goto reg4
+  menu Font size 20
+  menu Font color Blue
+  set %reg3 #mana
+  menu delete reg3
+  menu Text reg3 175 0 %reg3
+reg4:
+  if %reg4 = #weight
+  goto reg5
+  menu Font size 20
+  menu Font color White
+  set %reg4 #weight
+  menu delete reg4
+  menu Text reg4 240 27 %reg4
+reg5:
+  if %reg5 = #AR
+  goto reg6
+  menu Font size 20
+  menu Font color White
+  set %reg5 #AR
+  menu delete reg5
+  menu Text reg5 105 27 %reg5
+reg6:
+  finditem MZF C_ , %plecak ;
+  if %reg6 = #FINDSTACK
+  goto reg7
+  menu Font color Yellow
+  menu Font size 10
+  set %reg6 #FINDSTACK
+  if %reg6 < 16
+  menu Font color Red
+  menu delete reg6
+  menu Text reg6 50 60 %reg6
+reg7:
+  finditem SZF C_ , %plecak ;
+  if %reg7 = #FINDSTACK
+  goto reg8
+  menu Font color Yellow
+  menu Font size 10
+  set %reg7 #FINDSTACK
+  if %reg7 < 16
+  menu Font color Red
+  menu delete reg7
+  menu Text reg7 50 75 %reg7
+reg8:
+  finditem KZF C_ , %plecak ;
+  if %reg8 = #FINDSTACK
+  goto reg9
+  menu Font color Yellow
+  menu Font size 10
+  set %reg8 #FINDSTACK
+  if %reg8 < 16
+  menu Font color Red
+  menu delete reg8
+  menu Text reg8 50 90 %reg8
+reg9:
+  finditem JZF C_ , %plecak ;
+  if %reg9 = #FINDSTACK
+  goto reg10
+  menu Font color Yellow
+  menu Font size 10
+  set %reg9 #FINDSTACK
+  if %reg9 < 16
+  menu Font color Red
+  menu delete reg9
+  menu Text reg9 50 105 %reg9
+reg10:
+  finditem RZF C_ , %plecak ;
+  if %reg10 = #FINDSTACK
+  goto reg11
+  menu Font color Yellow
+  menu Font size 10
+  set %reg10 #FINDSTACK
+  if %reg10 < 16
+  menu Font color Red
+  menu delete reg10
+  menu Text reg10 50 120 %reg10
+reg11:
+  finditem WZF C_ , %plecak ;
+  if %reg11 = #FINDSTACK
+  goto reg12
+  menu Font color Yellow
+  menu Font size 10
+  set %reg11 #FINDSTACK
+  if %reg11 < 16
+  menu Font color Red
+  menu delete reg11
+  menu Text reg11 135 60 %reg11
+reg12:
+  finditem KUF C_ , %plecak ;
+  if %reg12 = #FINDSTACK
+  goto reg13
+  menu Font color Yellow
+  menu Font size 10
+  set %reg12 #FINDSTACK
+  if %reg12 < 16
+  menu Font color Red
+  menu delete reg12
+  menu Text reg12 135 75 %reg12
+reg13:
+  finditem JUF C_ , %plecak ;
+  if %reg13 = #FINDSTACK
+  goto reg14
+  menu Font color Yellow
+  menu Font size 10
+  set %reg13 #FINDSTACK
+  if %reg13 < 16
+  menu Font color Red
+  menu delete reg13
+  menu Text reg13 135 90 %reg13
+reg14:
+  finditem FVF C_ , %plecak ;
+  if %reg14 = #FINDSTACK
+  goto reg15
+  menu Font color Yellow
+  menu Font size 10
+  set %reg14 #FINDSTACK
+  if %reg14 < 4
+  menu Font color Red
+  menu delete reg14
+  menu Text reg14 135 105 %reg14
+reg15:
+  finditem OZF C_ , %plecak ;
+  if %reg15 = #FINDSTACK
+  goto reg16
+  menu Font color Yellow
+  menu Font size 10
+  set %reg15 #FINDSTACK
+  if %reg15 < 4
+  menu Font color Red
+  menu delete reg15
+  menu Text reg15 135 120 %reg15
+reg16:
+  finditem DUF C_ , %plecak ;
+  if %reg16 = #FINDSTACK
+  goto reg17
+  menu Font color Yellow
+  menu Font size 10
+  set %reg16 #FINDSTACK
+  if %reg16 < 15
+  menu Font color Red
+  menu delete reg16
+  menu Text reg16 220 60 %reg16
+reg17:
+  finditem HUF C_ , %plecak ;
+  if %reg17 = #FINDSTACK
+  goto reg18
+  menu Font color Yellow
+  menu Font size 10
+  set %reg17 #FINDSTACK
+  if %reg17 < 5
+  menu Font color Red
+  menu delete reg17
+  menu Text reg17 220 75 %reg17
+reg18:
+  finditem HVF C_ , %plecak ;
+  if %reg18 = #FINDSTACK
+  goto reg19
+  menu Font color Yellow
+  menu Font size 10
+  set %reg18 #FINDSTACK
+  menu delete reg18
+  menu Text reg18 220 90 %reg18
+reg19:
+  finditem FUF C_ , %plecak ;
+  if %reg19 = #FINDSTACK
+  goto reg20
+  menu Font color Yellow
+  menu Font size 10
+  set %reg19 #FINDSTACK
+  menu delete reg19
+  menu Text reg19 220 105 %reg19
+reg20:
+  finditem VLK C_ , %plecak ;
+  if %reg20 = #FINDSTACK
+  goto reg21
+  menu Font color Yellow
+  menu Font size 10
+  set %reg20 #FINDSTACK
+  menu delete reg20
+  menu Text reg20 220 120 %reg20
+reg21:
+  finditem IUF C_ , %plecak ;
+  if %reg21 = #FINDSTACK
+  goto reg22
+  menu Font color Yellow
+  menu Font size 10
+  set %reg21 #FINDSTACK
+  menu delete reg21
+  menu Text reg21 305 60 %reg21
+reg22:
+  finditem VZF C_ , %plecak ;
+  if %reg22 = #FINDSTACK
+  goto reg23
+  menu Font color Yellow
+  menu Font size 10
+  set %reg22 #FINDSTACK
+  menu delete reg22
+  menu Text reg22 305 75 %reg22
+reg23:
+  finditem YZF C_ , %plecak ;
+  if %reg23 = #FINDSTACK
+  goto reg24
+  menu Font color Yellow
+  menu Font size 10
+  set %reg23 #FINDSTACK
+  menu delete reg23
+  menu Text reg23 305 90 %reg23
+reg24:
+  finditem NZF C_ , %plecak ;
+  if %reg24 = #FINDSTACK
+  goto start
+  menu Font color Yellow
+  menu Font size 10
+  set %reg24 #FINDSTACK
+  menu delete reg24
+  menu Text reg24 305 105 %reg24
+goto start
+

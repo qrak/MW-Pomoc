@@ -1,0 +1,202 @@
+initevents
+ignoreitem XNJNRYD
+
+menu Clear
+menu window title Regi Wampa
+menu Window size 155 140
+menu Window color black
+menu Show
+menu Font color White
+menu Font bgcolor black
+menu Font size 13
+menu Text reg010 5 0 Mand
+menu Text reg020 5 20 Siar
+menu Text reg030 5 40 Czos
+menu Text reg040 5 60 Zens
+menu Text reg090 5 80 Szaf
+menu Text reg050 80 0 Siec
+menu Text reg060 80 20 Jago
+menu Text reg070 80 40 Perl
+menu Text reg080 80 60 Mech
+menu Text reg100 80 80 Demo
+menu Text reg110 5 100 Krew
+menu Text reg120 80 100 Wrzo
+menu Text reg130 5 120 Rubi
+menu Text reg140 80 120 Oto
+
+
+start:
+finditem CKF_ZJF C_ , #BACKPACKID ;woreczek lub plecak
+if #findkind = -1
+{
+ set %plecak #backpackid
+ goto reg1
+}
+set %plecak #findid
+
+
+reg1:
+  menu Font color Yellow
+  finditem MZF C_ , %plecak ;
+  if %reg1 = #FINDSTACK
+  goto reg2
+  set %reg1 #FINDSTACK
+  if %reg1 < 16
+  menu Font color Red
+  menu delete reg1
+  menu Text reg1 50 0 %reg1
+
+reg2:
+  menu Font color Yellow
+  finditem SZF C_ , %plecak ;
+  if %reg2 = #FINDSTACK
+  goto reg3
+  set %reg2 #FINDSTACK
+  if %reg2 < 16
+  menu Font color Red
+  menu delete reg2
+  menu Text reg2 50 20 %reg2
+
+reg3:
+  menu Font color Yellow
+  finditem KZF C_ , %plecak ;
+  if %reg3 = #FINDSTACK
+  goto reg4
+  set %reg3 #FINDSTACK
+  if %reg3 < 16
+  menu Font color Red
+  menu delete reg3
+  menu Text reg3 50 40 %reg3
+
+reg4:
+  menu Font color Yellow
+  finditem JZF C_ , %plecak ;
+  if %reg4 = #FINDSTACK
+  goto reg5
+  set %reg4 #FINDSTACK
+  if %reg4 < 16
+  menu Font color Red
+  menu delete reg4
+  menu Text reg4 50 60 %reg4
+
+reg5:
+  menu Font color Yellow
+  finditem RZF C_ , %plecak ;
+  if %reg5 = #FINDSTACK
+  goto reg6
+  set %reg5 #FINDSTACK
+  if %reg5 < 16
+  menu Font color Red
+  menu delete reg5
+  menu Text reg5 125 0 %reg5
+
+reg6:
+  menu Font color Yellow
+  finditem WZF C_ , %plecak ;
+  if %reg6 = #FINDSTACK
+  goto reg7
+  set %reg6 #FINDSTACK
+  if %reg6 < 16
+  menu Font color Red
+  menu delete reg6
+  menu Text reg6 125 20 %reg6
+
+reg7:
+  menu Font color Yellow
+  finditem KUF C_ , %plecak ;
+  if %reg7 = #FINDSTACK
+  goto reg8
+  set %reg7 #FINDSTACK
+  if %reg7 < 16
+  menu Font color Red
+  menu delete reg7
+  menu Text reg7 125 40 %reg7
+
+reg8:
+  menu Font color Yellow
+  finditem JUF C_ , %plecak ;
+  if %reg8 = #FINDSTACK
+  goto reg9
+  set %reg8 #FINDSTACK
+  if %reg8 < 16
+  menu Font color Red
+  menu delete reg8
+  menu Text reg8 125 60 %reg8
+
+reg9:
+  menu Font color Yellow
+  finditem FVF C_ , %plecak ;
+  if %reg9 = #FINDSTACK
+  goto reg10
+  set %reg9 #FINDSTACK
+  if %reg9 < 4
+  menu Font color Red
+  menu delete reg9
+  menu Text reg9 50 80 %reg9
+
+reg10:
+  menu Font color Yellow
+  finditem OZF C_ , %plecak ;
+  if %reg10 = #FINDSTACK
+  goto reg11
+  set %reg10 #FINDSTACK
+  if %reg10 < 4
+  menu Font color Red
+  menu delete reg10
+  menu Text reg10 125 80 %reg10
+  
+reg11:
+  menu Font color Yellow
+  finditem DUF C_ , %plecak ;
+  if %reg11 = #FINDSTACK
+  goto reg12
+  set %reg11 #FINDSTACK
+  if %reg11 < 15
+  menu Font color Red
+  menu delete reg11
+  menu Text reg11 50 100 %reg11
+
+reg12:
+  menu Font color Yellow
+  finditem HUF C_ , %plecak ;
+  if %reg12 = #FINDSTACK
+  goto reg13
+  set %reg12 #FINDSTACK
+  if %reg12 < 5
+  menu Font color Red
+  menu delete reg12
+  menu Text reg12 125 100 %reg12
+  
+reg13:
+  menu Font color Yellow
+  finditem HVF C_ , %plecak ;
+  if %reg13 = #FINDSTACK
+  goto reg14
+  set %reg13 #FINDSTACK
+  if %reg13 < 5
+  menu Font color Red
+  menu delete reg13
+  menu Text reg13 50 120 %reg13
+  
+reg14:
+  menu Font color Yellow
+  finditem FUF C_ , %plecak ;
+  if %reg14 = #FINDSTACK
+  goto start
+  set %reg14 #FINDSTACK
+  if %reg14 < 5
+  menu Font color Red
+  menu delete reg14
+  menu Text reg14 125 120 %reg14
+
+goto start
+
+; HVF - rubin - zywiolak krwi
+; FUF - otoczak - zywiolak krwi
+; NZF - zyzna gleba - ghul
+; VZF -  obsydian - straszliwy ksztalt
+; YZF - surowka - straszliwy ksztalt
+; IUF - skrzydla nietoperza - nietoperz
+; VLK - pioro - oczy kruka
+
+

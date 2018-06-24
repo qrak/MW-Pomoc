@@ -1,0 +1,357 @@
+; mining beta ;>
+
+; kilof = NPF
+; ruda = DWJ
+; wlocznia = LTF
+
+set %HID #SCNT
+
+set %plyta HSH_MSH
+
+gosub GetBackpackID
+set %kop 0
+set %starttime #SCNT
+set %lasttime %starttime
+set %timeout 10
+
+loop:
+OnHotKey F11
+   gosub fight
+FindItem %plyta C_ , #CharID
+if #FindKind <> -1
+  {
+  exevent drag #FindID
+  exevent dropc %BackPackID
+  goto loop
+  }
+if %HID + 10 < #SCNT
+   {
+   event macro 13 21
+   set %HID #SCNT
+}
+if #TargCurs = 1
+   key ESC
+if #SCNT > %lasttime + 200
+   {
+   set %lasttime #SCNT
+   set %time #SCNT - %starttime
+   set %time %time / 60
+   event ExMsg #CharID 9 5 Kopiesz juz %time minut! :(
+   }
+if #EnemyID <> N/A
+   {
+   FindItem %plyta C_ , %BackPackID
+   repeat
+         {
+         exevent drag #FindID
+         exevent droppd
+         wait 10
+         FindItem %plyta C_ , %BackPackID
+         }
+   until #FindKind = -1
+   FindItem LTF_AUH_SMH C_ , %BackPackID
+   if #FindKind = -1
+      {
+      ;msg Ratunku! Jestem glupi!!!!$
+      wait 2s
+      goto loop
+      }
+   set %bron #FindID
+   exevent drag %kilof
+   exevent dropc %BackPackID
+   while #LLifetedKind = 1
+         {
+         }
+   wait 15
+   set %kilof N/A
+   exevent drag %bron
+   exevent droppd
+   while #LLifetedKind = 1
+         {
+         }
+   wait 15
+   while #EnemyID <> N/A
+         {
+         wait 5
+         }
+   exevent drag %bron
+   exevent dropc %BackPackID
+   goto loop
+   }
+FindItem NPF C_ , #CharID
+if #FindKind = -1
+   gosub znajdzkilof
+else
+   set %kilof #FindID
+if %plecak = N/A
+   gosub znajdzplecak
+set #LObjectID %kilof
+set %_JIndex #JIndex
+event macro 17 0
+target 5s
+if %kop = 0
+{
+   set #ltargetx #charposx
+   set #ltargety #charposy
+}
+if %kop = 1
+{
+   set #ltargetx #charposx
+   set #ltargety #charposy + 1
+}
+if %kop = 2
+{
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy
+}
+if %kop = 3
+{
+   set #ltargetx #charposx
+   set #ltargety #charposy - 1
+}
+if %kop = 4
+{
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy
+}
+if %kop = 5
+{
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy + 1
+}
+if %kop = 6
+{
+   set #ltargetx #charposx
+   set #ltargety #charposy + 2
+}
+if %kop = 7
+{
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy + 1
+}
+if %kop = 8
+{
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy
+}
+if %kop = 9
+{
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy - 1
+}
+if %kop = 10
+{
+   set #ltargetx #charposx
+   set #ltargety #charposy - 2
+}
+if %kop = 11
+{
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy - 1
+}
+if %kop = 12
+{
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy
+}
+if %kop = 13
+{
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy + 1
+}
+if %kop = 14
+{
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy + 2
+}
+if %kop = 15
+{
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy + 2
+}
+if %kop = 16
+{
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy + 2
+}
+if %kop = 17
+{
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy + 2
+}
+if %kop = 18
+{
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy + 1
+}
+if %kop = 19
+{
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy - 1
+}
+if %kop = 20
+{
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy - 2
+}
+if %kop = 21
+{
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy - 2
+}
+if %kop = 22
+{
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy - 2
+}
+if %kop = 23
+{
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy - 2
+}
+if %kop = 24
+{
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy - 1
+}
+set #LTargetKind 2
+event macro 22 0
+gosub ScanJournal %_JIndex Nie_udalo_ci_sie Wykopales Nie_ma_tu_wiecej_rudy. Wybrane_miejsce_jest doing_something Nie_mozesz Musisz_uzyc_lopaty already
+if #Result = 2
+   wait 5
+if #Result = 3
+   {
+   if %plecak <> %BackPackID
+      {
+      FindItem DWJ C_ , %BackPackID
+      if #FindKind <> -1
+         {
+         exevent drag #FindID #FindStack
+         exevent dropc %plecak
+      }
+   }
+if #Result = 4
+   {
+   if %kop = 24
+      set %kop 0
+   else
+       set %kop %kop + 1
+   event sysmessage Miejsce: %kop
+   }
+if #Result = 5
+   wait 1
+if #Result = 6
+   wait 1
+if #Result = 7
+   {
+   if %kop = 24
+      set %kop 0
+   else
+       set %kop %kop + 1
+   event sysmessage Miejsce: %kop
+   }
+if #Result = 8
+   {
+   if %kop = 24
+      set %kop 0
+   else
+       set %kop %kop + 1
+   event sysmessage Miejsce: %kop
+   }
+if #Result = 9
+   wait 3
+if #Result = TIMEOUT
+   goto loop
+goto loop
+
+
+sub fight
+if #FindKind <> -1
+   {
+   exevent drag %plecak
+   exevent dropg #CharPosX #CharPosY #CharPosZ
+   FindItem %plyta C_ , %BackPackID
+   repeat
+         {
+         exevent drag #FindID
+         exevent droppd
+         wait 10
+         FindItem %plyta C_ , %BackPackID
+         }
+   until #FindKind = -1
+   FindItem LTF_AUH_SMH C_ , %BackPackID
+   set %bron #FindID
+   exevent drag %kilof
+   exevent dropc %BackPackID
+   set %kilof N/A
+   exevent drag %bron
+   exevent droppd
+   pause
+   exevent drag %bron
+   exevent dropc %BackPackID
+   goto loop
+   }
+return
+
+sub znajdzkilof
+FindItem NPF C
+if #FindKind = -1
+   {
+   display ok Nie masz kilofow.
+   halt
+   }
+set %kilof #FindID
+exevent drag %kilof
+exevent droppd
+wait 2s
+return
+
+
+sub znajdzplecak
+FindItem ZJF C_ , %BackPackID
+if #FindKind = -1
+   {
+   set %plecak %BackPackID
+   return
+   }
+set %plecak #FindID
+event sysmessage Plecak w ktorym bedzie ruda: %plecak
+return
+
+
+sub GetBackPackID
+FindItem ZJF C_ , #CharID
+if #FindKind = -1
+   {
+   display OK Nie mozna znalesc plecaka. Prawdopodobnie nie masz widocznego Paperdolla. Otworz paperdoll i wlacz skrypt ponownie.
+   halt
+   }
+else
+   {
+   event sysmessage Twoj plecak: #FindID
+   set %BackpackID #FindID
+   return
+   }
+return
+
+
+sub ScanJournal
+set %__JIndex %1
+set %_timeout #SCNT
+ScanLoop:
+set %x %timeout + %_timeout
+if #SCNT > %_timeout + %timeout
+   return TIMEOUT
+if #JIndex > %__JIndex
+   {
+   set %__JIndex %__JIndex + 1
+   ScanJournal %__JIndex
+   for %i 2 %0
+       {
+       if % . %i in #journal
+          return %i
+       }
+   }
+goto ScanLoop
+return
+

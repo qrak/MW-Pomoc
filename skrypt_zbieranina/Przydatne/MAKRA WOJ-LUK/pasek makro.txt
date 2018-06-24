@@ -1,0 +1,60 @@
+initevents  
+Event Macro 8 2 
+set %type1 JUF 
+set %name1 ME 
+set %type2 KZF 
+set %name2 CZ 
+set %type3 RZF 
+set %name3 PAJ 
+set %type4 JZF 
+set %name4 ZEN 
+set %type5 WZF 
+set %name5 JAG 
+set %type6 SZF 
+set %name6 SIA 
+set %type7 KUF 
+set %name7 PER 
+set %type8 MZF 
+set %name8 MAN 
+set %type9 ZUF 
+set %name9 C
+set %type10 TUF 
+set %name10 F
+set %type11 UUF 
+set %name11 Z
+set %type12 NUF 
+set %name12 P
+set %type13 zuf
+set %name13 M
+set %j 13
+Mainloop: 
+gosub CountRegs 
+gosub StatusBarUp 
+SetUOTitle [ HP: #hits / #maxhits STAM: #stamina / #maxstam MANA: #mana / #maxmana ] [ %tb  ] 
+wait 5 
+Goto Mainloop 
+sub CountRegs 
+ignoreitem reset 
+set %tb 
+for %i 1 %j 
+{ 
+set %count 0 
+cr1: 
+   finditem %type . %i C 
+   if #findkind <> -1 
+   { 
+      set %count %count + #findstack 
+      ignoreitem #findid 
+      goto cr1    
+   } 
+   set %tb %tb , #spc , %name . %i , : , %count 
+} 
+return 
+sub StatusBarUp 
+if #charname = N/A 
+{ 
+   Event Macro 8 2 
+   wait 5 
+} 
+
+return 

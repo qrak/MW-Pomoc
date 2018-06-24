@@ -1,0 +1,49 @@
+...::: bialY :::...
+
+initevents
+
+set %licz 0
+set %mad 0
+set %mana 11 <-- tu wpisz ile many
+		zabiera ci dany krag magii
+
+start:
+ignoreitem reset
+if #mana < %mana
+   goto medyt
+
+jedz:
+finditem hnd_yrd_uwi_qqd_nrd_fwi
+set #lobjectid #findid
+event macro 17
+wait 20
+
+inskrypcja:
+finditem pbg
+if #findkind = -1
+ {
+   if %mad = 1
+      halt
+   goto next
+ }
+set #lobjectid #findid
+finditem mmf
+if #findkind = -1
+ {
+   if %mad = 1
+      halt
+   goto next
+ }
+if #findstack < 1
+ {
+   if %mad = 1
+      halt
+   goto next
+ }
+event macro 17
+wait 10
+set #ltargetid #findid
+event macro 22
+wait 1s
+click 107 280
+wait 155

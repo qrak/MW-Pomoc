@@ -1,0 +1,266 @@
+;Autor [nGz]
+;Wersja: 1.6
+;Scina drzewo ktore ostatnio scinales.
+;Moze przezucac klody do plecaka, jesli chcesz wiedziec cos wiecej
+;zajrzyj do skryptu kopanie.txt
+;Mozesz ustawic zeby robil tez Anatomie(%skill 1), Armslore(%skill 2)
+;lub Ukrywanie(%skill 3)
+set %skill 1 ;<----- TUTAJ ustawiasz czy ma robic Anatomie/Armslore/Ukrywanie
+;czy tez nie(0-nic,1-anatomia,2-armslore,3-ukrywanie)
+if DREAM in #shard
+{
+set %plecakid vlswfxd ;<----- TUTAJ wpisz zamiast vlswfxd id plecaka do ktorego ma byc ruda przezucana jesli grasz na DM
+set %twojplecakid zhzfuwd ;<----- TUTAJ wpisz zamiast zhzfuwd id twojego plecaka jesli grasz na DM
+}
+if #shard = MYSTERIOUSWORLD
+{
+set %plecakid slmzjmd ;<----- TUTAJ wpisz zamiast slmzjmd id plecaka do ktorego ma byc ruda przezucana jesli grasz na MW
+set %twojplecakid ywwyjmd ;<----- TUTAJ wpisz zamiast ywwyjmd id twojego plecaka jesli grasz na MW
+}
+initevents
+finditem MZAWCYD
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie znaleziono topora
+halt
+}
+if #findkind = 1
+{
+ignoreitem #findid
+goto start
+}
+set %toporek #findid
+if %skill <> 1
+goto armsal
+set %ltn 0
+anat:
+finditem wn
+if #findkind = -1
+{
+finditem bo
+if #findkind = -1
+set %ltn 1
+}
+if #finddist > 3
+{
+ignoreitem #findid
+goto anat
+}
+if %ltn = 0
+goto anat2
+if %wjt = 1
+goto anat2
+ltanat:
+set %licz 0
+event macro 13 1
+petl:
+set %licz %licz + 1
+if #targcurs = 1
+{
+wait 2
+wskter:
+set #sysmsgcol 1152
+event sysmessage Wskaz teraz na czym ma byc robiona Anatomia
+set %licz 0
+goto petl2
+}
+if %licz > 50
+goto ltanat
+goto petl
+petl2:
+set %licz %licz + 1
+set %wjt 1
+if #targcurs = 0
+goto wskaz
+if %licz > 300
+goto wskter
+goto petl2
+wskaz:
+wait 10
+set %lt #ltargetid
+if Anulowano in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage Nie wskazano celu!
+set %wjt 0
+}
+goto rab
+anat2:
+set %licz 0
+event macro 13 1
+loopxa:
+set #ltargetkind 1
+if %ltn = 0
+set #ltargetid #findid
+if %ltn = 1
+set #ltargetid %lt
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+goto adalej
+if %licz > 5
+goto anat2
+goto loopxa
+armsal:
+if %skill <> 2
+goto hid
+wiedza:
+set %licz 0
+event macro 13 4
+loopxal:
+set #ltargetkind 1
+set #ltargetid %toporek
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+goto adalej
+if %licz > 5
+goto wiedza
+goto loopxal
+adalej:
+event macro 22
+event macro 22
+event macro 22
+hid:
+if %skill <> 3
+goto rab
+hid2:
+set %licz 0
+event macro 13 21
+ULTIMA-Dnt (20:57)
+
+loopxh:
+scanjournal 1
+set %licz %licz + 1
+wait 1
+wait 1
+if #charstatus = H
+goto rab
+if nie_udalo_Ci_sie_tu in #journal
+goto rab
+if %licz > 10
+goto hid2
+goto loopxh
+rab:
+wait 2
+top:
+set %licz 0
+set #lobjectid %toporek
+event macro 17
+loop:
+set #ltargetkind 3
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+goto dalej
+if %licz > 6
+goto top
+goto loop
+dalej:
+event macro 22
+event macro 22
+event macro 22
+set %licz #scnt2 + 10
+loop2:
+if s_scinac_drzewo in #sysmsg
+goto przez
+if Stoisz_za_daleko in #sysmsg
+halt
+if Nie_wiesz_jak_uzyc in #sysmsg
+{
+wait 1
+event sysmessage Najpierw wskaz drzewo, ktore ma scinac
+halt
+}
+if %licz < #scnt2
+goto przez
+goto loop2
+przez:
+finditem %plecakid
+set #findmod 25_7
+if #findkind = -1
+goto czek
+set %x #findx
+set %y #findy
+finditem zlk C_ , %twojplecakid
+if #findkind = -1
+goto czek
+event drag #findid
+if #findstack > 1
+{
+wait 1
+set %licz 0
+kolko:
+set %licz %licz + 1
+if #conttype = zlk
+goto wcis
+if %licz > 15
+goto przez
+goto kolko
+wcis:
+wait 1
+msg $
+}
+wait 2
+click %x %y
+if That_item_is_too_heavy in #sysmsg
+{
+set #sysmsgcol 1080
+sound E:\Mp3\kryt2.wav
+event sysmessage Plecak jest juz pelny
+halt
+}
+ULTIMA-Dnt (20:57)
+goto przez
+czek:
+set %licz #scnt2 + 150
+czek2:
+if That_item_is_too_heavy in #sysmsg
+{
+set #sysmsgcol 1080
+sound E:\Mp3\kryt2.wav
+event sysmessage Plecak jest juz pelny
+halt
+}
+scanjournal 1
+if klod_i_wlozyl in #journal
+goto lec
+if Sciales_troche in #journal
+goto lec
+if Your_skill_in_Drwalstwo in #journal
+goto lec
+if Your_skill_in_Lumberjacking in #journal
+goto lec
+if Your_strength_has in #journal
+goto lec
+if Nie_udalo_Ci_sie in #journal
+goto lec
+if Zniszczyles_klody in #journal
+goto lec
+if To_drzewo_wyglada_juz in #journal
+{
+if %sci = 8
+{
+sound C:\makro\dy.wav
+halt
+}
+set %sci %sci + 1
+goto lec
+}
+if #weight > #maxweight + 120
+{
+set #sysmsgcol 1080
+event sysmessage Zatrzymuje, za duzo wazysz.
+sound E:\Mp3\kryt2.wav
+halt
+}
+if %licz < #scnt2
+goto start
+goto czek2
+lec:
+wait 10
+goto start

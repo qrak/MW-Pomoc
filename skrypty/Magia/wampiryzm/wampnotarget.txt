@@ -1,0 +1,58 @@
+initevents
+
+start:
+mana:
+if #mana < 50 ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+wait 1s
+event macro 13 46
+goto sprawdzmedit
+}
+event macro 1 0 .um rozmowa z duchami
+goto czaruj
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+goto sprawdzglod
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+
+czaruj:
+event macro 1 0 Abeo Vultus ;SLOWA CZARU
+wait 8s  ;CZAS CASTU
+wait 10
+goto start
+
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+if Czujesz_sie_ciezki in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+if Your_skill in #sysmsg
+goto start
+else
+goto petla

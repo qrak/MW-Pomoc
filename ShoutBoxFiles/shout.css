@@ -1,0 +1,50 @@
+.shoutinput{    FONT-SIZE: 11px;
+    COLOR: #003366;}
+.shoutiframe {}
+a.shoutlink
+{
+    FONT-SIZE: 11px;
+    COLOR: #003366;
+    FONT-FAMILY: Arial;
+    TEXT-DECORATION: none
+}
+
+a.shoutlink:hover
+{
+    FONT-SIZE: 11px;
+    COLOR: black;
+    FONT-FAMILY: Arial;
+    TEXT-DECORATION: none
+}
+
+.fullshout
+{
+padding: 0 10px 0 10px;background-color:#c09c67;
+}
+
+.shoutentry{ 
+width:100%;background-color:#c09c67;FONT-SIZE: 10px;word-wrap:break-word;
+}
+
+a.shoutname{
+FONT-SIZE: 12px;TEXT-DECORATION: none;background-color:#c09c67;
+}
+a.shoutname:hover
+{
+COLOR: black;
+}
+
+.shoutmessage{}
+.shoutmessage2{}
+.shoutentry2{ 
+width:100%;background-color:#c09c67;FONT-SIZE: 10px;word-wrap:break-word;
+}
+
+a.shoutname2
+{
+FONT-SIZE: 12px;TEXT-DECORATION: none;background-color:#c09c30;
+}
+
+a.shoutname:hover{
+COLOR: black;
+}

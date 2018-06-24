@@ -1,0 +1,21 @@
+initevents
+set %profile 520_390
+start:
+onhotkey F6 alt
+halt
+event macro 17 0 ;last object
+set %czas #scnt2 + 10
+
+inskr:
+if #CONTSIZE = %profile
+{
+click 474 302  ; click
+goto start
+}
+if %czas > #scnt2
+goto start
+else
+{
+goto inskr
+}
+

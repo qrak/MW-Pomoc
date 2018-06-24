@@ -1,0 +1,83 @@
+                      ;Beeper by Raist v 0,1
+
+initevents
+set %timer 0
+
+start:
+if #CONTNAME = generic_gump
+{
+set %czas ( #scnt2 + 20 )
+czekaj:
+if %czas < #scnt2
+{
+   if #CONTNAME = generic_gump
+      {
+      if %timer = 0
+      {
+      set %czas2 #scnt2 + 200 ;OPOZNIENIE 350 = 35sekund
+      }
+      goto dzwiek
+      }
+   goto start
+}
+goto czekaj
+}
+if #CONTNAME = waiting_gump
+{
+wait 10
+click 404 330
+set %czas #scnt2 + 100
+goto loguj
+}
+set %timer 0
+goto start
+
+loguj:
+if #contname = MainMenu_gump
+{
+msg     ;<--WPISZ SWOJE HASLO NA KONTO
+wait 10
+key enter
+set %czas #scnt2 + 50
+wait 10
+goto serwer
+}
+if %czas < #scnt2
+halt
+else
+goto loguj
+
+serwer:
+if #contname = normal_gump
+{
+click 619 444
+set %czas #scnt2 + 50
+wait 10
+goto postac
+}
+if %czas < #scnt2
+halt
+else
+goto serwer
+
+postac:
+if #contname = Login_gump
+{
+click 622 448
+set %czas #scnt2 + 50
+wait 10
+goto start
+}
+if %czas < #scnt2
+halt
+else
+goto postac
+
+dzwiek:
+if %czas2 < #scnt2
+terminate uo
+set %timer 1
+sound E:\torpeda.wav ;SCIEZKA DO DZWIEKU
+goto start
+set %czas2 #scnt2 + 200 ;OPOZNIENIE 350 = 35sekund
+

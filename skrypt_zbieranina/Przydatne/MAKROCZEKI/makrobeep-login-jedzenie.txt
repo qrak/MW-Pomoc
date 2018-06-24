@@ -1,0 +1,89 @@
+;Skrypt bY SabiK
+;macrocheck_beep-login.txt
+;Wersja 1.5
+;Skrypt odtwarza dzwiek, gdy na ekranie pokaze sie macrocheck
+;oraz, gdy napisza do Ciebie Valarowie, ktorys z GM'ow lub jesli ktos wypowie twoje imie
+;Skrypt po zerwaniu polaczenie (cl) automatycznie loguje sie spowrotem do gry
+;Skrypt inormuje dzwiekiem gdy zglodniejemy (Czujesz sie dobrze)
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %sciezka d:\muza6        ;Tutaj ustaw sciezke do dzwieku
+set %pass                 ;Tutaj ustaw haslo do konta
+;-----------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [macrocheck_beep-login] odpalony (by SabiK)
+wait 1
+start:
+if #contname = generic_gump && ( #contposx <> 0 || #contposy <> 0 )
+   goto dzwiek
+for %linijka 1 2
+{
+   scanjournal %linijka
+   if Valarowie in #journal || Mephisto in #journal || Radhost in #journal || Daruntu in #journal || Hagsevern in #journal || Galavendrael in #journal || Shaundakul in #journal || Lothilir in #journal || #charname in #journal
+;   {
+;      if #charname , : in #journal
+;         continue
+;      goto dzwiek
+;   }
+}
+if Czujesz_sie_dobrze in #sysmsg
+{
+   sound %sciezka
+   set #sysmsgcol 1281
+   event sysmessage ZJEDZ COS!!
+   event sysmessage ZJEDZ COS!!
+   event sysmessage ZJEDZ COS!!
+}
+if #contsize = 203_121
+{
+   set #sysmsgcol 1080
+   event sysmessage Zerwano polaczenie (cl)! Loguje ponownie...
+   wait 20
+   click 400 333
+   wait 20
+}
+if #contsize = 640_480
+{
+   set %licz #scnt2 + 70
+   cl1:
+   if %licz < #scnt2
+      goto start
+   if #contname = normal_gump
+      goto cl2
+   if #contname = Login_gump
+      goto cl3
+   if #contname = MainMenu_gump
+   {
+      msg %pass , $
+      set %licz #scnt2 + 70
+      cl2:
+      if %licz < #scnt2
+         goto start
+      if #contname = normal_gump
+      {
+         click 620 445
+         wait 5
+         set %licz #scnt2 + 70
+         cl3:
+         if %licz < #scnt2
+            goto start
+         if #contname = Login_gump
+         {
+            click 620 445
+            wait 50
+            click 311 260 r
+         }
+         goto cl3
+      }
+      goto cl2
+   }
+   goto cl1
+}
+goto start
+dzwiek:
+sound %sciezka
+wait 45
+goto start
+

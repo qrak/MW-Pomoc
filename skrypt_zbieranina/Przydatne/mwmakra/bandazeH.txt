@@ -1,0 +1,34 @@
+initevent
+start:
+set %b amf
+onHotKey F8
+gosub F8
+goto start
+sub F8
+ban:
+finditem %b
+	if #findkind = -1
+	 {
+	                event macro 2 0 . ...
+                               	goto klawiszPetla
+	 }
+	if #findkind = 1
+	 {
+		ignoreitem #findid
+		goto miksPetla
+	 }
+	if #findkind = 0
+	 {
+		ignoreitem reset
+		set #lobjectid #findid
+		wait 1s
+		event macro 17 0
+    target 10s
+		event macro 22 0
+    czeka:
+    if umyles in #sysmsg
+    goto ban
+    else
+    goto czeka
+   }
+return

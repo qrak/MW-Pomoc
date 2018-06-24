@@ -1,0 +1,1793 @@
+;Skrypt bY SabiK
+;krawiec-menu.txt
+;Wersja 2.5
+;!!!UWAGA!!!
+;Przerzucanie expow do innego pojemnika:
+;Aby to zrobiæ musisz podac jego wspolrzedne w okna menu
+;Jesli najedziesz na ikone plecaka (ZAMKNIÊTY PLECAK) kursorem to wpisz w okna #CORSORX i #CURSORY
+
+;-------------------TUTAJ MOZESZ USTAWIC ZMIENNE--------------------
+set %m1 1                 ;Material (3-Tkanina, 4-Skora)
+set %pt1 1                ;Przedmiot z tkaniny (3-To co ostatnio)
+set %ps1 1                ;Przedmiot ze skory (3-To co ostatnio, 4-27)
+set %s1 1                 ;Skill (3-11)
+set %s2 1                 ;Po ilu przedmiotach robic skill (1-2)
+set %b1 #false             ;Zarzucaj blesa (#false - nie, #true - tak)
+set %b2 60                ;Ponizej ilu str ma rzucac blesa
+set %c1 #true             ;Ciecie (#false - nie, #true - tak)
+set %tnij_plecak #true    ;Tnij plecak lub pojedynczo (#false - pojedynczo, #true - z plecaka)
+set %tnij_expy #true      ;Tnij expy (#false - nie, #true - tak)
+set %w1 #true             ;tnij powyzej okreslonej wagi (#false - nie, #true - tak)
+set %w2 900               ;powyzej jakiej wagi ma ciac przedmioty
+set %p1 #false            ;Przerzucanie expow (#false - nie, #true - tak)
+set %xx1 xxx              ;"X" Plecaka na expy
+set %yy1 yyy              ;"Y" Plecaka na expy
+;---------------------------------------------------------------------
+
+initevents
+krawiecmenu:
+set #lpc 1000
+menu hide
+set %xr 0
+set %yr 0
+set %mat 0
+set %mat1 0
+set %item 0
+set %skill 0
+set %skill1 0
+set %ciecie 0
+set %id1 0
+set %ciecie_trwa 0
+set %rzut 0
+set %licz 0
+set %time1 #scnt
+set %id n/a
+set %lt n/a
+set #sysmsg n/a
+set #scnt 0
+set #menubutton n/a
+menu clear
+menu window title Krawiec bY SabiK v2.5
+menu window size 250 300
+menu window color btnface
+;Materia³
+menu font name verdana
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text wersja 85 214 Wersja 2.5
+menu text 1material 23 5 Materia³:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create material 85 2 155
+menu combo add material Wybierz:
+menu combo add material ----------------------------------
+menu combo add material Tkanina
+menu combo add material Skora
+menu combo select material %m1
+goto menuskille
+;Przedmioty z tkaniny
+menukrawca1:
+menu delete sprzedmioty
+menu delete 1przedmioty
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1przedmioty 11 30 Przedmiot:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create tprzedmioty 85 27 155
+menu combo add tprzedmioty Wybierz:
+menu combo add tprzedmioty ----------------------------------
+menu combo add tprzedmioty To co ostatnio
+menu combo add tprzedmioty Koszulka
+menu combo add tprzedmioty Koszula
+menu combo add tprzedmioty Oponcza
+menu combo add tprzedmioty Tunika
+menu combo add tprzedmioty Plaszcz
+menu combo add tprzedmioty Stroj blazenski
+menu combo add tprzedmioty Kubrak
+menu combo add tprzedmioty Koszulka
+menu combo add tprzedmioty Jin-baori
+menu combo add tprzedmioty Hakama-skita
+menu combo add tprzedmioty Koszulka
+menu combo add tprzedmioty Krotkie spodnie
+menu combo add tprzedmioty Dlugie spodnie
+menu combo add tprzedmioty Tettsuke-hakama
+menu combo add tprzedmioty Dlugie spodnie
+menu combo add tprzedmioty Kilt
+menu combo add tprzedmioty Spodniczka
+menu combo add tprzedmioty Hakama
+menu combo add tprzedmioty Sukienka
+menu combo add tprzedmioty Spodnica
+menu combo add tprzedmioty Kimono(m)
+menu combo add tprzedmioty Toga z kapturem
+menu combo add tprzedmioty Toga
+menu combo add tprzedmioty Kimshimo
+menu combo add tprzedmioty Kimono(f)
+menu combo add tprzedmioty Toga
+menu combo add tprzedmioty Szarfa
+menu combo add tprzedmioty Oib
+menu combo add tprzedmioty Koc
+menu combo add tprzedmioty Plotno
+menu combo add tprzedmioty Krotki fartuch
+menu combo add tprzedmioty Fartuch
+menu combo add tprzedmioty Mata
+menu combo add tprzedmioty Juka
+menu combo add tprzedmioty Bandana
+menu combo add tprzedmioty Mycka
+menu combo add tprzedmioty Czarodziejska czapka
+menu combo add tprzedmioty Czapka
+menu combo add tprzedmioty Beret
+menu combo add tprzedmioty Czapka z piorkiem
+menu combo add tprzedmioty Kesa
+menu combo add tprzedmioty Kapelusz okragly
+menu combo add tprzedmioty Kapelusz
+menu combo add tprzedmioty Trojkatny kapelusz
+menu combo add tprzedmioty Blazenska czapka
+menu combo select tprzedmioty %pt1
+set %mat1 1
+goto czekaj
+;Przedmioty ze skóry
+menukrawca2:
+menu delete tprzedmioty
+menu delete 1przedmioty
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1przedmioty 11 30 Przedmiot:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create sprzedmioty 85 27 155
+menu combo add sprzedmioty Wybierz:
+menu combo add sprzedmioty ----------------------------------
+menu combo add sprzedmioty To co ostatnio
+menu combo add sprzedmioty Sk. Czapka
+menu combo add sprzedmioty Sk. Karczek
+menu combo add sprzedmioty Sk. Rekawiczki
+menu combo add sprzedmioty Sk. Narramienniki
+menu combo add sprzedmioty Sk. Nogawice
+menu combo add sprzedmioty Sk. Tunika
+menu combo add sprzedmioty Sk. Jingasa
+menu combo add sprzedmioty Utw. Karczek
+menu combo add sprzedmioty Utw. Rêkawiczki
+menu combo add sprzedmioty Utw. Narramienniki
+menu combo add sprzedmioty Utw. Nogawice
+menu combo add sprzedmioty Utw. Tunika
+menu combo add sprzedmioty Utw. Jingasa
+menu combo add sprzedmioty Biustonosz
+menu combo add sprzedmioty Utw. Biustonosz
+menu combo add sprzedmioty Spodnie
+menu combo add sprzedmioty Spodniczka
+menu combo add sprzedmioty Damska zbroja
+menu combo add sprzedmioty Utw. Damska zbroja
+menu combo add sprzedmioty Sk. Kabuto
+menu combo add sprzedmioty Sk. Mempo
+menu combo add sprzedmioty Sk. Hiro sode
+menu combo add sprzedmioty Sk. Suneate
+menu combo add sprzedmioty Sk. Do
+menu combo add sprzedmioty Utw. Kabuto
+menu combo add sprzedmioty Utw. Mempo
+menu combo add sprzedmioty Utw. Hiro sode
+menu combo add sprzedmioty Utw. Suneate
+menu combo add sprzedmioty Utw. Do
+menu combo add sprzedmioty Sk. Elfi Karczek
+menu combo add sprzedmioty Sk. Elfie Rekawiczki
+menu combo add sprzedmioty Sk. Elfie Narramienniki
+menu combo add sprzedmioty Sk. Elfie Nogawice
+menu combo add sprzedmioty Sk. Elfia Tunika
+menu combo add sprzedmioty Ut. Elfi Karczek
+menu combo add sprzedmioty Ut. Elfie Rekawiczki
+menu combo add sprzedmioty Ut. Elfie Narramienniki
+menu combo add sprzedmioty Ut. Elfie Nogawice
+menu combo add sprzedmioty Ut. Elfia Tunika
+menu combo add sprzedmioty Sanda³y
+menu combo add sprzedmioty Buty
+menu combo add sprzedmioty Sandaly samuraja
+menu combo add sprzedmioty Wysokie buty
+menu combo add sprzedmioty Wysokie buty (2)
+menu combo add sprzedmioty Buty
+menu combo add sprzedmioty Worek
+menu combo add sprzedmioty Skrzynka
+menu combo add sprzedmioty Plecak
+menu combo add sprzedmioty W. na wilkolackie runa
+menu combo add sprzedmioty W. na wampirze runa
+menu combo select sprzedmioty %ps1
+set %mat1 2
+goto czekaj
+;Skille
+menuskille:
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1skille 49 55 Skill:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create skille 85 52 155
+menu combo add skille Wybierz:
+menu combo add skille ----------------------------------
+menu combo add skille Zaden
+menu combo add skille Ukrywanie
+menu combo add skille Madrosc
+menu combo add skille Anatomia
+menu combo add skille Identyfikacja
+menu combo add skille Rozmowa z duchami
+menu combo add skille Wykrywanie
+menu combo add skille Wiedza o zwierzetach
+menu combo add skille Wiedza o broni
+menu combo select skille %s1
+;Co ile Skill
+menu font size 8
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1skillec 48 80 Rób skill:
+menu font size 7
+menu font bgcolor white
+menu font style
+menu combo create skillec 110 77 130
+menu combo add skillec Po ka¿dym przedmiocie
+menu combo add skillec Co dwa przedmioty
+menu combo select skillec %s2
+;Bles
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check bles 15 103 163 15 %b1 Zarzucaj blesa ponizej
+menu edit bles1 180 100 23 %b2
+menu text bles 205 103 si³y
+;Ciêcie
+menu font size 9
+menu font color black
+menu font style
+menu font bgcolor btnface
+menu check ciecie 15 123 97 15 %c1 W³šcz ciêcie
+;Przerzucanie expów
+menu font size 9
+menu font color black
+menu font style
+menu font bgcolor btnface
+menu check rzut 15 163 210 15 %p1 W³šcz przerzucanie expów
+goto startianuluj
+;Tnij plecak
+tnijplecaktak:
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check tnijplecak1 115 125 85 15 %tnij_plecak tnij plecak
+set %tnijplecak3 1
+goto czekaj
+;Tnij expy
+tnijexpytak:
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check tnijexpy1 30 144 51 15 %tnij_expy expy
+set %tnijexpy3 1
+goto czekaj
+;Ponizej jakiej wagi ciag przedmioty
+wagatak:
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check waga1 87 144 173 15 %w1 powyzej wagii
+menu edit waga2 200 140 31 %w2
+set %waga3 1
+goto czekaj
+rzucanietak:
+menu font size 8
+menu font color black
+menu font style
+menu font bgcolor btnface
+menu text 1rzut 8 184 "X" PLECAKA:
+menu edit rzutx 90 180 28 %xx1
+menu text 1rzut 123 184 "Y" PLECAKA:
+menu edit rzuty 205 180 28 %yy1
+set %rzut1 1
+goto czekaj
+;Start i anuluj
+startianuluj:
+menu font size 10
+menu font color black
+menu font style b
+menu font bgcolor btnface
+menu button startp 10 210 60 25 START
+menu button anuluj 180 210 60 25 Anuluj
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 Oczekuje..
+
+menu hideEuo
+menupokaz:
+set #menubutton n/a
+menu show
+
+czekaj:
+if #str = N/A || #dex = N/A || #int = N/A
+   event macro 8 2
+if #menubutton <> n/a
+{
+   set #lpc 10
+   goto #menubutton
+}
+menu get material
+   set %mat #menures - 2
+menu get ciecie
+set %ciecie 1
+if #menures <> -1
+   set %ciecie 0
+if %ciecie = 0
+{
+   menu delete waga1
+   menu delete waga2
+   menu delete tnijexpy1
+   menu delete tnijplecak1
+   set %waga3 0
+   set %tnijexpy3 0
+   set %tnijplecak3 0
+}
+if %waga3 = 1
+   goto czekaj6
+if %ciecie = 1
+   goto wagatak
+czekaj6:
+if %tnijexpy3 = 1
+   goto czekaj7
+if %ciecie = 1
+   goto tnijexpytak
+czekaj7:
+if %tnijplecak3 = 1
+   goto czekaj5
+if %ciecie = 1
+   goto tnijplecaktak
+czekaj5:
+menu get rzut
+set %rzut 1
+if #menures <> -1
+   set %rzut 0
+if %rzut = 0
+{
+   menu delete 1rzut
+   menu delete rzutx
+   menu delete rzuty
+   set %rzut1 0
+}
+if %rzut1 = 1
+   goto czekaj2
+if %rzut = 1
+   goto rzucanietak
+czekaj2:
+if %mat <= 0
+{
+   menu delete tprzedmioty
+   menu delete sprzedmioty
+   menu delete 1przedmioty
+   set %mat1 0
+}
+if %mat1 = 1 && %mat = 2
+   goto czekaj4
+if %mat1 = 2 && %mat = 1
+   goto czekaj3
+if %mat1 = 1 || %mat1 = 2
+   goto czekaj
+czekaj3:
+if %mat = 1
+   goto menukrawca1
+czekaj4:
+if %mat = 2
+   goto menukrawca2
+goto czekaj
+
+closed:
+set #lpc 10
+set #targcurs 0
+halt
+anuluj:
+set #targcurs 0
+set #menubutton n/a
+set %last 0
+set %id1 0
+set %lt n/a
+goto krawiecmenu
+stopp:
+set #targcurs 0
+menu delete startp
+menu delete stopp
+menu font size 10
+menu font color black
+menu font style b
+menu font bgcolor btnface
+menu button startp 10 210 60 25 START
+if #menubutton = closed
+   goto menupokaz
+set #menubutton n/a
+set %last 0
+set %id1 0
+set %lt n/a
+goto czekaj
+
+startp:
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 Odczytywanie danych..
+menu font color black
+menu delete startp
+menu font size 10
+menu font color black
+menu font style b
+menu font bgcolor btnface
+menu button stopp 10 210 60 25 STOP
+set #menubutton n/a
+if #str = N/A || #dex = N/A || #int = N/A
+   event macro 8 2
+
+if %mat = 1
+{
+   menu get tprzedmioty
+   set %item #menures - 2
+}
+if %mat = 2
+{
+   menu get sprzedmioty
+   set %item #menures - 2
+}
+
+menu get skille
+set %skill #menures - 3
+if %skill > 0
+{
+   menu get skillec
+   set %skillec #menures
+}
+
+menu get bles
+set %bles 1
+{
+   if #menures <> -1
+      set %bles 0
+   if %bles = 1
+   {
+      menu get bles1
+      set %str #menures
+   }
+}
+if %ciecie = 1
+{
+   menu get waga1
+   set %waga1 1
+   {
+      if #menures <> -1
+         set %waga1 0
+      if %waga1 = 1
+      {
+         menu get waga2
+         set %waga #menures
+      }
+   }
+   menu get tnijplecak1
+   set %tnij_plecak 1
+   if #menures <> -1
+      set %tnij_plecak 0
+   menu get tnijexpy1
+   set %tnij_expy 1
+   if #menures <> -1
+      set %tnij_expy 0
+}
+if %rzut = 1
+{
+   menu get rzutx
+   set %xr #menures
+   menu get rzuty
+   set %yr #menures
+}
+
+if %mat < 1 && %skill < 0 && %item < 1
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , material, , #spc , przedmiot , #spc , i , #spc , skill ?le , #spc , wybrany , #spc , materia³, , #spc , przedmiot , #spc , i , #spc , skill
+   goto czekaj
+}
+if %mat < 1 && %item < 1
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , material, , #spc , i , #spc , przedmiot ?le , #spc , wybrany , #spc , materia³, , #spc , i , #spc , przedmiot
+   goto czekaj
+}
+if %mat < 1 && %skill < 0
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , material, , #spc , i , #spc , skill ?le , #spc , wybrany , #spc , materia³, , #spc , i , #spc , skill
+   goto czekaj
+}
+if %item < 1 && %skill < 0
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , przedmiot , #spc , i , #spc , skill ?le , #spc , wybrany , #spc , przedmiot , #spc , i , #spc , skill
+   goto czekaj
+}
+if %mat < 1
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , material ?le , #spc , wybrany , #spc , materia³
+   goto czekaj
+}
+if %item < 1
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , przedmiot ?le , #spc , wybrany , #spc , przedmiot
+   goto czekaj
+}
+if %skill < 0
+{
+   gosub ustaw_blad Zle , #spc , wybrany , #spc , skill ?le , #spc , wybrany , #spc , skill
+   goto czekaj
+}
+
+if #menubutton <> n/a
+   goto #menubutton
+
+if %mat = 1
+{
+;//Koszule
+   if %item >= 2 && %item <= 12
+   {
+      set %x 180
+      set %y 130
+   }
+   if %item = 2
+   {
+      set %x1 180
+      set %y1 180
+   }
+   if %item = 3
+   {
+      set %x1 280
+      set %y1 180
+   }
+   if %item = 4
+   {
+      set %x1 380
+      set %y1 180
+   }
+   if %item = 5
+   {
+      set %x1 480
+      set %y1 180
+   }
+   if %item = 6
+   {
+      set %x1 180
+      set %y1 245
+   }
+   if %item = 7
+   {
+      set %x1 280
+      set %y1 245
+   }
+   if %item = 8
+   {
+      set %x1 380
+      set %y1 245
+   }
+   if %item = 9
+   {
+      set %x1 480
+      set %y1 245
+   }
+   if %item = 10
+   {
+      set %x1 180
+      set %y1 315
+   }
+   if %item = 11
+   {
+      set %x1 280
+      set %y1 315
+   }
+   if %item = 12
+   {
+      set %x1 480
+      set %y1 315
+   }
+;//Spodnie
+   if %item >= 13 && %item <= 19
+   {
+      set %x 330
+      set %y 130
+   }
+   if %item = 13
+   {
+      set %x1 170
+      set %y1 210
+   }
+   if %item = 14
+   {
+      set %x1 270
+      set %y1 210
+   }
+   if %item = 5
+   {
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 16
+   {
+      set %x1 490
+      set %y1 210
+   }
+   if %item = 17
+   {
+      set %x1 170
+      set %y1 305
+   }
+   if %item = 18
+   {
+      set %x1 270
+      set %y1 305
+   }
+   if %item = 19
+   {
+      set %x1 380
+      set %y1 305
+   }
+;//Szaty
+   if %item >= 20 && %item <= 27
+   {
+      set %x 495
+      set %y 130
+   }
+   if %item = 20
+   {
+      set %x1 180
+      set %y1 190
+   }
+   if %item = 21
+   {
+      set %x1 300
+      set %y1 190
+   }
+   if %item = 22
+   {
+      set %x1 400
+      set %y1 190
+   }
+   if %item = 23
+   {
+      set %x1 505
+      set %y1 190
+   }
+   if %item = 24
+   {
+      set %x1 180
+      set %y1 285
+   }
+   if %item = 25
+   {
+      set %x1 300
+      set %y1 285
+   }
+   if %item = 26
+   {
+      set %x1 405
+      set %y1 285
+   }
+   if %item = 27
+   {
+      set %x1 505
+      set %y1 285
+   }
+;//Rozne
+   if %item >= 28 && %item <= 35
+   {
+      set %x 260
+      set %y 360
+   }
+   if %item = 28
+   {
+      set %x1 180
+      set %y1 210
+   }
+   if %item = 29
+   {
+      set %x1 280
+      set %y1 210
+   }
+   if %item = 30
+   {
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 31
+   {
+      set %x1 470
+      set %y1 210
+   }
+   if %item = 32
+   {
+      set %x1 180
+      set %y1 305
+   }
+   if %item = 33
+   {
+      set %x1 280
+      set %y1 305
+   }
+   if %item = 34
+   {
+      set %x1 380
+      set %y1 305
+   }
+   if %item = 35
+   {
+      set %x1 470
+      set %y1 305
+   }
+;//czapki
+   if %item >= 36 && %item <= 46
+   {
+      set %x 440
+      set %y 360
+   }
+   if %item = 36
+   {
+      set %x1 180
+      set %y1 180
+   }
+   if %item = 37
+   {
+      set %x1 270
+      set %y1 180
+   }
+   if %item = 38
+   {
+      set %x1 390
+      set %y1 180
+   }
+   if %item = 39
+   {
+      set %x1 480
+      set %y1 180
+   }
+   if %item = 40
+   {
+      set %x1 180
+      set %y1 250
+   }
+   if %item = 41
+   {
+      set %x1 270
+      set %y1 250
+   }
+   if %item = 42
+   {
+      set %x1 390
+      set %y1 250
+   }
+   if %item = 43
+   {
+      set %x1 480
+      set %y1 250
+   }
+   if %item = 44
+   {
+      set %x1 180
+      set %y1 320
+   }
+   if %item = 45
+   {
+      set %x1 330
+      set %y1 320
+   }
+   if %item = 46
+   {
+      set %x1 480
+      set %y1 320
+   }
+}
+
+if %mat = 2
+{
+;//skorzana zbroja
+   if %item => 2 && %item <= 8
+   {
+      set %x 125
+      set %y 130
+   }
+   if %item = 2
+   {
+
+      set %x1 180
+      set %y1 210
+   }
+   if %item = 3
+   {
+
+      set %x1 280
+      set %y1 210
+   }
+   if %item = 4
+   {
+
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 5
+   {
+
+      set %x1 480
+      set %y1 210
+   }
+   if %item = 6
+   {
+
+      set %x1 180
+      set %y1 305
+   }
+   if %item = 7
+   {
+
+      set %x1 280
+      set %y1 305
+   }
+   if %item = 8
+   {
+      set %x1 380
+      set %y1 305
+   }
+;//utwardzana zbroja
+   if %item => 9 && %item <= 14
+   {
+      set %x 225
+      set %y 130
+   }
+   if %item = 9
+   {
+      set %x1 180
+      set %y1 210
+   }
+   if %item = 10
+   {
+      set %x1 280
+      set %y1 210
+   }
+   if %item = 11
+   {
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 12
+   {
+      set %x1 480
+      set %y1 210
+   }
+   if %item = 13
+   {
+      set %x1 180
+      set %y1 305
+   }
+   if %item = 14
+   {
+      set %x1 280
+      set %y1 305
+   }
+;//damska zbroja
+   if %item => 15 && %item <= 20
+   {
+      set %x 340
+      set %y 130
+   }
+   if %item = 15
+   {
+      set %x1 180
+      set %y1 210
+   }
+   if %item = 16
+   {
+      set %x1 280
+      set %y1 210
+   }
+   if %item = 17
+   {
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 18
+   {
+      set %x1 480
+      set %y1 210
+   }
+   if %item = 19
+   {
+      set %x1 180
+      set %y1 305
+   }
+   if %item = 20
+   {
+      set %x1 280
+      set %y1 305
+   }
+;//skorzany samuraj i elfia skorzana
+   if ( %item => 21 && %item <= 25 ) || ( %item => 31 && %item <= 35 )
+   {
+      set %x 125
+      set %y 360
+   }
+;//utwardzany samuraj i elfia wzmacniana
+   if ( %item => 26 && %item <= 30 ) || ( %item => 36 && %item <= 40 )
+   {
+      set %x 300
+      set %y 360
+   }
+;//itemy
+   if %item = 21 || %item = 26 || %item = 31 || %item = 36
+   {
+      set %x1 180
+      set %y1 210
+   }
+   if %item = 22 || %item = 27 || %item = 32 || %item = 37
+   {
+      set %x1 280
+      set %y1 210
+   }
+   if %item = 23 || %item = 28 || %item = 33 || %item = 38
+   {
+      set %x1 380
+      set %y1 210
+   }
+   if %item = 24 || %item = 29 || %item = 34 || %item = 39
+   {
+      set %x1 180
+      set %y1 305
+   }
+   if %item = 25 || %item = 30 || %item = 35 || %item = 40
+   {
+      set %x1 280
+      set %y1 305
+   }
+;//buty
+   if %item => 41 && %item <= 46
+   {
+      set %x 430
+      set %y 10
+   }
+   if %item = 41
+   {
+      set %x1 170
+      set %y1 210
+   }
+   if %item = 42
+   {
+      set %x1 310
+      set %y1 210
+   }
+   if %item = 43
+   {
+      set %x1 440
+      set %y1 210
+   }
+   if %item = 44
+   {
+      set %x1 170
+      set %y1 305
+   }
+   if %item = 45
+   {
+      set %x1 310
+      set %y1 305
+   }
+   if %item = 46
+   {
+      set %x1 440
+      set %y1 305
+   }
+;//pojemniki
+   if %item => 47 && %item <= 51
+   {
+      set %x 125
+      set %y 130
+   }
+   if %item = 47
+   {
+      set %x1 220
+      set %y1 180
+   }
+   if %item = 48
+   {
+      set %x1 220
+      set %y1 250
+   }
+   if %item = 49
+   {
+      set %x1 220
+      set %y1 310
+   }
+   if %item = 50
+   {
+      set %x1 420
+      set %y1 215
+   }
+   if %item = 51
+   {
+      set %x1 420
+      set %y1 305
+   }
+;//przesuwanie menu krawca
+   if ( %item => 31 && %item <= 35 ) || ( %item => 36 && %item <= 40 ) || ( %item => 47 && %item <= 51 )
+   {
+      set %przesuwanie_menu 1
+      set %xx 520
+      set %yy 360
+   }
+
+}
+
+skill1:
+if #menubutton <> n/a
+   goto #menubutton
+if %skill = 1
+   set %skill1 Ukrywanie
+if %skill = 2
+   set %skill1 Madrosc
+if %skill = 3
+   set %skill1 Anatomia
+if %skill = 4
+   set %skill1 Identyfikacja
+if %skill = 5
+   set %skill1 Rozmowa , #spc , z , #spc , duchami
+if %skill = 6
+   set %skill1 Wykrywanie
+if %skill = 7
+   set %skill1 Wiedza , #spc , o , #spc , zwierzetach
+if %skill = 8
+   set %skill1 Wiedza , #spc , o , #spc , broni
+if %skill = 0 || %skill = 1 || %skill = 5 || %skill = 6
+   goto start
+
+if %lt = n/a
+{
+   lt:
+   set #targcurs 1
+   set #sysmsgcol 1090
+   event sysmessage Wskaz teraz na czym ma byc robiona %skill1
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   menu text blad 105 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 20 265 Wska¿ teraz na czym ma byæ robiona
+   menu font color blue
+   menu text blad 20 277 %skill1
+   if #menubutton = closed
+   {
+      menu show
+      set #menubutton n/a
+   }
+   set %licz 0
+   czekaj_lt:
+   if #menubutton <> n/a
+      goto #menubutton
+   onhotkey esc
+      goto dalej_lt0
+   set %licz %licz + 1
+   if #targcurs = 0
+      goto dalej_lt
+   if %licz > 300
+      goto lt
+   goto czekaj_lt
+}
+dalej_lt:
+if anulowano in #sysmsg
+   goto dalej_lt0
+if #ltargetid = n/a || #ltargetkind <> 1
+   goto lt
+set %lt #ltargetid
+set #sysmsgcol 1082
+event sysmessage Zapisano.
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 Zapisano cel umiejêtno?ci
+menu font color blue
+menu text blad 20 277 %skill1
+goto start
+dalej_lt0:
+set %skill 0
+set #sysmsgcol 1082
+event sysmessage Anulowano.
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 B³šd:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 Nie wskazano celu umiejêtno?ci
+menu font color blue
+menu text blad 20 277 %skill1 , !
+goto start
+
+
+start:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+   wait 200
+if %bles = 1
+{
+   if #str <= %str
+   {
+      bles:
+      event macro 15 16
+      set %licz #scnt2 + 50
+      repeat
+      if %licz < #scnt2
+         goto bles
+      if brakuje_ci_skladnikow in #sysmsg
+      {
+         set %bles 0
+         set #sysmsgcol 1080
+         event sysmessage Brakuje Ci skladnikow. Skrypt nie bedzie zarzucal blesa!
+         halt
+      }
+      until #targcurs = 1
+      wait 1
+      event macro 23
+      wait 10
+   }
+}
+if %skill <> 0
+{
+   if %skillec = 2
+   {
+      if %skillecile = 1
+      {
+         set %skillecile 0
+         goto start1
+      }
+      set %skillecile %skillecile + 1
+   }
+   gosub ustaw_stan Skill , #spc , ( , %skill1 , )...
+   gosub skill %skill
+}
+start1:
+if %waga1 = 1
+{
+   if #weight >= %waga
+   {
+      if %ciecie = 1 && %id1 = 0
+         goto id
+      goto ciecie
+   }
+}
+if %ciecie_trwa = 1
+   goto ciecie
+
+szycie:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+   wait 200
+gosub ustaw_stan Szyjê...
+finditem hag C
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+}
+if #findkind = -1
+{
+   gosub ustaw_blad Nie , #spc , masz , #spc , narzedzi , #spc , szewskich Nie , #spc , masz , #spc , narzêdzi , #spc , szewskich
+   goto czekaj
+}
+set %licz #scnt2 + 10
+repeat
+if #menubutton <> n/a
+   goto #menubutton
+if #contsize = 560_460 && #contname = generic_gump
+   goto klikaj
+if %licz < #scnt2
+   goto szycie
+until #targcurs = 1
+if #menubutton <> n/a
+   goto #menubutton
+wskaz_material:
+if %mat = 1
+{
+   finditem cui C
+   if #findkind = 0
+   {
+      set #ltargetkind 1
+      set #ltargetid #findid
+      event macro 22
+   }
+   if #findkind = -1
+   {
+      gosub ustaw_blad Nie , #spc , masz , #spc , tkaniny Nie , #spc , masz , #spc , tkaniny
+      goto czekaj
+   }
+}
+if %mat = 2
+{
+   finditem ddg C
+   if #findkind = 0
+   {
+      set #ltargetkind 1
+      set #ltargetid #findid
+      event macro 22
+   }
+   if #findkind = -1
+   {
+      gosub ustaw_blad Nie , #spc , masz , #spc , skory Nie , #spc , masz , #spc , skóry
+      goto czekaj
+   }
+}
+set %licz #scnt2 + 10
+repeat
+if #menubutton <> n/a
+   goto #menubutton
+if #targcurs = 1
+   goto wskaz_material
+if %licz < #scnt2
+   goto szycie
+until #contsize = 560_460 && #contname = generic_gump
+if #menubutton <> n/a
+   goto #menubutton
+if %item = 1 || %last = 1
+{
+   klikaj:
+   click 135 390
+   set %licz2 #scnt2 + 90
+   goto koniec
+}
+if %przesuwanie_menu = 1
+{
+   click %xx %yy
+   wait 15
+}
+click %x %y
+set %licz #scnt2 + 10
+repeat
+if #menubutton <> n/a
+   goto #menubutton
+if %licz < #scnt2
+   goto szycie
+until #contsize = 560_460 && #contname = generic_gump
+click %x1 %y1
+set %last 1
+set %licz2 #scnt2 + 90
+goto koniec
+
+koniec:
+if #menubutton <> n/a
+   goto #menubutton
+if %licz2 < #scnt2
+   goto start
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if Masz_za_malo in #sysmsg
+{
+   if %mat = 1
+   {
+      set #sysmsgcol 1080
+      if %ciecie = 1
+      {
+         event sysmessage Masz za malo tkaniny! Skrypt zaczyna ciac przedmioty!
+         set %ciecie_trwa 1
+         if %ciecie = 1 && %id1 = 0
+            goto id
+         goto ciecie
+      }
+      gosub ustaw_blad Nie , #spc , masz , #spc , tkaniny Nie , #spc , masz , #spc , tkaniny
+      goto czekaj
+   }
+   if %mat = 2
+   {
+      set #sysmsgcol 1080
+      if %ciecie = 1
+      {
+         event sysmessage Masz za malo skory! Skrypt zaczyna ciac przedmioty!
+         set %ciecie_trwa 1
+         if %ciecie = 1 && %id1 = 0
+            goto id
+         goto ciecie
+      }
+      gosub ustaw_blad Nie , #spc , masz , #spc , skory Nie , #spc , masz , #spc , skóry
+      goto czekaj
+   }
+}
+scanjournal 1
+if Uszyl in #journal
+{
+   set %tak %tak + 1
+   if %ciecie = 0 || %id1 = 1
+      goto omin_id
+   id:
+   set #targcurs 1
+   set #sysmsgcol 1090
+   if %tnij_expy = 1
+   event sysmessage Wskaz teraz plecak, aby skrypt mogl pozniej pociac przedmioty!
+   else
+   event sysmessage Wskaz teraz uszyty przedmiot, aby skrypt mogl pozniej pociac przedmioty!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 105 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   if %tnij_expy = 1
+   menu text blad 20 265 Wska¿ teraz plecak
+   else
+   menu text blad 20 265 Wska¿ teraz uszyty przedmiot
+   menu text blad 20 277 aby skrypt mógl pó?niej pocišæ przedmioty!
+   if #menubutton = closed
+   {
+      menu show
+      set #menubutton n/a
+   }
+   set %licz 0
+   czekaj_id:
+   if #menubutton <> n/a
+      goto #menubutton
+   onhotkey esc
+      goto dalej_id10
+   set %licz %licz + 1
+   if #targcurs = 0
+      goto dalej_id
+   if %licz > 250
+      goto id
+   goto czekaj_id
+   dalej_id:
+   if anulowano in #sysmsg
+      goto dalej_id10
+   if #ltargetid = n/a || #ltargetkind <> 1
+      goto id
+   finditem #ltargetid
+   if %tnij_expy = 1
+   set %plecak #ltargetid
+   else
+   set %id #findtype
+   set #sysmsgcol 1082
+   event sysmessage Zapisano.
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 105 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 20 265 Zapisano.
+   set %id1 1
+   goto omin_id
+   dalejid10:
+   set %ciecie 0
+   set #sysmsgcol 1082
+   event sysmessage Anulowano.
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 105 241 B³šd:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 20 265 Nie wskazano ostatnio uszytego przedmiotu
+   menu text blad 20 277 Skrypt nie bêdzie ciš³ przedmiotów
+   omin_id:
+   for %i 1 3
+   {
+      if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+         goto start
+      scanjournal %i
+      if W_pojemniku in #journal
+      {
+         set #sysmsgcol 1080
+         if %ciecie = 1
+         {
+            event macro 1 0 .grab
+            event sysmessage W pojemniku nie ma juz miejsca! Skrypt zaczyna ciac przedmioty!
+            wait 10
+            set %nie_ma_miejsca 1
+            break
+         }
+         gosub ustaw_blad W , #spc , pojemniku , #spc , nie , #spc , ma , #spc , juz , #spc , miejsca W , #spc , pojemniku , #spc , nie , #spc , ma , #spc , ju¿ , #spc , miejsca
+         goto czekaj
+      }
+   }
+   if %nie_ma_miejsca = 1
+   {
+      set %nie_ma_miejsca 0
+      goto ciecie
+   }
+   goto start
+}
+if #contsize = 560_460 && #contname = generic_gump
+   goto klikaj
+scanjournal 1
+if Zniszczyl in #journal
+{
+   set %nie %nie + 1
+   goto start
+}
+if Your_skill_in in #journal
+{
+   set %time #scnt - %time1
+   set %time1 #scnt
+   set %taknie %tak + %nie
+   set #sysmsgcol 1281
+   event sysmessage Uszytych: [ , %tak , ] Nieuszytych: [ , %nie , ] ( , %taknie , ) w %time sekund
+   set %tak 0
+   set %nie 0
+   goto start
+}
+if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+   goto start
+goto koniec
+
+
+ciecie:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+   wait 200
+gosub ustaw_stan Ciêcie , #spc , przedmiotów...
+set %ciecie_trwa 1
+finditem kag C
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+}
+if #findkind = -1
+{
+   gosub ustaw_blad Nie , #spc , masz , #spc , nozyczek Nie , #spc , masz , #spc , no¿yczek
+   goto czekaj
+}
+set %licz #scnt2 + 10
+repeat
+if #menubutton <> n/a
+   goto #menubutton
+if %licz < #scnt2
+   goto ciecie
+until #targcurs = 1
+if %tnij_plecak = 1
+finditem %plecak
+else
+finditem %id C
+if #findkind = 0
+{
+   set #ltargetkind 1
+   set #ltargetid #findid
+   event macro 22
+}
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   if %tnij_plecak = 1
+   event sysmessage Nie znaleziono plecaka! Skrypt zaczyna szyc!
+   else
+   event sysmessage Nie znaleziono przedmiotu do ciecia! Skrypt zaczyna szyc!
+   set %ciecie_trwa 0
+   set %ciecie_ile 0
+   if #targcurs = 1
+      key esc
+   goto start
+}
+set %licz #scnt2 + 30
+koniec1:
+if #menubutton <> n/a
+   goto #menubutton
+if #contsize = 203_121 || #contsize = 640_480 || #contname = MainMenu_gump || #clilogged = 0
+   goto start
+if %tnij_plecak = 0
+{
+   if %licz < #scnt2
+      goto ciecie
+}
+scanjournal 1
+if Nie_mozesz_pociac in #journal
+{
+    if %rzut = 0
+    {
+       if %tnij_expy = 1
+       click 70 95
+       else
+       {
+          click 125 95
+          ignoreitem #ltargetid
+          goto ciecie
+       }
+       goto koniec11
+    }
+    click 126 94
+    event Drag #findID
+    wait 20
+    click %xr %yr p
+    goto ciecie
+}
+if #CONTSIZE = 188_118
+{
+    if %rzut = 0
+    {
+       if %tnij_expy = 1
+       click 70 95
+       else
+       {
+          click 125 95
+          ignoreitem #ltargetid
+          goto ciecie
+       }
+       goto koniec11
+    }
+    click 126 94
+    event Drag #findID
+	  wait 20
+    click %xr %yr p
+    goto ciecie
+}
+koniec11:
+scanjournal 1
+if %tnij_plecak = 0
+{
+   if Pociales_przedmiot in #journal || Pocielas_przedmiot in #journal
+   {
+      set %ciecie_ile %ciecie_ile + 1
+      if %ciecie_ile >= 4
+      {
+         set %ciecie_ile 0
+         goto start
+      }
+      goto ciecie
+   }
+}
+if Nie_udalo_Ci in #journal
+{
+   set %ciecie_ile %ciecie_ile + 1
+   if %ciecie_ile >= 4
+   {
+      set %ciecie_ile 0
+      goto start
+   }
+   goto ciecie
+}
+if %tnij_plecak = 1
+{
+   if W_tym_pojemniku_nie_ma_nic_co_mozna_by_pociac in #journal
+   {
+      set %ciecie_ile 0
+      set %ciecie_trwa 0
+      goto start
+   }
+}
+goto koniec1
+
+
+;//------- SUBS --------
+
+sub ustaw_stan
+if #menubutton <> n/a
+   goto #menubutton
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 %1
+return
+
+sub ustaw_blad
+menu font size 10
+menu font color red
+menu font style b
+menu font bgcolor btnface
+menu delete startp
+menu delete stopp
+menu button startp 10 210 60 25 START
+set #sysmsgcol 1080
+event sysmessage %1 , !
+menu delete ramka
+menu delete blad
+menu shape ramka 15 240 220 18 3 6 1 blue 7 $98FB98
+menu shape ramka 15 257 220 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 105 241 B³šd:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 20 265 %2 , !
+if #menubutton = closed
+   goto menupokaz
+return
+
+sub skill
+if #menubutton <> n/a
+   goto #menubutton
+if %1 = 1
+{
+   ukrywanie:
+   event macro 1 0 .um ukrywanie
+   set %licz #scnt2 + 5
+   repeat
+   if #menubutton <> n/a
+      goto #menubutton
+   if %licz < #scnt2
+      goto ukrywanie
+   if #sysmsg = Nie_uda_Ci_sie_schowac_wierzchowca!
+   {
+      set %skill 0
+      set #sysmsgcol 1080
+      event sysmessage Nie ukryjesz sie na wierzchowcu! Skrypt nie bedzie sie ukrywal!
+   }
+   until H in #charstatus || Nie_udalo_Ci_sie_ukryc in #sysmsg
+   return
+}
+if %1 = 2
+{
+   set %jaki_skill madrosc
+   gosub dokoncz_cel
+   return
+}
+if %1 = 3
+{
+   set %jaki_skill anatomia
+   gosub dokoncz_cel
+   return
+}
+if %1 = 4
+{
+   set %jaki_skill identyfikacja
+   gosub dokoncz_cel
+   return
+}
+if %1 = 5
+{
+   rozmowa:
+   event macro 1 0 .um rozmowa z duchami
+   set %licz #scnt2 + 5
+   repeat
+   if #menubutton <> n/a
+      goto #menubutton
+   if %licz < #scnt2
+      goto rozmowa
+   until Porozumiales_sie in #sysmsg || Porozumialas_sie in #sysmsg || Nie_udalo_Ci_sie in #sysmsg
+   return
+}
+if %1 = 6
+{
+   wykrywanie:
+   event macro 1 0 .um wykrywanie
+   set %licz #scnt2 + 5
+   repeat
+   if #menubutton <> n/a
+      goto #menubutton
+   if %licz < #scnt2
+      goto wykrywanie
+   until Znalazles_kogos in #sysmsg || Znalazlas_kogos in #sysmsg || Nie_znalazles_nikogo in #sysmsg || Nie_znalazlas_nikogo in #sysmsg
+   return
+}
+if %1 = 7
+{
+   set %jaki_skill wiedza , #spc , o , #spc , zwierzetach
+   gosub dokoncz_cel
+   if Nie_wiesz_jak_to_ocenic in #sysmsg || Nie_udalo_ci_sie_ocenic_tego_stworzenia in #sysmsg
+      return
+   wait %delay
+   return
+}
+if %1 = 8
+{
+   set %jaki_skill wiedza , #spc , o , #spc , broni
+   gosub dokoncz_cel
+   if Nie_wiesz_jak_to_ocenic in #sysmsg || Nie_udalo_ci_sie_ocenic in #sysmsg
+      return
+   wait %delay
+   return
+}
+return
+
+sub dokoncz_cel
+dokoncz:
+if #menubutton <> n/a
+   goto #menubutton
+event macro 1 0 .um %jaki_skill
+set %licz #scnt2 + 5
+repeat
+if #menubutton <> n/a
+   goto #menubutton
+if %licz < #scnt2
+   goto dokoncz
+until #targcurs = 1
+set #ltargetkind 1
+set #ltargetid %lt
+event macro 22
+return
+

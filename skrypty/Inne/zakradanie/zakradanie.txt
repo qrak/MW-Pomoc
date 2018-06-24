@@ -1,0 +1,147 @@
+;Skrypt bY SabiK
+;zakradanie-liczenie.txt
+;Wersja 1.1
+;Skrypt zakrada sie i liczy wykonane kroki oraz obroty
+;Po nacisnieciu odpowiedniego klawisza skrypt sie wlacza, po ponownym jego nacisnieciu skrypt powraca do poczatku
+;i mozna go ponownie uruchomic poprzez nacinienie klawisza
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %key home           ;Tutaj ustaw klawisz pod ktorym chcesz wlaczac i wylaczac skrypt
+set %kroki 0        ;Tutaj ustaw liczbe krokow, ktora mozesz zrobic
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [zakradanie-liczenie] odpalony (by SabiK)
+wait 1
+
+start:
+onhotkey %key
+  {
+   set #sysmsgcol 1080
+   event sysmessage Wcisnieto %key Skrypt wlaczono
+   goto zakradanie
+  }
+goto start
+
+zakradanie:
+if H in #charstatus
+   goto stealth
+hid:
+event macro 1 ^ .um ukrywanie
+set %licz 0
+hid_czekaj:
+set %licz %licz + 1
+if #sysmsg = Nie_udalo_Ci_sie_ukryc.
+  {
+   set %licz 0
+   nieudalo:
+   set %licz %licz + 1
+   onhotkey %key
+     {
+      set #sysmsgcol 1080
+      event sysmessage Wcisnieto %key Skrypt wraca do poczatku!
+      goto start
+     }
+   if %licz > 440
+      goto zakradanie
+   goto nieudalo
+   nieudalo_dalej:
+   goto zakradanie
+  }
+if #sysmsg = Juz_cos_robisz.
+  {
+   wait 10
+   goto zakradanie
+  }
+if H in #charstatus
+  {
+   set %licz 0
+   licz:
+   set %licz %licz + 1
+   onhotkey %key
+     {
+      set #sysmsgcol 1080
+      event sysmessage Wcisnieto %key Skrypt wraca do poczatku!
+      goto start
+     }
+   if %licz > 440
+      goto stealth
+   goto licz
+  }
+onhotkey %key
+  {
+   set #sysmsgcol 1080
+   event sysmessage Wcisnieto %key Skrypt wraca do poczatku!
+   goto start
+  }
+if %licz > 50
+   goto zakradanie
+goto hid_czekaj
+stealth:
+onhotkey %key
+  {
+   set #sysmsgcol 1080
+   event sysmessage Wcisnieto %key Skrypt wraca do poczatku!
+   goto start
+  }
+event macro 1 ^ .um zakradanie
+set %krok 0
+set #scnt2 0
+licz1:
+set %petla 0
+set %x #charposx
+set %y #charposy
+set %ch #chardir
+licz2:
+if #sysmsg = Juz_cos_robisz.
+  {
+   wait 10
+   goto stealth
+  }
+if %petla = 1
+   goto licz1
+if %x <> #charposx
+  {
+   set %krok %krok + 1
+   set %krok1 %kroki - %krok
+   set #sysmsgcol 1281
+   event sysmessage Pozostalo %krok1 krokow
+   if #chardir = 1 || #chardir = 3 || #chardir = 5 || #chardir = 7
+     {
+      set %petla 1
+      goto licz3
+     }
+   set %petla 1
+  }
+if %y <> #charposy
+  {
+   set %krok %krok + 1
+   set %krok1 %kroki - %krok
+   set #sysmsgcol 1281
+   event sysmessage Pozostalo %krok1 krokow
+   set %petla 1
+  }
+licz3:
+if %ch <> #chardir
+  {
+   set %krok %krok + 1
+   set %krok1 %kroki - %krok
+   set #sysmsgcol 1281
+   event sysmessage Pozostalo %krok1 krokow
+   set %petla 1
+  }
+onhotkey %key
+  {
+   set #sysmsgcol 1080
+   event sysmessage Wcisnieto %key Skrypt wraca do poczatku!
+   goto start
+  }
+if #scnt2 > 110
+{
+   if H in #charstatus
+      goto stealth
+   goto zakradanie
+}
+goto licz2
+

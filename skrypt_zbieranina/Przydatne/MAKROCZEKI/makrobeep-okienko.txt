@@ -1,0 +1,24 @@
+;skrypt bY rada
+gosub 1
+sub 1
+if #CONTNAME = generic_gump
+{
+gosub czekanie
+}
+sub czekanie
+}
+wait 3s
+}
+if #CONTNAME = generic_gump
+{
+gosub dajsygnal
+}
+else
+{
+gosub 1
+}
+sub dajsygnal
+sound E:\torpeda.wav
+wait 1,6s
+return
+

@@ -1,0 +1,47 @@
+initevents
+set %profile 436_259
+repeat
+onHotKey F1   ;kilof
+gosub F1
+onHotKey F3   ;ident
+gosub F3
+onhotkey F5
+gosub F5
+onHotKey F12
+gosub keg
+until #false
+
+sub F1
+finditem NPF C_ , #charid  ;wybuch
+set #lobjectid #findid
+event macro 17 0 ;last object
+wait 1s
+return
+
+sub F2
+finditem NPF C_ , #charid  ;wybuch
+set #ltargetid #findid
+event macro 1 0 .um identyfikacja
+target 2s
+event macro 22 0
+return
+
+sub F3
+finditem ZUF C ;czerwony pot
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F5
+event macro 1 0 za mna!
+set #lobjectid RJWESB
+event macro 17 0 ;last object
+return
+
+sub keg
+repeat
+event macro 17 0
+wait 1
+if Keg_jest_pusty. in #sysmsg || Nie_masz_butelek. in #sysmsg
+   return
+until #false

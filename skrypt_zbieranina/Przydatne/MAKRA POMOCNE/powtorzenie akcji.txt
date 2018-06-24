@@ -1,0 +1,8 @@
+initevents
+akcja:
+event macro 17 0
+wait 1
+event macro 22 0
+wait 2s
+goto akcja
+

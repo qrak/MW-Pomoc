@@ -1,0 +1,24 @@
+InitEvents
+set %hp #hits
+start:
+set #NEXTCPOSX 600
+set #NEXTCPOSY 400
+ if #hits <> %hp
+     {
+      set %lhp #hits - %hp
+         if %lhp < 0
+           {
+       Event exmsg #charid 3 2049 %lhp ( , #hits , )
+      set %hp #hits
+          }
+         if %lhp > 0
+           {
+      set #sysmsgcol 65
+       Event SysMessage Odzyskales: %lhp hp ( , #hits , )
+      set %hp #hits
+          }
+     }
+goto start
+
+
+

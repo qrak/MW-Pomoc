@@ -1,0 +1,2020 @@
+;Skrypt bY SabiK
+;druid_menu.txt
+;Wersja 1.2
+;Wcisnij play i pojawi sie menu druida
+;!!!UWAGA!!!
+;Aby skrypt przerywal medytacje musisz miec jedna z ponizszych rzeczy:
+;pust? miske (po sa³atce), pusty talerz (po ciasteczkach), pusty dzbanek (po soku)
+initevents
+;-------------------TUTAJ MOZESZ USTAWIC ZMIENNE--------------------
+set %wymowa 3   ;[1 - mowa, 3 - szept, 4 - krzyk]
+set %delay 4s   ;TUTAJ USTAW DELAY PO WIEDZY O ZWIERZETACH LUB WIEDZY O BRONI ZANIM SKRYPT ZACZNIE CZAROWAC (wiedza o zwierzetach ok 4s, wiesza o broni ok 2s)
+set %c1 1       ;Czar (3-17)
+set %s1 1       ;Skill (3-10)
+set %c2 1       ;Cel czarow (3-5)
+set %m1 1       ;Przerywanie medytacji (3-5)
+set %b1 #true  ;Bles (#false - nie, #true - tak)
+set %b2 60      ;Ponizej ilu str zarzucac blesa
+set %l1 #false   ;Lecz (#false - nie, #true - tak)
+set %l2 30      ;Ponizej ilu hp ma leczyc
+---------------------------------------------------------------------
+
+magiamenu:
+set #lpc 1000
+menu hide
+set %bles 0
+set %czar 0
+set %czar1 0
+set %skill 0
+set %skill1 0
+set %cel 0
+set %mana 0
+set %mana1 0
+set %mana2 0
+set %mana3 0
+set %mana4 0
+set %mana5 0
+set %medyt 0
+set %medyt1 0
+set %res 0
+set %time 0
+set %licz 0
+set %hp 0
+set %lecz 0
+set %str 0
+set %ramka 0
+set %mamresa 0
+set %jestzywiol 0
+set %lt n/a
+set %lt1 n/a
+set #sysmsg n/a
+set #scnt 0
+set #scnt2 0
+set #menubutton n/a
+menu clear
+menu window title Druid bY SabiK v1.2
+if %ramka = 0
+{
+   menu delete ramka1
+   menu delete blad1
+   menu window size 216 290
+}
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu window color btnface
+;Czary
+menu font name verdana
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text wersja 70 214 Wersja 1.2
+menu text 1czary 10 12 Czar:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create czary 50 10 160
+menu combo add czary Wybierz:
+menu combo add czary ----------------------------------
+menu combo add czary Chwytajacy Korzen
+menu combo add czary Przywolanie Wilkow
+menu combo add czary Roj Pszczol
+menu combo add czary Fala Plywowa
+menu combo add czary Kamienny Deszcz
+menu combo select czary %c1
+;Skille
+menu font size 9
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1skille 11 53 Skill:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create skille 50 50 160
+menu combo add skille Wybierz:
+menu combo add skille ----------------------------------
+menu combo add skille Zaden
+menu combo add skille Ukrywanie
+menu combo add skille Madrosc
+menu combo add skille Identyfikacja
+menu combo add skille Rozmowa z duchami
+menu combo add skille Wykrywanie
+menu combo add skille Wiedza o zwierzetach
+menu combo add skille Wiedza o broni
+menu combo select skille %s1
+;Cel
+menu font size 10
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1cel 10 92 Cel czarów:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create cel 100 90 110
+menu combo add cel Wybierz:
+menu combo add cel -------------------------
+menu combo add cel W siebie
+menu combo add cel W wybrany cel
+menu combo add cel Brak (deszcz)
+menu combo select cel %c2
+;Przerywany medyt
+menu font size 10
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text 1medyt 10 124 Medytacja:
+menu font size 8
+menu font bgcolor white
+menu font style
+menu combo create medyt 100 122 110
+menu combo add medyt Wybierz:
+menu combo add medyt -------------------------
+menu combo add medyt Nie przerywaj
+menu combo add medyt Przerwij raz
+menu combo add medyt Przerwij dwa razy
+menu combo select medyt %m1
+;Bles
+menu font size 8
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check bles 10 155 149 15 %b1 Zarzucaj blesa ponizej
+menu edit bles1 161 152 23 %b2
+menu text bles 186 155 si³y
+;Leczenie
+menu font size 8
+menu font color black
+menu font bgcolor btnface
+menu font style
+menu check lecz 10 183 90 15 %l1 Lecz poni¿ej
+menu edit lecz1 102 180 23 %l2
+menu text lecz 127 183 hp
+;Start i anuluj
+menu font size 10
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu button startp 5 210 60 25 START
+menu button anuluj 150 210 60 25 Anuluj
+
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Oczekuje..
+
+menu hideEuo
+set #lpc 10
+menupokaz:
+set #menubutton n/a
+menu show
+czekaj:
+if #str = N/A || #dex = N/A || #int = N/A
+   event macro 8 2
+if #menubutton <> n/a
+   goto #menubutton
+goto czekaj
+
+closed:
+set #targcurs 0
+halt
+anuluj:
+set #targcurs 0
+set #menubutton n/a
+goto magiamenu
+stopp:
+set #targcurs 0
+menu delete startp
+menu delete stopp
+menu font size 10
+menu font color black
+menu font style b
+menu font bgcolor btnface
+menu button startp 5 210 60 25 START
+if #menubutton = closed
+   goto menupokaz
+set #menubutton n/a
+goto czekaj
+
+
+startp:
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Odczytywanie danych..
+if %ramka = 0 && %res = 0
+{
+   menu delete ramka1
+   menu delete blad1
+   menu window size 216 290
+}
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font color black
+menu delete startp
+menu font size 10
+menu font color black
+menu font style b
+menu font bgcolor btnface
+menu button stopp 5 210 60 25 STOP
+set #menubutton n/a
+if #str = N/A || #dex = N/A || #int = N/A
+   event macro 8 2
+
+menu get czary
+set %czar #menures - 2
+menu get skille
+set %skill #menures - 3
+menu get cel
+set %cel #menures - 2
+menu get medyt
+set %medyt #menures - 3
+menu get lecz
+set %lecz 1
+{
+   if #menures <> -1
+   {
+      set %lecz 0
+      goto startp1
+   }
+   menu get lecz1
+   set %hp #menures
+}
+startp1:
+if #menubutton <> n/a
+   goto #menubutton
+menu get bles
+set %bles 1
+{
+   if #menures <> -1
+   {
+      set %bles 0
+      goto startp2
+   }
+   menu get bles1
+   set %str #menures
+}
+startp2:
+if #menubutton <> n/a
+   goto #menubutton
+if %czar = 5
+{
+   if %cel <> 3
+      set %cel 3
+}
+if %cel = 3
+{
+   if %czar = 5
+      goto startp3
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany czar wzgledem celu!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany czar wzglêdem celu!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+startp3:
+if %czar < 1 && %skill < 0 && %cel < 1
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany czar, skill i cel!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany czar, skill i cel!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %czar < 1 && %skill < 0
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany czar i skill!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany czar i skill!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %czar < 1 && %cel < 1
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany czar i cel!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany czar i cel!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %skill < 0 && %cel < 1
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany skill i cel!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany skill i cel!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %czar < 1
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany czar!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany czar!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %skill < 0
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany skill!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany skill!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+if %cel < 1
+{
+   menu delete startp
+   menu delete stopp
+   menu font size 10
+   menu font color red
+   menu font bgcolor btnface
+   menu font style b
+   menu button startp 5 210 60 25 START
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrany cel!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 ?le wybrany cel!
+   if #menubutton = closed
+      goto menupokaz
+   goto czekaj
+}
+
+if %czar = 1
+{
+   set %czar1 Tiolp , #spc , Luibh
+   set %mana 11
+}
+if %czar = 2
+{
+   set %czar1 Filliu , #spc , Prasgan
+   set %mana 14
+}
+if %czar = 3
+{
+   set %czar1 Sgob , #spc , Sgaoth
+   set %mana 20
+}
+if %czar = 4
+{
+   set %czar1 Sdhbhal , #spc , Roiseal
+   set %mana 40
+}
+if %czar = 5
+{
+   set %czar1 Artan , #spc , Braile
+   set %mana 50
+}
+if %cel <> 2
+   goto skill1
+if %lt1 <> N/A
+   goto skill1
+lt1:
+set #targcurs 1
+set #sysmsgcol 1090
+event sysmessage Wskaz teraz cel czarow
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font size 9
+menu font color red
+menu font style b
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Wska¿ teraz cel czarów
+if #menubutton = closed
+{
+   menu show
+   set #menubutton n/a
+}
+set %licz 0
+czekaj_lt1:
+if #menubutton <> n/a
+   goto #menubutton
+onhotkey esc
+   goto dalej_lt11
+set %licz %licz + 1
+if #targcurs = 0
+   goto dalej_lt1
+if %licz > 300
+   goto lt1
+goto czekaj_lt1
+}
+dalej_lt1:
+if anulowano in #sysmsg
+   goto dalej_lt11
+set %lt1 #ltargetid
+set #sysmsgcol 1082
+event sysmessage Zapisano.
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Zapisano cel czarów
+goto skill1
+dalej_lt11:
+set #sysmsgcol 1082
+event sysmessage Nie wskazano celu czarów!
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 B³?d:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Nie wskazano celu czarów!
+if #menubutton = closed
+   goto menupokaz
+goto czekaj
+
+skill1:
+if %skill = 0 || %skill = 1 || %skill = 4 || %skill = 5
+   goto start
+if %skill = 2
+   set %skill1 Madrosc
+if %skill = 3
+   set %skill1 Identyfikacja
+if %skill = 6
+   set %skill1 Wiedza , #spc , o , #spc , zwierzetach
+if %skill = 7
+   set %skill1 Wiedza , #spc , o , #spc , broni
+
+if %lt <> n/a
+   goto start
+lt:
+set #targcurs 1
+set #sysmsgcol 1090
+event sysmessage Wskaz teraz na czym ma byc robiona %skill1
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 295
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Wska¿ teraz na czym ma byæ robiona
+menu font color blue
+menu text blad 15 277 %skill1
+if #menubutton = closed
+{
+   menu show
+   set #menubutton n/a
+}
+set %licz 0
+czekaj_lt:
+if #menubutton <> n/a
+   goto #menubutton
+onhotkey esc
+   goto dalej_lt0
+set %licz %licz + 1
+if #targcurs = 0
+   goto dalej_lt
+if %licz > 300
+   goto lt
+goto czekaj_lt
+}
+dalej_lt:
+if anulowano in #sysmsg
+   goto dalej_lt0
+set %lt #ltargetid
+set #sysmsgcol 1082
+event sysmessage Zapisano.
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Zapisano cel umiejêtno?ci
+menu font color blue
+menu text blad 15 277 %skill1
+goto start
+dalej_lt0:
+set %skill 0
+set #sysmsgcol 1082
+event sysmessage Anulowano.
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 35 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 B³?d:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Nie wskazano celu umiejêtno?ci
+menu font color blue
+menu text blad 15 277 %skill1 , !
+set %skill 0
+goto start
+
+
+start:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #hits < 2
+{
+   set #targcurs 1
+   set #sysmsgcol 1090
+   event sysmessage Masz #hits hp! Skrypt wylaczono!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 90 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 Masz #hits hp! Skrypt wy³?czono!
+   halt
+}
+if %bles = 1
+{
+   if #str > %str
+      goto start2
+   if #targcurs = 1
+      key esc
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 90 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 Czarujê blesa..
+   bles1:
+   if #mana < 9
+      goto medyt
+   event macro 15 16
+   set %licz 0
+   czekaj_bles:
+   set %licz %licz + 1
+   if #targcurs = 1
+      goto dalej_bles
+   if brakuje_ci_skladnikow in #sysmsg
+   {
+      menu delete startp
+      menu delete stopp
+      menu font size 10
+      menu font color red
+      menu font bgcolor btnface
+      menu font style b
+      menu button startp 5 210 60 25 START
+      set #sysmsgcol 1080
+      event sysmessage Brakuje Ci skladnikow!
+      menu delete ramka
+      menu delete blad
+      menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+      menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+      menu font size 9
+      menu font color red
+      menu font style b
+      menu font bgcolor $98FB98
+      if %ramka = 0
+      menu window size 216 290
+      else
+      {
+         if %time > 0
+         menu window size 216 350
+         else
+         menu window size 216 345
+      }
+      menu text blad 90 241 B³?d:
+      menu font size 7
+      menu font bgcolor $FFF8DC
+      menu font color black
+      menu text blad 15 265 Brakuje Ci sk³adników!
+      if #menubutton = closed
+         goto menupokaz
+      goto czekaj
+   }
+   scanjournal 1
+   if Brakuje_Ci_many in #sysmsg
+   {
+      if Brakuje_Ci_many in #journal
+      {
+         deletejournal
+         goto medyt
+      }
+   }
+   if %licz > 180
+      goto bles1
+   goto czekaj_bles
+   dalej_bles:
+   event macro 23
+   set %bles2 1
+   wait 10
+}
+start2:
+if %lecz = 1
+{
+   if #hits <= %hp
+   {
+      if #mana < 11
+         goto medyt
+      goto leczenie
+   }
+}
+if #mana < %mana
+   goto medyt
+
+
+skille:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if %skill = 0
+   goto start1
+if #targcurs = 1
+   key esc
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Skill..
+
+ukrywanie:
+if %skill <> 1
+   goto madrosc
+event macro 1 0 .um ukrywanie
+set %licz #scnt2 + 8
+czekaj_ukrywanie:
+if #menubutton <> n/a
+   goto #menubutton
+if H in #charstatus
+   goto start1
+scanjournal 1
+if #journal = Nie_udalo_Ci_sie_ukryc.
+   goto start1
+if #journal = Nie_uda_Ci_sie_schowac_wierzchowca!
+{
+   set %skill 0
+   set #sysmsgcol 1080
+   event sysmessage Nie ukryjesz sie na wierzchowcu! Skrypt nie bedzie sie ukrywal!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 210 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 227 196 30 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 90 211 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 230 Nie ukryjesz sie na wierzchowcu!
+   menu text blad 15 230 Skrypt nie bedzie sie ukrywal!
+}
+scanjournal 2
+if #journal = Nie_udalo_Ci_sie_ukryc.
+   goto start1
+if #journal = Nie_uda_Ci_sie_schowac_wierzchowca!
+{
+   set %skill 0
+   set #sysmsgcol 1080
+   event sysmessage Nie ukryjesz sie na wierzchowcu! Skrypt nie bedzie sie ukrywal!
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 210 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 227 196 30 3 6 1 blue 7 $FFF8DC
+   menu font bgcolor $98FB98
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu text blad 90 211 B³?d:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 230 Nie ukryjesz sie na wierzchowcu!
+   menu text blad 15 230 Skrypt nie bedzie sie ukrywal!
+}
+if %licz < #scnt2
+   goto ukrywanie
+goto czekaj_ukrywanie
+
+madrosc:
+if %skill <> 2
+   goto identyfikacja
+event macro 1 0 .um madrosc
+set %licz #scnt2 + 8
+czekaj_madrosc:
+if #menubutton <> n/a
+   goto #menubutton
+if #targcurs = 1
+   goto dalej_madrosc
+if %licz < #scnt2
+   goto madrosc
+goto czekaj_madrosc
+dalej_madrosc:
+set #ltargetid %lt
+event macro 22
+goto start1
+
+identyfikacja:
+if %skill <> 3
+   goto rozmowa
+event macro 1 0 .um identyfikacja
+set %licz #scnt2 + 8
+czekaj_identyfikacja:
+if #menubutton <> n/a
+   goto #menubutton
+if #targcurs = 1
+   goto dalej_identyfikacja
+if %licz < #scnt2
+   goto identyfikacja
+goto czekaj_identyfikacja
+dalej_identyfikacja:
+set #ltargetid %lt
+event macro 22
+wait 20
+goto start1
+
+rozmowa:
+if %skill <> 4
+   goto wykrywanie
+event macro 1 0 .um rozmowa z duchami
+set %licz #scnt2 + 8
+czekaj_rozmowa:
+if #menubutton <> n/a
+   goto #menubutton
+scanjournal 1
+if #sex = 0
+{
+   if Porozumiales_sie in #journal
+      goto start1
+}
+if #sex = 1
+{
+   if Porozumialas_sie in #journal
+      goto start1
+}
+scanjournal 2
+if #sex = 0
+{
+   if Porozumiales_sie in #journal
+      goto start1
+}
+if #sex = 1
+{
+   if Porozumialas_sie in #journal
+      goto start1
+}
+if Nie_udalo_Ci_sie in #journal
+   goto start1
+if %licz < #scnt2
+   goto rozmowa
+goto czekaj_rozmowa
+
+wykrywanie:
+if %skill <> 5
+   goto wiedzaozw
+event macro 1 0 .um wykrywanie
+set %licz #scnt2 + 8
+czekaj_wykrywanie:
+if #menubutton <> n/a
+   goto #menubutton
+scanjournal 1
+if #sex = 0
+{
+   if Znalazles_kogos in #journal
+      goto start1
+   if Nie_znalazles_nikogo in #journal
+      goto start1
+}
+if #sex = 1
+{
+   if Znalazlas_kogos in #journal
+      goto start1
+   if Nie_znalazlas_nikogo in #journal
+      goto start1
+}
+scanjournal 2
+if #sex = 0
+{
+   if Znalazles_kogos in #journal
+      goto start1
+   if Nie_znalazles_nikogo in #journal
+      goto start1
+}
+if #sex = 1
+{
+   if Znalazlas_kogos in #journal
+      goto start1
+   if Nie_znalazlas_nikogo in #journal
+      goto start1
+}
+if %licz < #scnt2
+   goto wykrywanie
+goto czekaj_wykrywanie
+
+wiedzaozw:
+if %skill <> 6
+   goto wiedzaobr
+event macro 1 0 .um wiedza o zwierzetach
+set %licz #scnt2 + 8
+czekaj_wiedzaozw:
+if #menubutton <> n/a
+   goto #menubutton
+if #targcurs = 1
+   goto dalej_wiedzaozw
+if %licz < #scnt2
+   goto wiedzaozw
+goto czekaj_wiedzaozw
+dalej_wiedzaozw:
+set #ltargetid %lt
+event macro 22
+scanjournal 1
+if Nie_wiesz_jak_to_ocenic in #journal || Nie_udalo_ci_sie_ocenic_tego_stworzenia in #journal
+   goto start1
+wait %delay
+goto start1
+
+wiedzaobr:
+if %skill <> 7
+   goto start1
+event macro 1 0 .um wiedza o broni
+set %licz #scnt2 + 8
+czekaj_wiedzaobr:
+if #menubutton <> n/a
+   goto #menubutton
+if #targcurs = 1
+   goto dalej_wiedzaobr
+if %licz < #scnt2
+   goto wiedzaobr
+goto czekaj_wiedzaobr
+dalej_wiedzaobr:
+set #ltargetid %lt
+event macro 22
+scanjournal 1
+if Nie_wiesz_jak_to_ocenic in #journal || Nie_udalo_ci_sie_ocenic in #journal
+   goto start1
+wait %delay
+goto start1
+
+
+start1:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if %czar = 0
+   goto start
+if %lecz = 1
+{
+   if #hits <= %hp
+      goto leczenie
+}
+if #mana < %mana
+   goto medyt
+
+
+czar:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if %bles = 1
+{
+   if #str <= %str
+      goto start
+}
+if #targcurs = 1
+   key esc
+deletejournal
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Czarujê..
+if %lecz = 1
+{
+   if #hits <= %hp
+   {
+      if #targcurs = 1
+         key esc
+      goto leczenie
+   }
+}
+event macro 1 %wymowa %czar1
+if %czar = 5
+   set %mana1 #mana
+set %licz 0
+czekaj_czar:
+set %licz %licz + 1
+if #menubutton <> n/a
+   goto #menubutton
+if %czar = 5
+{
+   if %mana1 - #mana > 37
+      goto start1
+}
+if %czar = 2
+{
+ if %jestzywiol = 1
+ {
+   if %licz > 30
+   {
+      zywiol:
+      event macro 1 ^ uwalniam was
+      set %licz1 0
+      czekaj_zywiol:
+      set %licz1 %licz1 + 1
+      scanjournal 1
+      if uwalniam_was in #journal
+      {
+         set %jestzywiol 0
+         goto pozywiole
+      }
+      if %licz1 > 20
+         goto zywiol
+      goto czekaj_zywiol
+   }
+ }
+}
+pozywiole:
+scanjournal 1
+if Czar_sie_nie_udal in #sysmsg
+{
+   if Czar_sie_nie_udal in #journal
+   {
+      if #mana < %mana
+      {
+         deletejournal
+         goto medyt
+      }
+      deletejournal
+      goto czar
+   }
+}
+if #sex = 0
+{
+   if #sysmsg = Straciles_koncentracje.
+   {
+      if #journal = Straciles_koncentracje.
+      {
+         if #mana < %mana
+         {
+            deletejournal
+            goto medyt
+         }
+         deletejournal
+         goto czar
+      }
+   }
+}
+if #sex = 1
+{
+   if #sysmsg = Stracilas_koncentracje.
+   {
+      if #journal = Stracilas_koncentracje.
+      {
+         if #mana < %mana
+         {
+            deletejournal
+            goto medyt
+         }
+         deletejournal
+         goto czar
+      }
+   }
+}
+if brakuje_ci_skladnikow in #sysmsg
+{
+  menu delete startp
+  menu delete stopp
+  menu font size 10
+  menu font color red
+  menu font bgcolor btnface
+  menu font style b
+  menu button startp 5 210 60 25 START
+  set #sysmsgcol 1080
+  event sysmessage Brakuje Ci skladnikow!
+  menu delete ramka
+  menu delete blad
+  menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+  menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+  menu font size 9
+  menu font color red
+  menu font style b
+  menu font bgcolor $98FB98
+  if %ramka = 0
+  menu window size 216 290
+  else
+  {
+     if %time > 0
+     menu window size 216 350
+     else
+     menu window size 216 345
+  }
+  menu text blad 90 241 B³?d:
+  menu font size 7
+  menu font bgcolor $FFF8DC
+  menu font color black
+  menu text blad 15 265 Brakuje Ci sk³adników!
+  if #menubutton = closed
+     goto menupokaz
+  goto czekaj
+}
+if Brakuje_Ci_many in #sysmsg
+{
+   if Brakuje_Ci_many in #journal
+   {
+      deletejournal
+      goto medyt
+   }
+}
+if I_am_frozen in #journal
+{
+   deletejournal
+   wait 20
+   goto start1
+}
+if #targcurs = 1
+   goto dalej_czar
+if %licz > 130
+   goto start1
+goto czekaj_czar
+dalej_czar:
+if %cel = 1
+{
+   if %lecz = 1
+   {
+      if #hits <= %hp
+      {
+         if #targcurs = 1
+            key esc
+         goto leczenie
+      }
+   }
+   event macro 23
+   goto dalej_czar1
+}
+set #ltargetid %lt1
+event macro 22
+dalej_czar1:
+if #menubutton <> n/a
+   goto #menubutton
+if %cel = 1
+   wait 10
+if #sysmsg = Czujesz_swoja_odpornosc_na_magie!
+{
+   set %res %res + 1
+   set #sysmsgcol 1090
+   if #sex = 0
+   event sysmessage Zresowales juz %res czarow.
+   else
+   event sysmessage Zresowalas juz %res czarow.
+   menu delete ramka1
+   menu delete blad1
+   menu shape ramka1 10 292 196 18 3 6 1 blue 7 $98FB98
+   if %time > 0
+   menu shape ramka1 10 309 196 35 3 6 1 blue 7 $FFF8DC
+   else
+   menu shape ramka1 10 309 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+   menu text blad1 75 293 Stan resa:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   if #sex = 0
+   {
+      menu text blad1 15 319 Zresowa³e? juz %res czarów!
+      if %time > 0
+         menu text blad1 15 331 Gain: RESÓW: %resik CZAS: %time , min!
+   }
+   else
+   menu text blad1 15 317 Zresowa³a? juz %res czarów!
+   if %time > 0
+      menu text blad1 15 331 Gain: RESÓW: %resik CZAS: %time , min!
+   if #menubutton = closed
+   {
+      menu show
+      set #menubutton n/a
+   }
+   set %ramka 1
+}
+if #scnt2 > 300
+   set %mamresa 0
+if %mamresa = 1
+   goto jestres
+if Your_skill_in_Odpornosc_na_Magie_has_increased in #sysmsg
+{
+   set %time #scnt / 60
+   set %res %res + 1
+   set %resik %res
+   menu delete ramka1
+   menu delete blad1
+   if %time > 0
+   {
+   menu shape ramka1 10 294 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka1 10 311 196 35 3 6 1 blue 7 $FFF8DC
+   }
+   else
+   {
+   menu shape ramka1 10 294 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka1 10 311 196 30 3 6 1 blue 7 $FFF8DC
+   }
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   menu text blad1 75 295 Stan resa:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   if #sex = 0
+   {
+      set #sysmsgcol 1090
+      event sysmessage Zresowales %res czarow na gaina
+      menu text blad1 15 319 Zresowa³e? %res czarów na gaina!
+      menu text blad1 15 331 Gain: RESÓW: %resik CZAS: %time , min!
+      if %time > 0
+      {
+         set #sysmsgcol 1090
+         event sysmessage Trwalo to %time minut.
+      }
+   }
+   if #sex = 1
+   {
+      set #sysmsgcol 1090
+      event sysmessage Zresowalas %res czarow na gaina
+      menu text blad1 15 319 Zresowa³a? %res czarów na gaina!
+      menu text blad1 15 331 Gain: RESÓW: %resik CZAS: %time , min!
+      if %time > 0
+      {
+         set #sysmsgcol 1090
+         event sysmessage Trwalo to %time minut.
+      }
+   }
+   if #menubutton = closed
+   {
+      menu show
+      set #menubutton n/a
+   }
+   set %res 0
+   set #scnt 0
+   set %ramka 1
+   set #scnt2 0
+   set %mamresa 1
+}
+jestres:
+if %czar = 2
+   set %jestzywiol 1
+goto start1
+
+medyt:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #mana = #maxmana
+   goto start
+if #targcurs = 1
+   key esc
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Medytujê..
+event macro 13 46
+set %licz 0
+czekaj_medyt:
+set %licz %licz + 1
+if #menubutton <> n/a
+   goto #menubutton
+if Rozpoczynasz_medytacje in #sysmsg
+{
+   if %medyt = 1
+   {
+      set %mana3 #maxmana / 2 + 25
+      set %mana4 #maxmana / 2 + 32
+   }
+   if %medyt = 2
+   {
+      set %mana3 #maxmana / 2 - 12
+      set %mana4 #maxmana / 2 - 5
+      set %mana33 #maxmana / 2 + 15
+      set %mana44 #maxmana / 2 + 22
+   }
+   goto koniec
+}
+if #sysmsg = Juz_medytujesz...
+   goto koniec
+if Nie_brakuje_Ci_many in #sysmsg
+   goto start1
+scanjournal 1
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+{
+   if #journal = Nie_mozesz_sie_skoncentrowac.
+   {
+      if #mana = #maxmana
+         goto start
+      wait 60
+      deletejournal
+      goto medyt
+   }
+}
+if #mana = #maxmana
+   goto start1
+if %licz > 20
+   goto medyt
+goto czekaj_medyt
+
+leczenie:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #mana < 11
+   goto medyt
+if #targcurs = 1
+   key esc
+menu delete ramka
+menu delete blad
+menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+menu font bgcolor $98FB98
+if %ramka = 0
+menu window size 216 290
+else
+{
+   if %time > 0
+   menu window size 216 350
+   else
+   menu window size 216 345
+}
+menu font size 9
+menu font color red
+menu font style b
+menu text blad 90 241 Stan:
+menu font size 7
+menu font bgcolor $FFF8DC
+menu font color black
+menu text blad 15 265 Leczê In Vas Mani..
+event macro 15 28
+set %licz 0
+czekaj_leczenie:
+set %licz %licz + 1
+if #menubutton <> n/a
+   goto #menubutton
+if brakuje_ci_skladnikow in #sysmsg
+{
+  menu delete startp
+  menu delete stopp
+  menu font size 10
+  menu font color red
+  menu font bgcolor btnface
+  menu font style b
+  menu button startp 5 210 60 25 START
+  set #sysmsgcol 1080
+  event sysmessage Brakuje Ci skladnikow!
+  menu delete ramka
+  menu delete blad
+  menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+  menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+  menu font size 9
+  menu font color red
+  menu font style b
+  menu font bgcolor $98FB98
+  if %ramka = 0
+  menu window size 216 290
+  else
+  {
+     if %time > 0
+     menu window size 216 350
+     else
+     menu window size 216 345
+  }
+  menu text blad 90 241 B³?d:
+  menu font size 7
+  menu font bgcolor $FFF8DC
+  menu font color black
+  menu text blad 15 265 Brakuje Ci sk³adników!
+  if #menubutton = closed
+     goto menupokaz
+  goto czekaj
+}
+scanjournal 1
+if Czar_sie_nie_udal in #sysmsg
+{
+   if Czar_sie_nie_udal in #journal
+   {
+      if #mana < 11
+         goto medyt
+      if #mana => 11
+      {
+         deletejournal
+         goto leczenie
+      }
+   }
+}
+if #targcurs = 1
+   goto dalej_leczenie
+if %licz > 160
+   goto leczenie
+goto czekaj_leczenie
+dalej_leczenie:
+event macro 23
+wait 5
+goto start1
+
+
+koniec:
+if #menubutton <> n/a
+   goto #menubutton
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if %medyt = 0
+   goto koniec1
+if #mana > %mana4
+   set %medyt1 0
+if %medyt1 = 1
+   goto koniec10
+if #mana >= %mana3 && #mana <= %mana4
+{
+   finditem wyf_igi_nqd C
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie masz miski, talerza lub dzbanka! Medytacja nie bedzie przerywana!
+      menu delete ramka
+      menu delete blad
+      menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+      menu shape ramka 10 257 196 34 3 6 1 blue 7 $FFF8DC
+      menu font size 9
+      menu font color red
+      menu font style b
+      menu font bgcolor $98FB98
+      if %ramka = 0
+      menu window size 216 295
+      else
+      {
+         if %time > 0
+         menu window size 216 350
+         else
+         menu window size 216 345
+      }
+      menu text blad 90 241 B³?d:
+      menu font size 7
+      menu font bgcolor $FFF8DC
+      menu font color black
+      menu text blad 15 265 Nie masz miski, talerza lub dzbanka!
+      menu text blad 15 277 Medytacja nie bedzie przerywana!
+      set %medyt 0
+      if #menubutton = closed
+      {
+         menu show
+         set #menubutton n/a
+      }
+      goto koniec1
+   }
+   set #lobjectid #findid
+   event macro 17
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 Przerywam medytacje..
+   set %licz 0
+   czekaj_przeryw:
+   set %licz %licz + 1
+   if #targcurs = 1
+   {
+      key esc
+      goto dalej_przeryw
+   }
+   if %licz > 40
+      goto koniec
+   goto czekaj_przeryw
+   dalej_przeryw:
+   set %medyt1 1
+   goto medyt
+}
+koniec10:
+if #mana > %mana44
+   set %medyt10 0
+if %medyt10 = 1
+   goto koniec1
+if #mana >= %mana33 && #mana <= %mana44
+{
+   finditem wyf_igi_nqd C
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie masz miski, talerza lub dzbanka! Medytacja nie bedzie przerywana!
+      menu delete ramka
+      menu delete blad
+      menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+      menu shape ramka 10 257 196 34 3 6 1 blue 7 $FFF8DC
+      menu font size 9
+      menu font color red
+      menu font style b
+      menu font bgcolor $98FB98
+      if %ramka = 0
+      menu window size 216 295
+      else
+      {
+         if %time > 0
+         menu window size 216 350
+         else
+         menu window size 216 345
+      }
+      menu text blad 90 241 B³?d:
+      menu font size 7
+      menu font bgcolor $FFF8DC
+      menu font color black
+      menu text blad 15 265 Nie masz miski, talerza lub dzbanka!
+      menu text blad 15 277 Medytacja nie bedzie przerywana!
+      set %medyt 0
+      if #menubutton = closed
+      {
+         menu show
+         set #menubutton n/a
+      }
+      goto koniec1
+   }
+   set #lobjectid #findid
+   event macro 17
+   menu delete ramka
+   menu delete blad
+   menu shape ramka 10 240 196 18 3 6 1 blue 7 $98FB98
+   menu shape ramka 10 257 196 30 3 6 1 blue 7 $FFF8DC
+   menu font size 9
+   menu font color red
+   menu font style b
+   menu font bgcolor $98FB98
+   if %ramka = 0
+   menu window size 216 290
+   else
+   {
+      if %time > 0
+      menu window size 216 350
+      else
+      menu window size 216 345
+   }
+   menu text blad 90 241 Stan:
+   menu font size 7
+   menu font bgcolor $FFF8DC
+   menu font color black
+   menu text blad 15 265 Przerywam medytacje..
+   set %licz 0
+   czekaj_przeryw:
+   set %licz %licz + 1
+   if #targcurs = 1
+   {
+      wait 1
+      key esc
+      goto dalej_przeryw
+   }
+   if %licz > 40
+      goto koniec
+   goto czekaj_przeryw
+   dalej_przeryw:
+   set %medyt10 1
+   goto medyt
+}
+koniec1:
+if #targcurs = 1
+{
+   key esc
+   goto dalej_przeryw
+}
+if #mana = #maxmana
+   goto start
+if #sysmsg = Konczysz_medytacje.
+{
+   if #mana = #maxmana
+      goto start
+   wait 20
+   goto medyt
+}
+if #sysmsg = Nie_brakuje_Ci_many.
+   goto start
+scanjournal 1
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+{
+   if #journal = Nie_mozesz_sie_skoncentrowac.
+   {
+      if #mana = #maxmana
+         goto start
+      wait 60
+      goto medyt
+   }
+}
+if #sex = 0
+{
+   if #sysmsg = Straciles_koncentracje.
+   {
+      if #mana = #maxmana
+         goto start
+      if %medyt1 = 1 || %medyt10 = 1
+         goto kyniec
+      goto medyt
+   }
+}
+if #sex = 1
+{
+   if #sysmsg = Stracilas_koncentracje.
+   {
+      if #mana = #maxmana
+         goto start
+      if %medyt1 = 1 || %medyt10 = 1
+         goto kyniec
+      goto medyt
+   }
+}
+kyniec:
+if Your in #sysmsg
+{
+   if #mana = #maxmana
+      goto start
+   goto koniec
+}
+if #sysmsg = Juz_medytujesz...
+   goto koniec
+goto koniec

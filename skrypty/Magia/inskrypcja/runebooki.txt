@@ -1,0 +1,586 @@
+               ;Autor: [nGz]
+;Wersja: 1.2
+;%Krag - Okresla, ktory krag chcemy pisac, wartosci od 1 do 8, mozna laczyc kilka kregow np: 123 (krag 1, 2 i 3) lub 478 (krag 4, 7 i 8) lub wpisac 0 co oznacza wszystkie kregi.
+;%Czar - Okresla, ktory czar chcemy pisac, wartosci od 1 do 8 (od 1 do 4 to gorne czary od lewej do prawej, reszta wiadomo), reszta to samo co w %Krag, tzn mozna laczyc np: 357 (czar 3, 5 i 7), 0 - wszystkie czary z danego kregu.
+;Czyli jak chcemy przepisac cala ksiege to ustawiamy %Krag 0 i %Czar 0.
+;%Runebook - Wartosci: tak, nie. Okresla czy ma pisac runebooki.
+;%Ilosc - Okresla ile chcemy napisac czarow lub runebookow, 0 - nieskonczenie wiele.
+;%Skill - Wykonywany jest miedzy pisaniem czarow(runebookow), gdy nie medytuje, 0-Nic, 1-Anatomia, 2-Madrosc, 3-Wiedza o zwierzetach, 4-Ukrywanie, 5-Wiedza o broni, 6-Wykrywanie, 7-Rozmowa z duchami.
+;%SkillPoMedytacji - Wartosci: tak, nie. Jesli wiemy ze bedziemy dlugo medytowac to mozna ustawic na 'tak', wtedy bedzie wykonywac skilla dodatkowo zaraz po medytacji + standardowo miedzy pisaniem czarow, gdy nie medytuje (jesli taka opcja bedzie miala miejsce).
+;%MedytujCo - okresla jak czesto ma medytowac, 1-co kazde stworzenie zwoju, 2-co drugie stworzenie zwoju, itd, 0-nie patrzy na to i nie liczy co ile ma medytowac.
+;%MedytujOd - okresla od ilu many ma zaczac medytowac, np: 20 znaczy, ze jak bedzie 20 many lub mniej to bedzie medytowal, 0-mozna potraktowac jako wylacznik, jesli nie chcemy zeby medytowal od jakiegos poziomu many.
+;Ogolnie skrypt sam zacznie medytowac jesli poziom many spadnie ponizej poziomu jaki jest wymagany na dany krag.
+;========================
+set %Krag 1
+set %Czar 1
+set %Runebook tak
+set %Ilosc 0
+set %Skill 0
+set %SkillPoMedytacji nie
+set %MedytujCo 0
+set %MedytujOd 0
+;========================
+
+if %Runebook = tak
+  goto Runebook
+gosub Weryfikuj Krag
+gosub Weryfikuj Czar
+if ! ( %MedytujCo > -1 )
+{
+  set #sysmsgcol 1080
+  event sysmessage Wartosc % , MedytujCo jest bledna.
+  halt
+}
+if ! ( %MedytujOd > -1 )
+{
+  set #sysmsgcol 1080
+  event sysmessage Wartosc % , MedytujOd jest bledna.
+  halt
+}
+gosub Weryfikuj2
+if %MedytujCo > 0
+  set %LicznikMedyt %MedytujCo
+set %ToCoOst #false
+set %PrzesKrag 0
+set %PrzesCzar 0
+gosub UstawNastepnyAktCzar
+if #mana < #maxmana
+  gosub Medytuj
+Inskrypcja:
+finditem pbg C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono piora.
+  halt
+}
+set %PioroID #findid
+finditem mmf C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono czystych zwoi.
+  halt
+}
+set %ZwojID #findid
+set #lobjectid %PioroID
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Inskrypcja
+scanjournal 1
+until #targcurs = 1 || ( I_am_already_doing_something_else in #journal && #contname = generic_gump && #contsize = 350_300 )
+Celownik:
+set #ltargetkind 1
+set #ltargetid %ZwojID
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Celownik
+until #targcurs = 0
+set %Timer #scnt2 + 10
+repeat
+if %Timer < #scnt2
+  goto Inskrypcja
+until #contname = generic_gump && #contsize = 350_300
+Klik:
+gosub Klikaj
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Klik
+until #contname <> generic_gump || #contsize <> 350_300
+set %TimerIns #scnt2 + 110
+repeat
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+{
+  set %TimerSave #scnt2 + 300
+  repeat
+  scanjournal 1
+  until Zapisywanie_Stanu_Swiata notin #journal && ( You_see:_ notin #journal || #jcolor <> 995 ) || %TimerSave < #scnt2
+  set %TimerIns %TimerIns + 305 - ( %TimerSave - #scnt2 )
+}
+if Nie_masz_potrzebnych_skladnikow_na_przepisanie_tego_czaru in #journal
+  halt
+if Masz_za_malo_many in #journal
+{
+  gosub Medytuj
+  goto Inskrypcja
+}
+until ( Stworzyl in #journal && s_zwoj_i_wlozyl in #journal ) || Nie_udalo_Ci_sie_i_zniszczyl in #journal || Your_skill_in_Ins in #journal || ( Przestal in #journal && s_pisac. in #journal ) || %TimerIns < #scnt2
+set %ToCoOst #true
+if ( Stworzyl in #journal && s_zwoj_i_wlozyl in #journal ) || Your_skill_in_Ins in #journal
+{
+  if %CntIlosc > 0
+    set %CntIlosc %CntIlosc - 1
+  if %CntIlosc = 0
+  {
+    if %PrzesCzar = %CzarLen && %PrzesKrag = %KragLen && %Ilosc > 0
+    {
+      set #sysmsgcol 0
+      event sysmessage Koniec.
+      halt
+    }
+    if %CzarLen > 1 || %KragLen > 1
+    {
+      set %ToCoOst #false
+      gosub UstawNastepnyAktCzar
+    }
+    set %CntIlosc %Ilosc
+  }
+}
+if %MedytujCo > 0
+{
+  if %LicznikMedyt <= 0
+    set %LicznikMedyt %MedytujCo
+  set %LicznikMedyt %LicznikMedyt - 1
+}
+if #mana < %PotrzebnaMana || #mana <= %MedytujOd || ( %LicznikMedyt = 0 && %MedytujCo > 0 )
+{
+  gosub Medytuj
+  if %Skill > 0 && %SkillPoMedytacji = tak
+    gosub %SkillName
+}
+else
+{
+  if %Skill > 0
+    gosub %SkillName
+}
+goto Inskrypcja
+;========================================================
+Runebook:
+gosub Weryfikuj2
+RunebookPoczatek:
+if %Skill > 0
+  gosub %SkillName
+RunebookPetla:
+finditem pbg C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono piora.
+  halt
+}
+set %PioroID #findid
+finditem qwl_pwl C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono runa.
+  halt
+}
+set %RunoID #findid
+finditem mmf C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono czystych zwoi.
+  halt
+}
+set %ZwojID #findid
+finditem wtl C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono zwoju Recall.
+  halt
+}
+set %RecallID #findid
+finditem yul C
+if #findkind
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znalaziono zwoju Gate Travel.
+  halt
+}
+set %GateTID #findid
+set #lobjectid %PioroID
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto RunebookPetla
+until #targcurs = 1
+RunoCelownik:
+set #ltargetkind 1
+set #ltargetid %RunoID
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto RunoCelownik
+scanjournal 1
+until #targcurs = 0 || Wybierz_zwoje_z_ktorych_chcesz_zrobic_runebooka in #journal
+set %Timer #scnt2 + 10
+repeat
+until #targcurs = 1 || %Timer < #scnt2
+ZwojeCelownik:
+set #ltargetkind 1
+set #ltargetid %ZwojID
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto ZwojeCelownik
+scanjournal 1
+until #targcurs = 0 || Wybierz_zwoj_czaru_Recall in #journal
+set %Timer #scnt2 + 20
+repeat
+scanjournal 1
+if Za_malo_zwo in #journal
+  halt
+until #targcurs = 1 || %Timer < #scnt2
+RecallCelownik:
+set #ltargetkind 1
+set #ltargetid %RecallID
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto RecallCelownik
+scanjournal 1
+until #targcurs = 0 || Wybierz_zwoj_czaru_Gate in #journal
+set %Timer #scnt2 + 10
+repeat
+until #targcurs = 1 || %Timer < #scnt2
+GateTCelownik:
+set #ltargetkind 1
+set #ltargetid %GateTID
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto GateTCelownik
+scanjournal 1
+until #targcurs = 0
+set %TimerRB #scnt2 + 350
+repeat
+scanjournal 1
+until ( Stworzyl in #journal && _runebooka_i_wlozyl in #journal && s_go_do_plecaka in #journal ) || ( Nie_udalo_Ci_sie_i_zniszczyl in #journal && s_runo in #journal ) || Your_skill_in_Ins in #journal || ( Przestal in #journal && s_pisac. in #journal ) || %TimerRB < #scnt2
+if ( ( Stworzyl in #journal && _runebooka_i_wlozyl in #journal && s_go_do_plecaka in #journal ) || Your_skill_in_Ins in #journal ) && %Ilosc > 0
+{
+  set %CntIlosc %CntIlosc - 1
+  if %CntIlosc = 0
+  {
+    set #sysmsgcol 0
+    event sysmessage Koniec.
+    halt
+  }
+}
+goto RunebookPoczatek
+
+;=========================================================================
+
+sub Weryfikuj
+set #lpc 200
+set #sysmsgcol 1080
+str Len % . %1
+if #strres > 18
+{
+  event sysmessage Blad weryfikacji - za dlugi string w % , %1 , .
+  halt
+}
+set %zmLen %1 , Len
+set % . %zmLen #strres
+set %Weryfikacja #false
+if % . %1 > 0
+  set %Weryfikacja #true
+if % . %1 = 0
+{
+  set % . %1 12345678
+  set % . %zmLen 8
+  set %Weryfikacja #true
+}
+if ! %Weryfikacja
+{
+  event sysmessage Blad weryfikacji - bledne znaki w % , %1 , .
+  halt
+}
+for %i 1 % . %zmLen
+{
+  str Mid % . %1 %i 1
+  if #strres < 1 || #strres > 8
+  {
+    event sysmessage Blad weryfikacji - niedozwolone cyfry w % , %1 , .
+    halt
+  }
+  set %zmNrx %1 , Nr , %i
+  set % . %zmNrx #strres
+}
+set #lpc 10
+return
+
+sub Weryfikuj2
+if ! ( %Ilosc > -1 )
+{
+  set #sysmsgcol 1080
+  event sysmessage Wartosc % , Ilosc jest bledna.
+  halt
+}
+set %CntIlosc %Ilosc
+if %Skill > 0
+{
+  set %CelSkilla 0
+  if %Skill = 1
+    set %SkillName Anatomia
+  if %Skill = 2
+    set %SkillName Madrosc
+  if %Skill = 3
+    set %SkillName AnimalLore
+  if %Skill = 4
+    set %SkillName Ukrywanie
+  if %Skill = 5
+    set %SkillName ArmsLore
+  if %Skill = 6
+    set %SkillName Wykrywanie
+  if %Skill = 7
+    set %SkillName SpiritSpeak
+  if %Skill in 1_2_3_5
+    gosub WskazCel
+}
+return
+
+sub Klikaj
+if %ToCoOst
+  click 107 280
+else
+{
+  click %XKrag 250
+  click %XCzar %YCzar
+}
+return
+
+sub UstawNastepnyAktCzar
+set #lpc 100
+if %PrzesCzar = %CzarLen || %PrzesCzar = 0
+{
+  if %PrzesKrag = %KragLen
+    set %PrzesKrag 0
+  set %PrzesKrag %PrzesKrag + 1
+  set %PrzesCzar 0
+}
+set %AktKrag %KragNr . %PrzesKrag
+set %PrzesCzar %PrzesCzar + 1
+set %AktCzar %CzarNr . %PrzesCzar
+
+set %XKrag 0
+set %XCzar 0
+set %YCzar 0
+if %AktKrag = 1 2
+  set %XKrag 100
+  set %PotrzebnaMana 4
+if %AktKrag = 2 2
+  set %XKrag 130
+  set %PotrzebnaMana 6
+if %AktKrag = 3 2
+  set %XKrag 160
+  set %PotrzebnaMana 9
+if %AktKrag = 4 2
+  set %XKrag 190
+  set %PotrzebnaMana 11
+if %AktKrag = 5 2
+  set %XKrag 220
+  set %PotrzebnaMana 14
+if %AktKrag = 6 2
+  set %XKrag 250
+  set %PotrzebnaMana 20
+if %AktKrag = 7 2
+  set %XKrag 280
+  set %PotrzebnaMana 40
+if %AktKrag = 8 2
+  set %XKrag 310
+  set %PotrzebnaMana 50
+
+if %AktCzar = 1 || %AktCzar = 5
+  set %XCzar 120
+if %AktCzar = 2 || %AktCzar = 6
+  set %XCzar 170
+if %AktCzar = 3 || %AktCzar = 7
+  set %XCzar 220
+if %AktCzar = 4 || %AktCzar = 8
+  set %XCzar 270
+if %AktCzar > 0 && %AktCzar < 5
+  set %YCzar 120
+if %AktCzar > 4 && %AktCzar < 9
+  set %YCzar 190
+
+if %XKrag = 0 || %XCzar = 0 || %YCzar = 0
+{
+  set #sysmsgcol 1080
+  event sysmessage Wystapil blad: XKrag= , %XKrag , , , #spc , XCzar= , %XCzar , , , #spc , YCzar= , %YCzar
+  halt
+}
+set #lpc 10
+return
+
+;=========================================================================
+
+sub Medytuj
+Medyt:
+event macro 1 0 .um med
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Medyt
+scanjournal 1
+if Nie_brakuje_Ci_many in #journal
+  return
+until Rozpoczynasz_medytacje in #journal || Juz_medytujesz in #journal
+repeat
+scanjournal 1
+if s_koncentracje. in #journal || ( Konczysz_medytacje in #journal && #mana <> #maxmana )
+  goto Medyt
+if Nie_mozesz_sie_skoncentrowac in #journal
+{
+  wait 40
+  goto Medyt
+}
+until #mana = #maxmana
+return
+
+;=========================================================================
+
+sub Anatomia
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa ana
+gosub ObsluzCelownikSkilla
+return
+
+sub Madrosc
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa mad
+gosub ObsluzCelownikSkilla
+return
+
+sub AnimalLore
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa wie
+gosub ObsluzCelownikSkilla
+set %TimerAL #scnt2 + 30
+repeat
+scanjournal 1
+until _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal || To_stworzenie_ in #journal || Nie_udalo_Ci_sie_ocenic_tego_zwierzecia in #journal || Nie_wiesz_jak_to_ocenic in #journal || Stoisz_za_daleko in #journal || %TimerAL < #scnt2
+if _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal
+{
+  set %TimerAL #scnt2 + 9
+  repeat
+  scanjournal 1
+  until To_stworzenie_ in #journal || %TimerAL < #scnt2
+}
+if To_stworzenie_ in #journal
+{
+  set %TimerAL #scnt2 + 8
+  repeat
+  until %TimerAL < #scnt2
+}
+return
+
+sub Ukrywanie
+SkillUkrywanie:
+event macro 1 0 .um ukr
+set %TimerUkr #scnt2 + 3
+repeat
+if %TimerUkr < #scnt2
+  goto SkillUkrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until ukryl in #journal || nie_udalo_Ci_sie_ukryc in #journal || Wrog_Cie_juz in #journal || Nie_uda_Ci_sie_schowac_wierzchowca in #journal || Your_skill_in_Ukr in #journal || Your_skill_in_Hid in #journal
+return
+
+sub ArmsLore
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa bro
+gosub ObsluzCelownikSkilla
+return
+
+sub Wykrywanie
+SkillWykrywanie:
+event macro 1 0 .um wyk
+set %TimerWykr #scnt2 + 3
+repeat
+if %TimerWykr < #scnt2
+  goto SkillWykrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until Nie_znalazl in #journal || :_Znalazl in #journal || Your_skill_in_Wyk in #journal || Your_skill_in_Det in #journal
+return
+
+sub SpiritSpeak
+set %JIndexSkillSS #jindex
+SkillSpiritSpeak:
+event macro 1 0 .um roz
+set %TimerSpiritS #scnt2 + 10
+repeat
+if %TimerSpiritS < #scnt2
+  goto SkillSpiritSpeak
+until #jindex <> %JIndexSkillSS
+set %TimerSpiritS #scnt2 + 4
+repeat
+if %TimerSpiritS < #scnt2
+  goto SkillSpiritSpeak
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until _z_drugim_swiatem. in #journal || Your_skill_in_Roz in #journal || Your_skill_in_Spi in #journal
+return
+
+sub ObsluzCelownikSkilla
+UzyjSkilla:
+event macro 1 0 .um %SkroconaNazwa
+set %TimerUSK #scnt2 + 3
+repeat
+if %TimerUSK < #scnt2
+  goto UzyjSkilla
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until #targcurs = 1
+CelownikSkilla:
+set #ltargetkind 1
+set #ltargetid %CelSkilla
+event macro 22
+set %TimerUSK #scnt2 + 3
+repeat
+if %TimerUSK < #scnt2
+  goto CelownikSkilla
+until #targcurs = 0
+return
+
+sub WskazCel
+set #targcurs 1
+set #sysmsgcol 1152
+WskazCelSkilla:
+event sysmessage Wskaz cel dla skilla: %SkillName , #dot
+set %TimerWC #scnt2 + 100
+repeat
+if %TimerWC < #scnt2
+  goto WskazCelSkilla
+onhotkey ESC
+  goto WcisnietoESC
+until #targcurs = 0
+onhotkey ESC
+{
+  WcisnietoESC:
+  set #sysmsgcol 1080
+  event sysmessage Nie wskazales celu.
+  halt
+}
+set %CelSkilla #ltargetid
+if #ltargetkind = 0
+{
+  set #sysmsgcol 1080
+  event sysmessage Zle wskazany cel.
+  halt
+}
+return
+
+

@@ -1,0 +1,128 @@
+;==================================
+; Script Name:  Jawetzels gold looter
+; Author: Jawetzel
+; Version: 1.11
+; Client Tested with: osi
+; EUO version tested with: 1.5 v 124
+; Shard OSI / FS: chessy
+; Revision Date: 10-11-2007
+; Public Release: 10-5-2007
+; Global Variables Used: monster type
+; Purpose:will loot the gold off corpses and send to bank
+;==================================
+set %loot EEG_POF ;POF_VLK_RZF_KUF_JZF_WZF_KZF_MZF_SZF_ZUF_JUF_ ;EEG ;- skora
+set %corpse YFM_WNF_QNF_IIF
+set %mod ;put in mod for items here (ex: Recovery , #spc , 3)
+set %items ;put additional items to take, but not send to bank
+set %additional_items 3 ;put 1 to loot the specified additional items and
+;3 to not loot those items
+
+
+finditem %loot C_ , #backpackid
+set %0 #findid
+ignoreitem %0
+finditem %corpse G_2
+if #findkind <> -1
+{
+set %y #findid
+set #lobjectid %y
+event macro 17
+wait 10
+if reach in #sysmsg
+ {
+ repeat
+  {
+  event macro 17
+  wait 10
+  }
+ until Container_holds in #sysmsg
+ }
+finditem %loot ; C_ , %y
+if #findkind <> -1
+ {
+ repeat
+  {
+  finditem %loot
+  set %u #findid
+  exevent drag %u 60000
+  wait
+  exevent dropc #backpackid
+  ignoreitem %u
+  }
+ until #findkind = -1
+ }
+ignoreitem %y
+}
+;=========================
+if %additional_items < 2
+{
+finditem %items
+if #findkind > -1
+ {
+ set %i #findid
+ event property #findid
+ if %mod in #property
+  {
+  if #findkind > 0
+   {
+   repeat
+    {
+    exevent drag %i 60000
+    wait
+    exevent dropc #backpackid
+    wait 1
+    }
+   until #findkind = -1
+   }
+  }
+ }
+}
+set %i #findid
+ignoreitem %i
+if #weight > 550
+{
+gosub bag
+}
+;================================
+sub bag
+ignoreitem reset
+gosub checkbag
+finditem CKF C_ , #backpackid
+set %bagofsending #findid
+finditem POF C_ , #backpackid
+set %gold #findid
+set %findstack #findstack
+set #lobjectid %bagofsending
+set #ltargetid %gold
+set #ltargetkind 1
+event macro 17
+wait 5
+target
+event macro 22
+wait 20
+return
+;================================
+sub checkbag
+finditem CKF C_ , #backpackid
+event property #findid
+if Sending notin #property
+{
+ignoreitem #findid
+}
+if 0 in #property
+{
+set %bagofsending #findid
+finditem EUO C_ , #backpackid
+set %powder #findid
+set %findstack #findstack
+set #ltargetid %bagofsending
+set #lobjectid %powder
+set #ltargetkind 1
+event macro 17
+wait 5
+event macro 22
+wait 20
+}
+return
+
+

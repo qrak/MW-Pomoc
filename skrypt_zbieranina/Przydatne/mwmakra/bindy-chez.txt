@@ -1,0 +1,40 @@
+initevents
+set %profile 436_259
+
+keyloop:
+onHotKey F1   ;kilof
+gosub F1
+onHotKey F3   ;ident
+gosub F3
+onhotkey F4
+gosub F4
+
+goto keyloop
+
+sub F1
+finditem NPF C_ , #charid  ;wybuch
+set #lobjectid #findid
+event macro 17 0 ;last object
+wait 1s
+return
+
+sub F2
+finditem NPF C_ , #charid  ;wybuch
+set #ltargetid #findid
+event macro 1 0 .um identyfikacja
+target 2s
+event macro 22 0
+return
+
+sub F3
+finditem ZUF C ;czerwony pot
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F4
+event macro 1 0 za mna!
+set #lobjectid PZYACB
+event macro 17 0 ;last object
+return
+

@@ -1,0 +1,588 @@
+;Bindy by Raist
+;dla Draka
+initevents
+linespercycle 50
+
+repeat
+ignoreitem reset
+onHotKey 1 alt   ;wsiadanie na widmo
+gosub plecaczek
+onHotKey r alt   ;wsiadanie na widmo
+gosub widmo
+onHotKey e alt    ;drzwi
+gosub drzwi
+onHotKey F2       ;pomarancz
+gosub pomarancz
+onHotKey F3       ;zolta
+gosub zolta
+onHotKey F5       ;czerwony pot
+gosub czerwona
+onHotKey F6       ;leczenie
+gosub leczenie
+onHotKey F7       ;fiolet
+gosub fioletowa
+onHotKey F12      ;truta
+gosub zielona
+onHotKey F10      ;celowanie
+gosub targnext
+onhotkey q alt    ;jednoreczna + tarcza
+gosub jednoreczna
+onhotkey w alt    ;dwureczna kosa/promien
+gosub dwureczna
+onHotKey F10 alt  ;KLAWISZ DO ZBIERANIA SKRZYNI SKARBU
+gosub skarb
+onHotKey F12 alt  ;KLAWISZ DO ODKLADANIA REGOW
+gosub odkladaj
+until #false
+
+sub widmo
+event macro 1 0 Stop
+event macro 1 0 za mna
+set #lobjectid WKCUSB ;<--TU WPISZ ID MOUNTA
+event macro 17 0
+return
+
+sub plecaczek
+set #lobjectid #backpackid
+event macro 17 0
+return
+
+sub jednoreczna
+set %timer #scnt2 + 50
+finditem NFR_BPH C_ , #charid     ;szuka jednorecznej na paperdollu
+if #findkind <> -1
+   goto tarczaj
+finditem DFR_GUO C_ , #charid  ;szuka dwurecznej w paperdollu
+if #findkind = -1
+   goto mieczj
+set %dwu #findid
+dragdwu1:
+exevent Drag %dwu
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto dragdwu1
+if %timer < #scnt2
+   return
+finditem %dwu C ;
+until #findkind = -1
+dropdwu1:
+exevent Dropc #backpackid
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto dropdwu1
+if %timer < #scnt2
+   return
+finditem %dwu C ;
+until #findkind <> -1
+mieczj:
+finditem NFR_BPH C_ , #backpackid  ;szuka jednorecznej w plecaku
+if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage Nie znalazlem broni jednorecznej
+   return
+   }
+set %jedno #findid
+mieczdrag1:
+exevent Drag %jedno
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto mieczdrag1
+if %timer < #scnt2
+   return
+finditem %jedno C ;
+until #findkind = -1
+mieczdrop1:
+exevent Droppd
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto mieczdrop1
+if %timer < #scnt2
+   return
+finditem %jedno C ;
+until #findkind <> -1
+tarczaj:
+finditem CIK_HKQ C_ , #charid  ;szuka tarczy na paperdollu
+if #findkind <> -1
+   return
+finditem CIK C_ , #backpackid  ;szuka paweza w plecaku
+if #findkind = -1
+   {
+   finditem HKQ C_ , #backpackid  ;szuka tarczy pala w plecaku
+   if #findkind = -1
+      {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem tarczy
+      return
+      }
+   set #lobjectid #findid
+   event macro 17 0
+   wait 5
+   return
+   }
+set %tarcza #findid
+tarczadrag1:
+exevent Drag %tarcza
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto tarczadrag1
+if %timer < #scnt2
+   return
+finditem %tarcza C ;
+until #findkind = -1
+tarczadrop1:
+exevent Droppd
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto tarczadrop1
+if %timer < #scnt2
+   return
+finditem %tarcza C ;
+until #findkind <> -1
+return
+
+sub dwureczna
+set %timer #scnt2 + 50
+finditem DFR_GUO C_ , #charid    ;szuka dwurecznej w paperdollu
+if #findkind = -1
+   {
+   finditem CIK_HKQ C_ , #charid  ;szuka tarczy na paperdollu
+   if #findkind = -1
+      {
+      finditem NFR_BPH C_ , #charid  ;szuka jednorecznej na paperdollu
+      if #findkind = -1
+         {
+         goto dragdwur2
+         }
+      set %jedno #findid
+      goto mieczdrag2
+      }
+   set %tarcza #findid
+   goto tarczadrag2
+   }
+zmiendwu:
+set %dwu1 #findid
+finditem DFR_GUO C_ , #backpackid ;szuka dwurecznej w plecaku
+if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage Nie znalazlem broni dwurecznej
+   return
+   }
+set %dwu2 #findid
+zmiendg1:
+exevent Drag %dwu1
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto zmiendg1
+if %timer < #scnt2
+   return
+finditem %dwu1 C ;
+until #findkind = -1
+zmiendp1:
+exevent Dropc #backpackid
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto zmiendp1
+if %timer < #scnt2
+   return
+finditem %dwu1 C ;
+until #findkind <> -1
+zmiendg2:
+exevent Drag %dwu2
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto zmiendg2
+if %timer < #scnt2
+   return
+finditem %dwu2 C ;
+until #findkind = -1
+zmiendp2:
+exevent Droppd
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto zmiendp2
+if %timer < #scnt2
+   return
+finditem %dwu1 C ;
+until #findkind <> -1
+return
+tarczadrag2:
+exevent Drag %tarcza
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto tarczadrag2
+if %timer < #scnt2
+return
+finditem %tarcza C ;
+until #findkind = -1
+tarczadrop2:
+exevent Dropc #backpackid
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto tarczadrop2
+if %timer < #scnt2
+   return
+finditem %tarcza C ;
+until #findkind <> -1
+finditem NFR_BPH C_ , #charid  ;szuka jednorecznej na paperdollu
+if #findkind = -1
+   goto dragdwur2
+set %jedno #findid
+mieczdrag2:
+exevent Drag %jedno
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto mieczdrag2
+if %timer < #scnt2
+   return
+finditem %jedno C ;
+until #findkind = -1
+mieczdrop2:
+exevent Dropc #backpackid
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto mieczdrop2
+if %timer < #scnt2
+   return
+finditem %jedno C ;
+until #findkind <> -1
+dragdwur2:
+finditem GUO C_ , #backpackid
+if #findkind = -1
+   {
+   finditem DFR C_ , #backpackid
+   if #findkind = -1
+      {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem broni dwurecznej
+      return
+      }
+   }
+set %dwu #findid
+dragdwu2:
+exevent Drag %dwu
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto dragdwu2
+if %timer < #scnt2
+   return
+finditem %dwu C ;
+until #findkind = -1
+dropdwu2:
+exevent Droppd
+set %czas #scnt2 + 20
+repeat
+if %czas < #scnt2
+   goto dropdwu2
+if %timer < #scnt2
+   return
+finditem %dwu C ;
+until #findkind <> -1
+return
+
+sub drzwi
+set %czas #scnt2 + 20
+ignoreitem reset
+drzwi:
+finditem XG_ZG_TG_VG_FH_HH_BH_DH_AY_ZX_CY_BY_XGB_ZGB_JHB_LHB_FHB_HHB_RHB_THB_NHB_PHB_ZHB_BIB_VHB_XHB_HIB_JIB_DIB_FIB_PIB_RIB_LIB_NIB_ZDB_BEB_VDB_XDB_HEB_JEB_DEB_FEB_PEB_REB_LEB_NEB_XEB_ZEB_TEB_VEB_FFB_HFB_FJC_IJC_HJC_SJC_RJC_UJC_TJC_OJC_NJC_QJC_PJC_YOC_XOC_APC_ZOC_UOC_TOC_WOC_VOC_GPC_FPC_IPC_HPC_CPC_BPC_EPC_DPC_OPC_NPC_QPC_PPC_KPC_JPC_MPC_LPC_WPC_VPC_YPC_XPC_SPC_RPC_UPC_TPC_EQC_DQC_GQC_FQC_AQC_ZPC_CQC_BQC_MQC_LQC_OQC_NQC_IQC_HQC_KQC_JQC_UQC_TQC_WQC_VQC_QQC_PQC_SQC_RQC_CRC_BRC_ERC_DRC_YQC_XQC_ARC_ZQC_MMC_LMC_OMC_NMC_IMC_HMC_KMC_JMC_UMC_TMC_WMC_VMC_QMC_PMC_SMC_RMC_CNC_BNC_ENC_DNC_YMC_XMC_ANC_ZMC_KNC_JNC_MNC_LNC_GNC_FNC_INC_HNC_SNC_RNC_UNC_TNC_ONC_NNC_QNC_PNC_AOC_ZNC_COC_BOC_WNC_VNC_YNC_XNC_IOC_HOC_KOC_JOC_EOC_IPJ_HPJ_RPL_UPL_TPL_OPL_NPL_QPL_PPL_AQL_ZPL_CQL_BQL_WPL_VPL_YPL_XPL_IQL_HQL_KQL_JQL_EQL_DQL_GQL_FQL_QQL_PQL_SQL_RQL_MQL_LQL_OQL_NQL_YQL_XQL_ARL_ZQL_UQL_ZZL_CAM_BAM_MAM_LAM_OAM_NAM_IAM_HAM_KAM_JAM_UAM_TAM_WAM_VAM_QAM_FUN_QUN_PUN_SUN_RUN_MUN_GRO_IRO_EWP_DWP_KWP_JWP_HAQ_KAQ_JAQ_UAQ_TAQ_WAQ_VAQ_QAQ  G_2 ;
+if #findkind = -1
+finditem DUU_TTU_XTU_RTU_PAQ_SAQ_RAQ_CBQ_BBQ_EBQ_DBQ_YAQ_XAQ_ABQ_ZAQ_KBQ_JBQ_MBQ_LBQ_GBQ_UED_TED_WED_VED_GFD_FFD_IFD_HFD_CFD_BFD_EFD_DFD_OFD_NFD_QFD_PFD_VFD_YFD_XFD_SFD_RFD_UFD_TFD_GBD_FBD_IBD_HBD_CBD_BBD_EBD_DBD_OBD_KBD_JBD_MBD_LBD_WBD_VBD_YBD_XBD_SBD_RBD_UBD_TBD_ECD_DCD_GCD_FCD_KCD_JCD_UCD_TCD_WCD_VCD_QCD_PCD_SCD_RCD_CDD_BDD_EDD_DDD_YCD_XCD_RZN_UZN_TZN_EAO_DAO_GAO_FAO_AAO_ZZN_CAO_BAO_MAO_LAO_OAO_ZHO G_2 ;
+if #findkind = -1
+   return
+if #findkind = 1 && ( ( #findz - #charposz ) > 15 || ( #findz - #charposz ) < -15 )
+{
+  ignoreitem #findid
+  goto drzwi
+}
+if #findkind = 1 && ( ( #findz - #charposz ) < 16 && ( #findz - #charposz ) > -16 )
+{
+  set #lobjectid #findid
+  event macro 17
+  wait 5
+  return
+}
+if %czas < #scnt2
+{
+  return
+}
+goto drzwi
+
+sub zolta
+finditem UUF C ;Heal
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz zoltych
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl zoltych
+return
+
+sub czerwona
+finditem ZUF C ;czerwony pot
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz czerwieni
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl czerwieni
+return
+
+sub fioletowa
+finditem TUF C ;fioletowa
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz fioletow
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl fioletowych
+return
+
+sub pomarancz
+finditem NUF C ;pomarancz
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz pomaranczy
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl pomaranczy
+return
+
+sub zielona
+finditem AVF C ;zielona
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz zielonych
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl zielonych
+return
+
+sub targnext
+start2:
+ event macro 26 0
+ finditem #ltargetid
+ if #ltargetid = #charid
+ return
+ if #ltargetid = ATKDFB || #ltargetid = SBEM || #ltargetid = XCVQF || #ltargetid = EUUFEB || #ltargetid = VCAIB || #ltargetid = XQNLU || #ltargetid = HRGJEB || #ltargetid = AYMVEB || #ltargetid = XEGJHB || #ltargetid = CWWAKB || #ltargetid = LGUMU
+ goto start2
+ if #findrep = 4
+ return
+ if #findrep = 5
+ return
+ if ( #findtype = IS ) || ( #findtype = HS ) || ( #findtype = AV ) || ( #findtype = XU )
+ {
+  if ( #findrep = 2 ) || ( #findrep = 7 ) || ( #findrep = 1 )
+     goto start2
+  if #findrep = 6
+     goto sprnpc
+  return
+ }
+ if #findtype = FH   ;wilkolak
+    return
+ else
+ goto start2
+sprnpc:
+event property #findid
+if ( ( #spc , - , #spc ) in #property ) || ( Uzdrowiciel in #property ) || ( pustyni in #property ) || ( ( drow , #spc ) in #property ) || ( ( khaldun ) in #property )
+goto start2
+return
+ ;LGUMU-raist
+ ;EUUFEB-mag garba
+ ;VCAIB-drak
+ ;XQNLU-kamyk
+ ;HRGJEB-lucas
+ ;AYMVEB-vaincre
+ ;XEGJHB-godrik
+ ;CWWAKB-nil
+ ;XCVQF-neribczlowiek
+ ;SBEM-nimfa
+ ;ATKDFB-dedz
+
+sub odkladaj
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak do ktorego chcesz odlozyc ziola i kamienie
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc2
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc2:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple #ltargetid
+set #lobjectid #ltargetid
+set %czas #scnt2 + 10
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+lecimy:
+finditem wlf_szf_rzf_mzf_kzf_wzf_juf_jzf_ozf_vzf_yzf_tzf_qzf_duf_pzf_fuf_euf_nzf_huf_eag_guf_iuf_kuf_uzf_dag_eth_lzf_rvf_mwf_evf_bvf_gvf_ovf_fvf_hvf_vuf_wuf C_ , #backpackid ;
+if #findkind = -1
+{
+set #sysmsgcol 1063
+event sysmessage Odlozone
+return
+}
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exdrag3:
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag3
+finditem %id_przen C_ , #backpackid ;
+until #findkind = -1
+finditem %typ_przen C_ , %ple
+set %tmp #findstack
+exdrop3:
+exevent dropc %ple ;odloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop3
+finditem %typ_przen C_ , %ple
+until #findstack <> %tmp
+goto lecimy
+
+sub skarb
+ignoreitem reset
+set %skarb #contid
+lecimy2:
+finditem pof_szf_wlf_szf_rzf_mzf_kzf_wzf_juf_jzf_ozf_vzf_yzf_tzf_qzf_duf_pzf_fuf_euf_nzf_huf_eag_guf_iuf_kuf_uzf_dag_eth_lzf_rvf_mwf_evf_bvf_gvf_ovf_fvf_hvf_vuf_wuf C_ , %skarb ;
+if #findkind = -1
+   {
+   wstep:
+   finditem * C_ , #backpackid
+   if #findkind = -1
+      goto magiki
+   ignoreitem #findid
+   goto wstep
+   magiki:
+   finditem AUO_KPH_TVI_RPF_BPH_DCI_YSF_JSF_FWL_ZVI_SPO_KTF_VOH_GFF_RPO_VAP_ATF_EBP_VRH_SRH_CQF_PMH_LMH_GBP_UJG_HJG_POH_OMH_AUH_FJG_SJG_RJG_AQH_TSF_IJG C_ , %skarb
+   if #findkind = -1
+      {
+      set #sysmsgcol 1080
+      event sysmessage Skarb zabrany
+      return
+      }
+   event property #findid
+   if magiczn in #property
+      goto zabierz
+   ignoreitem #findid
+   goto lecimy2
+   }
+goto zabierz
+zabierz:
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exdrag4:
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag4
+finditem %id_przen C_ , %skarb ;
+until #findkind = -1
+finditem %typ_przen C_ , #backpackid
+set %tmp #findstack
+set %czas2 #scnt2 + 60
+exdrop4:
+exevent dropc #backpackid ;odloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop4
+finditem %typ_przen C_ , #backpackid
+until #findstack <> %tmp || #findid = %id_przen || %czas2 < #scnt2
+ignoreitem %id_przen
+goto lecimy2
+
+sub leczenie
+  stleczenie:
+  finditem ZLF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam bandazy!
+     goto koniecleczenie
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stleczenie
+   }
+  set %iloscbandazy #findstack
+  set #lobjectid #findid
+  event macro 17
+  target 5s
+  if #targcurs <> 1
+   {
+    goto koniecleczenie
+   }
+  event macro 23
+  event macro 23
+  event macro 23
+  set #sysmsgcol 1154
+  set %iloscbandazy %iloscbandazy - 1
+  event sysmessage Aktualna ilosc bandazy: %iloscbandazy
+  koniecleczenie:
+  ignoreitem reset
+return
+
+

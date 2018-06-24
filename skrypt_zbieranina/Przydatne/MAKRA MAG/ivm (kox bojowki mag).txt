@@ -1,0 +1,510 @@
+;Skrypt bY SabiK
+;leczenie-in_vas_mani.txt
+;Wersja 1.3
+;Makro przydatne do koxania bojowki
+;Jesli mamy ponizej '%hp' hp czaruje In Vas Mani,
+;Jezeli mamy ponizej '%hp1' hp leczy nas i medytuje
+;Zarzuca blesa, prota i reactiva
+;Po przytrzymaniu klawisza "insert" skrypt sie wylacza
+;Jesli brakuje ci skladnikow lub many skrypt sie wylaczy oraz poinformuje cie o tym dzwiekiem i powiadomieniem w uo
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %bles 0                   ;Tu ustaw czy skrypt ma zarzucac blesa
+set %prot 0                   ;Tu ustaw czy skrypt ma zarzucac prota
+set %reactiv 0                ;Tu ustaw czy skrypt ma zarzucac reactiv armor
+set %str 53                   ;Tu ustaw ponizej ilu STR skrypt ma zarzucac blesa
+set %hp 35                    ;Tu ustaw ponizej jakiej ilosci hp skrypt ma czarowac In Vas Mani
+set %hp1 30                   ;Tu ustaw ponizej jakiej ilosci hp skrypt ma uleczzyc nas In Vas Mani
+set %hpk 20                   ;Tu ustaw krytyczna ilosc hp ponizej ktorej skrypt w razie nieudanego leczenia ma odegrac dzwiek, abys mogl uciec :))
+set %sciezka E:\torpeda.wav       ;Tutaj ustaw sciezke do dzwieku
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [leczenie-in_vas_mani] odpalony (by SabiK)
+wait 1
+set %licz 0
+
+start:
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #hits < ( %hp - 10 )
+   goto lecz
+if #str <= %str
+   goto bles
+if #str = 0
+   goto lecz
+if #hits < %hpk
+   sound %sciezka
+if #hits < %hp
+   goto lecz
+
+lecz:
+if #hits = #maxhits
+   goto start
+if #str <= %str
+   goto bles
+if #hits < %hpk
+   sound %sciezka
+if #hits < %hp
+{
+   leczenie:
+   if #charghost = YES
+   {
+      set #sysmsgcol 1080
+      event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   set %x #charposx
+   set %y #charposy
+   set %z #charposz
+   set %ch #chardir
+   wait 10
+   onhotkey insert
+   {
+      set #sysmsgcol 1080
+      event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   if #charposx = %x
+   {
+      if #charposy = %y
+      {
+         if #charposz = %z
+         {
+            if #chardir = %ch
+               goto leczenie1
+         }
+      }
+   }
+   goto lecz
+   leczenie1:
+   event macro 15 28
+   set %licz #scnt2 + 60
+   czekaj_leczenie:
+   if #targcurs = 1
+      goto dalej_leczenie
+   if #sex = 0
+   {
+      if Straciles_koncentracje in #sysmsg
+         goto lecz
+   }
+   if #sex = 1
+   {
+      if Stracilas_koncentracje in #sysmsg
+         goto lecz
+   }
+   if #sysmsg = You_are_already_doing_something_else.
+   {
+      wait 10
+      goto lecz
+   }
+   if #charghost = YES
+   {
+      set #sysmsgcol 1080
+      event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   onhotkey insert
+   {
+      set #sysmsgcol 1080
+      event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   if brakuje in #sysmsg
+   {
+      set #sysmsgcol 1080
+      event sysmessage Brakuje Ci skladnikow lub many! Skrypt wylaczono!
+      sound %sciezka
+      wait 35
+      sound %sciezka
+      halt
+   }
+   if %licz < #scnt2
+      goto lecz
+   goto czekaj_leczenie
+   dalej_leczenie:
+   if #hits < %hp1
+      goto dalej2_leczenie
+   if #targcurs = 0
+   {
+      wait 5
+      if #mana > ( #maxmana - 10 )
+      goto start
+      else
+      goto medyt
+   }
+   event macro 1 0 .um wykrywanie
+   wait 15
+   if #hits < %hp1
+      goto dalej2_leczenie
+   if #targcurs = 0
+   {
+      wait 5
+      if #mana > ( #maxmana - 10 )
+      goto start
+      else
+      goto medyt
+   }
+   wait 15
+   if #hits < %hp1
+      goto dalej2_leczenie
+   if #targcurs = 0
+   {
+      wait 5
+      if #mana > ( #maxmana - 10 )
+      goto start
+      else
+      goto medyt
+   }
+   if #charghost = YES
+   {
+      set #sysmsgcol 1080
+      event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   onhotkey insert
+   {
+      set #sysmsgcol 1080
+      event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+      halt
+   }
+   goto dalej_leczenie
+}
+goto start
+
+dalej2_leczenie:
+event macro 23
+wait 5
+medyt:
+if #hits < %hpk
+   sound %sciezka
+if #hits < ( %hp - 10 )
+   goto lecz
+if #str <= %str
+   goto bles
+if #mana = #maxmana
+   goto start
+if #mana > ( #maxmana - 10 )
+   goto start
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+set %x #charposx
+set %y #charposy
+set %z #charposz
+set %ch #chardir
+wait 10
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #charposx = %x
+{
+   if #charposy = %y
+   {
+      if #charposz = %z
+      {
+         if #chardir = %ch
+            goto medyt11
+      }
+   }
+}
+goto medyt
+medyt11:
+event macro 13 46
+set %licz #scnt2 + 20
+medyt1:
+if Rozpoczynasz_medytacje in #sysmsg
+   goto koniec
+if #hits < ( %hp - 10 )
+   goto lecz
+if #str <= %str
+   goto bles
+if #hits < %hpk
+   sound %sciezka
+if #hits < %hp
+   goto lecz
+if %licz < #scnt2
+   goto medyt
+goto medyt1
+koniec:
+if #hits < ( %hp - 10 )
+   goto lecz
+if #str <= %str
+   goto bles
+if #hits < %hpk
+   sound %sciezka
+if #hits < %hp
+   goto lecz
+if #mana = #maxmana
+   goto start
+if #sysmsg = Konczysz_medytacje.
+   goto start
+if #sex = 0
+{
+   if #sysmsg = Straciles_koncentracje.
+      goto start
+}
+if #sex = 0
+{
+   if #sysmsg = Stracilas_koncentracje.
+      goto start
+}
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+   goto start
+if #sysmsg = Nie_brakuje_Ci_many.
+  goto start
+if #sysmsg = Juz_cos_robisz.
+   goto start
+if #sysmsg = You_are_already_doing_something_else.
+   goto start
+if #sysmsg = You_must_wait_to_perform_another_action.
+   goto start
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #sysmsg = Juz_medytujesz...
+   goto koniec
+goto koniec
+
+bles:
+if %bles = 0
+   goto prot
+if %bles = 1 && %prot = 1 && %reactiv = 1
+{
+   if #mana < 19
+      goto medyt
+}
+if %bles = 1 && %prot = 1 && %reactiv = 0
+{
+   if #mana < 15
+      goto medyt
+}
+if %bles = 1 && %prot = 0 && %reactiv = 1
+{
+   if #mana < 13
+      goto medyt
+}
+if %bles = 0 && %prot = 1 && %reactiv = 1
+{
+   if #mana < 9
+      goto medyt
+}
+if %bles = 1 && %prot = 0 && %reactiv = 0
+{
+   if #mana < 9
+      goto medyt
+}
+if %bles = 0 && %prot = 1 && %reactiv = 0
+{
+   if #mana < 6
+      goto medyt
+}
+if %bles = 0 && %prot = 0 && %reactiv = 1
+{
+   if #mana < 4
+      goto medyt
+}
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani-wykrywanie]
+   halt
+}
+set %x #charposx
+set %y #charposy
+set %z #charposz
+set %ch #chardir
+wait 10
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #charposx = %x
+{
+   if #charposy = %y
+   {
+      if #charposz = %z
+      {
+         if #chardir = %ch
+            goto bles1
+      }
+   }
+}
+goto bles
+bles1:
+event macro 15 16
+set %licz #scnt2 + 40
+czekaj_bles:
+set %licz %licz + 1
+if #targcurs = 1
+   goto dalej_bles
+if %licz < #scnt2
+   goto bles
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+goto czekaj_bles
+dalej_bles:
+event macro 23
+wait 5
+prot:
+if %prot = 0
+   goto reactiv
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+set %x #charposx
+set %y #charposy
+set %z #charposz
+set %ch #chardir
+wait 10
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #charposx = %x
+{
+   if #charposy = %y
+   {
+      if #charposz = %z
+      {
+         if #chardir = %ch
+         goto prot1
+      }
+   }
+}
+goto prot
+prot1:
+event macro 15 14
+wait 45
+reactiv:
+if %reactiv = 0
+{
+   if #mana < #maxmana
+      goto medyt
+   goto detect
+}
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+set %x #charposx
+set %y #charposy
+set %z #charposz
+set %ch #chardir
+wait 10
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty :P. Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+onhotkey insert
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie-in_vas_mani]
+   halt
+}
+if #charposx = %x
+{
+   if #charposy = %y
+   {
+      if #charposz = %z
+      {
+         if #chardir = %ch
+            goto reactiv1
+      }
+   }
+}
+goto reactiv
+reactiv1:
+event macro 15 6
+wait 50
+goto medyt
+

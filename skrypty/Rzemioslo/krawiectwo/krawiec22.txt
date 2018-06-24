@@ -1,0 +1,103 @@
+initevents
+set %ple #BACKPACKID
+set %profile 560_460
+
+start:
+
+if #dex = 36
+{
+finditem yuf C ;
+set #lobjectid #findid
+event macro 17 0
+wait 1s
+}
+
+finditem HAG C , %ple ; szuka narzedzie szewskie
+set #lobjectid #findid  ; ustawia je jako lastobject
+
+finditem  ddg_cui C ; szuka tkaniny/skory
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC
+sound D:\misile.wav
+halt
+}
+set #ltargetid #findid
+event macro 17 0
+target 1s
+event macro 22 0
+set %czas #scnt2 + 10
+
+stolarz:
+if #CONTSIZE = %profile
+{
+set %czas #scnt2 + 70
+click 137 392   ; rob ostatnie ostatnie
+wait 1s
+goto pat
+}
+if %czas < #scnt2
+goto pat
+else
+{
+goto stolarz
+}
+
+pat:
+scanJournal 1
+if Uszyles_przedmiot || Uszylas_przedmiot in #journal
+{
+goto hid
+}
+if Zniszczyles_troche || Zniszczylas_troche in #journal
+{
+goto hid
+}
+if narzedzia_szewskie in #journal
+{
+sound D:\missile.wav
+halt
+}
+if Uszyles_Wyjatkowej || Uszylas_Wyjatkowej in #journal
+{
+set #sysmsgcol 1080
+goto hid
+halt
+}
+if Your_skill in #journal
+{
+goto hid
+}
+if Masz_za in #journal
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC
+sound C:\missile.wav
+halt
+}
+if %czas < #scnt2
+goto hid
+else
+{
+goto pat
+}
+
+hid:
+event macro 1 0 .um ukrywanie
+set %czas #scnt2 + 10
+
+hid2:
+scanjournal 1
+if Cheeza: in #journal
+goto start
+if Nie_udalo in #journal
+goto start
+if Juz_cos in #journal
+goto start
+if Your_skill_in_Ukrywanie in #journal
+goto start
+if %czas < #scnt2
+goto start
+else
+goto hid2

@@ -1,0 +1,18 @@
+initEvents
+insc:
+if #mana > 40
+{
+fala:
+event macro 1 0 Sdhbhal Roiseal
+event SysMessage --- Fala ---
+wait 8s
+key F5
+event SysMessage Mana: #mana
+goto insc
+}
+{
+event macro 13 46
+event SysMessage --- Medytowanie ---
+wait 12s
+goto mana
+}

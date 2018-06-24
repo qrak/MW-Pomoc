@@ -1,0 +1,127 @@
+initevents
+set %cel #ltargetid
+set %profile 350_300
+
+start:
+if #mana < 50
+goto mana
+event macro 13 21
+wait 30
+
+zzz:
+finditem PBG C;
+set #lobjectid #findid
+finditem MMF
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM JUZ ZWOJKOW
+sound C:\oneandonly.wav
+halt
+}
+else
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0 
+
+inskr:
+if #CONTSIZE = %profile
+{
+click 105 278
+goto pat
+}
+else
+{
+goto inskr
+}
+
+pat:
+if Stworzyles_zwoj in #sysmsg
+{
+goto sprawdzglod
+}
+if Nauczasz in #sysmsg
+{
+goto sprawdzglod
+}
+if Nie_udalo in #sysmsg
+{
+goto sprawdzglod
+}
+if Masz_za in #sysmsg
+{
+goto sprawdzglod
+}
+else
+goto pat
+
+mana:
+event macro 13 46
+goto sprawdzmedit
+
+
+sprawdzmedit:
+if Konczysz_medytacje in #sysmsg
+{
+wait 25
+goto dalej
+}
+if Juz_medytujesz... in #sysmsg
+{
+goto sprawdzmedit
+}
+if Nie_mozesz in #sysmsg
+{
+wait 6s
+goto mana
+}
+if Nie_brakuje in #sysmsg
+{
+goto start
+}
+if You_must in #sysmsg
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+dalej:
+goto bless
+
+
+
+bless:
+if #str < 60   ;tu wstawiasz wartosc swojej sily zeby pisal na blessie
+{
+event macro 15 16
+target 100s
+event macro 23
+wait 4s
+goto mana
+}
+else
+{
+goto sprawdzglod
+}
+
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+else
+goto petla

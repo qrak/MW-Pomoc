@@ -1,0 +1,127 @@
+;Autor: [nGz]
+;Bip z opoznieniem (do koxania alchemii, kowala, itp...)
+;Client: 5.0.0 i wyzsze.
+;===============
+set %Sciezka_do_wava C:\missile.wav
+set %Pw haslo
+set %Char 2
+set %Opoznienie 20   ;(10 = 1 sekunda)
+;===============
+set %Makroczek 0
+set %Imie_postaci #charname
+str Count %Imie_postaci #spc
+for %i 1 #strres
+{
+  str Pos %Imie_postaci #spc
+  set %pozycja #strres
+  str Del %Imie_postaci %pozycja 1
+  str Ins #strres _ %pozycja
+  set %Imie_postaci #strres
+}
+str Left #charname 3
+repeat
+if #contname = generic_gump
+{
+  if %Makroczek = 0
+  {
+    set %Makroczek 1
+    set %Timer_mczek #scnt2 + %Opoznienie
+    continue
+  }
+  if %Timer_mczek < #scnt2 && #contname = generic_gump
+    sound %Sciezka_do_wava
+}
+else
+  set %Makroczek 0
+scanjournal 1
+if ( _ , #strres in #journal && %Imie_postaci , :_ notin #journal && You_see:_ notin #journal ) || valar in #journal || smiertel in #journal || bog in #journal || ( zrob in #journal && krok in #journal ) || ( ( rusz in #journal || przesun in #journal ) && sie in #journal && %Imie_postaci , :_ notin #journal )
+  sound %Sciezka_do_wava
+if ( _-_Straznikx:_ in #journal || _-_Rycerz_Britishax:_ in #journal ) && wracaj_tu notin #journal && Ah_ha! notin #journal && Aha_! notin #journal && :_*hrrr* notin #journal && Moge_cie_nauczyc notin #journal && Mowilem_cos notin #journal && Mowilam_cos notin #journal && Zegnam. notin #journal && Nauka_wazna_rzecz, notin #journal && Innym_razem_wiec. notin #journal && Dowidzenia. notin #journal && Czego_pragniesz_sie_nauczyc? notin #journal
+{
+  if Nie_rozpychaj_sie_tak. notin #journal && Nauka_wazna_rzecz._udziele_jej notin #journal && Zapraszam_innym_razem. notin #journal && Czemu_sie_tak_pchasz? notin #journal && Spojrz_czego_nauczyc_moge. notin #journal
+    sound %Sciezka_do_wava
+}
+if #contname = waiting_gump && #contsize = 203_121
+{
+  sound %Sciezka_do_wava
+  key Enter
+  set %czas #scnt2 + 20
+}
+if %czas < #scnt2
+{
+  set %czas N/A
+  gosub Loguj
+}
+onhotkey F1 ALT
+  gosub Loguj
+onhotkey F2 ALT
+  gosub Drzwi
+until #false
+
+sub Loguj
+if #contname = MainMenu_gump
+{
+  msg %Pw
+  wait 10
+  key Enter
+}
+else
+  return
+set %Timer #scnt2 + 150
+repeat
+if %Timer < #scnt2
+  return
+until #contname = normal_gump
+wait 10
+key Enter
+set %Timer #scnt2 + 150
+repeat
+if %Timer < #scnt2
+  return
+until #contname = Login_gump
+wait 5
+if %Char = 1
+  click 355 165
+if %Char = 2
+  click 355 205
+wait 5
+click 617 445
+set %Timer #scnt2 + 50
+repeat
+if %Timer < #scnt2
+{
+  event macro 8 2
+  set %Timer #scnt2 + 10
+}
+until #str <> N/A && #str <> 0
+wait 10
+click 50 50 r
+return
+
+sub Drzwi
+set #sysmsgcol 1264
+set %Timer_Drzwi #scnt2 + 27
+ignoreitem reset
+drzwi_petla:
+finditem xmc_hnc_jqc_hqc_bqc_zpc_xnc_vnc_pnc_nnc_zmc_xmc_fnc_jam_ham_boc_znc_vfd_xfd_hjc_fjc_kcd_ucd_njc_pjc_tpc_rpc_zzl_bam_lam_ued_wed_dfd_ifd_joc_hoc G_2
+if #findkind = 1 && ( ( #findz - #charposz ) > 15 || ( #findz - #charposz ) < -15 )
+{
+  ignoreitem #findid
+  event sysmessage Znalazlem drzwi na innym poziomie
+  wait 2
+  goto drzwi_petla
+}
+if #findkind = 1 && ( ( #findz - #charposz ) < 16 && ( #findz - #charposz ) > -16 )
+{
+  event sysmessage Znalazlem drzwi !
+  set #lobjectid #findid
+  event macro 17
+  return
+}
+if %Timer_Drzwi < #scnt2
+{
+  event sysmessage Nie znalazlem drzwi do otworzenia
+  return
+}
+goto drzwi_petla
+</div>

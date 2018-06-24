@@ -1,0 +1,14 @@
+initevents
+start:
+keyloop:
+onHotKey r alt
+  gosub bola
+goto keyloop
+sub bola
+event macro 1 0 stop!
+event macro 1 0 za mna!
+finditem XTRASB ; TU WPISZ id ZwIERZAKA
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+

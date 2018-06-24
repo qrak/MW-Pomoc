@@ -1,0 +1,134 @@
+initevents
+set %profile 520_390
+
+start:
+
+mana:
+if #mana < 40 ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+event macro 13 46
+set %czas #scnt2 + 200
+goto sprawdzmedit
+}
+else
+{
+if #HITS < 20
+   goto heal
+if #STR = 62 ;WPISZ SWOJE STR BEZ BLESSA (jesli makro ma blessowac)
+   goto bless
+goto czaruj
+}
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #sysmsg
+{
+goto sprawdzglod
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+if %czas < #scnt2
+goto start
+else
+{
+goto sprawdzmedit
+}
+
+bless:
+event macro 15 16
+target 55s
+event macro 23
+wait 4s
+goto mana
+goto start
+
+czaruj:
+event macro 15 52 ;mana vamp
+wait 2s
+set %czas #scnt2 + 60
+
+czekaj:
+scanjournal 1
+if #TARGCURS = 1
+   {
+   event macro 23 0
+   wait 12
+   finditem DYM G_2
+   if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage STOISZ ZA DALEKO OD KSIEGI
+   goto start
+   }
+   set #lobjectid #findid
+   event macro 17 0 ;last object
+   wait 1
+   set %czas #scnt2 + 20
+   inskr:
+   if #CONTSIZE = %profile
+      {
+      wait 10
+      click 474 302  ; click
+      wait 5
+      click 474 302
+      wait 5
+      goto start
+      }
+      if %czas > #scnt2
+      goto start
+      else
+      goto inskr
+   }
+if Czar_sie in #sysmsg
+   goto start
+if You_skill in #sysmsg
+   goto start
+if Czujesz_swoja in #sysmsg
+   goto start
+if %czas < #scnt2
+   {
+   goto start
+   }
+else
+    goto czekaj
+
+heal:
+event macro 15 28 ;in vas mani
+target 50s
+event macro 23 ;target self
+goto start
+
+sprawdzglod:
+event macro 1 0 .glod
+set %czas #scnt + 20
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+finditem DUF C ;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ JEDZENIA
+sound C:\missile.wav
+halt
+}
+set #lobjectid #findid
+event macro 17 0
+wait 20
+goto sprawdzglod
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Czujesz_sie_ciezki in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+if Your_skill in #sysmsg
+goto start
+if %czas < #scnt2
+goto start
+else
+goto petla

@@ -1,0 +1,12 @@
+initevents
+keyloop:
+onHotKey 6 ;<-- TU WPISZ DOGODNY DLA SIEBIE KLAWISZ
+gosub wsiadanie
+goto keyloop
+sub wsiadanie
+event macro 1 0 stop!
+event macro 1 0 za mna!
+finditem  LWWXPB ;<--TU WPISZ id ZWIERZAKA (ka¿da zmiana zwierzaka = koniecznoœæ zmiany tego wpisu)
+set #lobjectid #findid
+event macro 17 0 ;last object
+return

@@ -1,0 +1,43 @@
+;MAKRO NA LECZENIE by Raist
+;ustawiasz klawisz pod ktorym makro stopuje
+;musisz go przytrzymac tak dlugoaz zobaczysz komunikat
+;ze makro leczace zostalo wylaczone
+
+initevents
+
+start:
+onHotKey F6    ;<--USTAW KLAWISZ
+goto stop1
+
+if #hits < 55  ;<--USTAW PROG HP PONIZJ KTOREGO MA LECZYC
+{
+wait 5
+event macro 15 28 ; in vas mani
+wait 5
+set %czas #scnt2 + 40
+czekaj:
+scanjournal 1
+if %czas < #scnt2
+   goto start
+if #TARGCURS = 1
+   {
+   event macro 23 ;target self
+   wait 12
+   goto start
+   }
+if Straciles in #JOURNAL
+   {
+   wait 5
+   goto start
+   }
+else
+   goto czekaj
+}
+else
+goto start
+
+stop1:
+set #sysmsgcol 1080
+event sysmessage MAKRO NA LECZENIE WYLACZONE
+halt
+

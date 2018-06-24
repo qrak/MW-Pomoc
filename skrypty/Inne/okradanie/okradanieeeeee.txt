@@ -1,0 +1,235 @@
+;Autor: [nGz]
+;Wloz jakis przedmiot zestackowany (ilosc dowolna) do swojego plecaka, zamknij (jesli masz otwarte) plecaki jucznych zwierzat i dopiero wlacz.
+;Karmi juczniaka (gruszkami, brzoskwiniami, jablkami, bananami, cytrynami).
+;%Karmienie - okresla co ile ma karmic (czas w sekundach).
+;=============
+set %Karmienie 6000
+;=============
+set #sysmsgcol 1152
+set #targcurs 1
+event sysmessage Wybierz przedmiot.
+repeat
+onhotkey ESC
+  goto WcisESC1
+until #targcurs = 0
+onhotkey ESC
+{
+  WcisESC1:
+  event sysmessage Nie wskazales przedmiotu.
+  halt
+}
+finditem #ltargetid
+if #findbagid <> #backpackid
+{
+  event sysmessage Przedmiot musi znajdowac sie w twoim plecaku.
+  halt
+}
+set %TypPrzedmiotu #findtype
+wait 10
+set #targcurs 1
+event sysmessage Wybierz juczniaka.
+repeat
+onhotkey ESC
+  goto WcisESC2
+until #targcurs = 0
+onhotkey ESC
+{
+  WcisESC2:
+  event sysmessage Nie wskazales juczniaka.
+  halt
+}
+set %Idjuczniaka #ltargetid
+set %IdPlecaka 0
+gosub Nakarm
+gosub Zagladanie
+Poczatek:
+if %TimerKarmienia < #scnt
+  gosub Nakarm
+gosub Przenies
+gosub Okradanie
+goto Poczatek
+
+sub Okradanie
+OkradaniePoczatek:
+if %TimerKarmienia < #scnt
+  gosub Nakarm
+finditem %IdPlecaka
+if #findkind = -1
+  gosub Zagladanie
+finditem %TypPrzedmiotu C_ , %IdPlecaka
+if #findkind = -1
+  return
+set %IdOkradanego #findid
+Okradanie:
+event macro 1 0 .um okr
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto Okradanie
+until #targcurs = 1
+OkradanieCel:
+set #ltargetkind 1
+set #ltargetid %IdOkradanego
+finditem %IdPlecaka
+if #findkind <> -1
+  event macro 22
+else
+{
+  key ESC
+  wait 210
+  goto OkradaniePoczatek
+}
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto OkradanieCel
+until #targcurs = 0
+deletejournal
+set %Timer #scnt2 + 170
+repeat
+scanjournal 1
+finditem %IdOkradanego C_ , %IdPlecaka
+if Tego_nie_uda_Ci_sie_ukrasc in #journal || To_stworzenie_nie_ma_za_duzo_przy_sobie in #journal
+{
+  event sysmessage Zamknij plecak juczniaka i zacznij od nowa :P
+  halt
+}
+until #findkind = -1 || Ujawnil in #journal || Oddalil in #journal || %Timer < #scnt2
+finditem %IdPlecaka
+if #findkind = -1
+{
+  set %Poczekaj %Timer - #scnt2 - 90
+  if %Poczekaj > 40
+    wait %Poczekaj
+}
+goto OkradaniePoczatek
+
+sub Przenies
+Przenies:
+finditem %TypPrzedmiotu C_ , #backpackid
+if #findkind = -1
+  return
+set %Idprzedmiotu #findid
+DragItemu:
+exevent drag %Idprzedmiotu
+set %Timer #scnt2 + 50
+repeat
+if %Timer < #scnt2
+  goto DragItemu
+finditem %Idprzedmiotu C_ , #backpackid
+until #findkind = -1
+DropItemu:
+exevent dropc %Idjuczniaka
+finditem %IdPlecaka
+if #findkind = -1
+  gosub Zagladanie
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto DropItemu
+finditem %Idprzedmiotu C
+until #findkind <> -1
+goto Przenies
+
+sub Zagladanie
+ignoreitem #backpackid
+if %IdPlecaka = 0
+{
+  finditem zjf C_ , #charid
+  if #findkind <> -1
+  {
+    event sysmessage Zamknij plecak juczniaka i wlacz ponownie skrypt.
+    halt
+  }
+}
+Zagladaj:
+if %TimerKarmienia < #scnt
+  gosub Nakarm
+event macro 1 0 .um zagladanie
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto Zagladaj
+until #targcurs = 1
+ZagladajCel:
+set #ltargetid %Idjuczniaka
+set #ltargetkind 1
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto ZagladajCel
+until #targcurs = 0
+deletejournal
+set %Timer #scnt2 + 170
+repeat
+nextcpos 360 495
+if %Timer < #scnt2
+  goto Zagladaj
+if %IdPlecaka = 0
+  finditem zjf C_ , #charid
+else
+  finditem %IdPlecaka
+scanjournal 1
+if Anulowano in #journal
+{
+  event sysmessage Cos jest nie tak.
+  halt
+}
+if Stoisz_za_daleko in #journal || Oddalil in #journal
+{
+  event macro 1 0 podejdzcie
+  wait 20
+  goto Zagladaj
+}
+if Nie_udalo_ci_sie in #journal
+{
+  wait 10
+  goto Zagladaj
+}
+until #findkind <> -1
+if %IdPlecaka = 0
+  set %IdPlecaka #findid
+ignoreitem #backpackid
+return
+
+sub Nakarm
+NakarmPoczatek:
+if %IdOwoca <> N/A
+{
+  finditem %IdOwoca
+  if #findkind = -1
+    finditem twi_uwi_qqd_fwi_ywi_uqe_mqe C
+}
+else
+  finditem twi_uwi_qqd_fwi_ywi_uqe_mqe C
+if #findkind = -1
+{
+  set %TimerKarmienia #scnt + %Karmienie
+  return
+}
+set %IdOwoca #findid
+DragOwoca:
+exevent drag %IdOwoca
+set %Timer #scnt2 + 50
+repeat
+if %Timer < #scnt2
+  goto DragOwoca
+finditem %IdOwoca C
+until #findkind = -1
+deletejournal
+DropOwoca:
+exevent dropc %Idjuczniaka
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto DropOwoca
+scanjournal 1
+if szczesliwe in #journal
+{
+  set %TimerKarmienia #scnt + %Karmienie
+  return
+}
+until Yum in #journal || twe_zwierze_wyglada_na_szczesliwsze in #journal
+goto NakarmPoczatek
+

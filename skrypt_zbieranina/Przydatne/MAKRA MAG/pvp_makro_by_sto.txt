@@ -1,0 +1,248 @@
+
+set %minstam 10 	;<--- kiedy lykac refresza
+set %ltw n/a
+set %ltzostaw n/a
+
+initevents
+ignoreitem #charid
+set #sysmsgcol 1082
+event sysmessage  kombajn pvp odpalony  !!!
+wait 1
+
+start:
+onhotkey e ctrl
+   gosub lt
+onhotkey f11 alt
+   gosub ltustaw
+onhotkey f8 		          	;wybuch
+   gosub wybuch
+onhotkey f1 alt  	       		;mix sily
+   gosub sily
+onhotkey f7 	            	;mix odtrutki
+   gosub odtrutka
+onhotkey f6 		          	;mix leczenia
+   gosub leczenia
+onhotkey f5	           	;mix odswiezenia
+   gosub refresh
+onhotkey insert             ;otwieranie drzwi
+   gosub Drzwi
+onhotkey home
+   gosub recall
+
+
+
+if #charstatus = H
+   goto start
+if #charstatus = HG
+   goto start
+if #stamina = 0
+   goto start
+if #stamina < %minstam
+{
+   if #stamina = 0
+      goto start
+   gosub refresh
+}
+goto start
+
+sub sily
+finditem xuf C
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa sily
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Wypiles miksa sily
+return
+goto start
+
+sub refresh
+if #stamina = 0
+   goto start
+finditem zuf C
+if #findkind = 0
+{
+set #lobjectid #findid
+event macro 17
+wait 5
+set #sysmsgcol 1264
+event sysmessage Uzyles refresza
+wait 5
+return
+}
+if #findkind <> 0
+{
+   set #sysmsgcol 1080
+event sysmessage Nie masz refresza
+wait 1s
+return
+}
+return
+
+sub odtrutka
+finditem nuf C
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa odtrutki
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa odtrutki
+return
+
+sub wybuch
+finditem tuf C
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa wybuchowego
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa wybuchowego
+return
+
+sub leczenia
+finditem uuf C
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa leczenia
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa leczenia
+return
+
+
+sub Drzwi
+set #sysmsgcol 1264
+set %Timer_Drzwi #scnt2 + 10
+ignoreitem reset
+drzwi_petla:
+finditem xmc_hnc_jqc_hqc_bqc_zpc_xnc_vnc_zoc_pnc_nnc_zmc_xmc_fnc_jam_ham_boc_znc_vfd_xfd_hjc_hmc_jmc_kbd_fbd_cbd_vqc_tqc_fjc_kcd_ucd_njc_pjc_tpc_rpc_zzl_bam_lam_ued_wed_dfd_ifd_joc_hoc G_2
+if #findkind = 1 && ( ( #findz - #charposz ) > 15 || ( #findz - #charposz ) < -15 )
+{
+  ignoreitem #findid
+  event sysmessage Znalazlem drzwi na innym poziomie
+  wait 2
+  goto drzwi_petla
+}
+if #findkind = 1 && ( ( #findz - #charposz ) < 16 && ( #findz - #charposz ) > -16 )
+{
+  event sysmessage Znalazlem drzwi !
+  set #lobjectid #findid
+  event macro 17
+  return
+}
+if %Timer_Drzwi < #scnt2
+{
+  event sysmessage Nie znalazlem drzwi do otworzenia
+  return
+}
+goto drzwi_petla
+return
+
+
+
+sub recall
+finditem hmjvivd
+set #lobjectid #findid
+event macro 17
+wait 1
+click 92 132
+return
+
+sub bola
+click 406 252
+wait 1
+click 406 252
+wait 15
+finditem KTO
+set #lobjectid #findid
+event macro 15 4
+wait 2
+event macro 22 0
+
+kon_petla:
+finditem JC                                         ; tutaj wpisuje LOBJECTID z zakladki Last Action (najpierw musisz wsiasc na konia recznie :)
+if #finddist < 2
+{
+set #lobjectid #findid
+event macro 17
+return
+}
+if #finddist > 1
+{
+msg za mna$
+msg wszyscy za mna$
+
+wait 2
+goto kon_petla
+}
+return
+
+
+
+;;;;;;;;;;;;;; NIE UZYWAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+sub Konisko
+kon_petla:
+finditem JC                                         ; tutaj wpisuje LOBJECTID z zakladki Last Action (najpierw musisz wsiasc na konia recznie :)
+if #finddist < 2
+{
+set #lobjectid #findid
+event macro 17
+return
+}
+if #finddist > 1
+{
+msg za mna$
+msg wszyscy za mna$
+
+wait 2
+goto kon_petla
+}
+return
+
+
+sub ltwrog
+set %ltzostaw #ltargetid
+set #ltargetid %lt
+event macro 22
+set #ltargetid %ltzostaw
+return
+
+
+sub ltustaw
+set #targcurs 1
+set #sysmsgcol 1082
+event sysmessage Ustaw teraz lt!
+set %licz 0
+czekaj_ltustaw:
+set %licz %licz + 1
+if #targcurs = 0
+   goto dalej_ltustaw
+if %licz > 110
+{
+   set #targcurs 0
+   goto start
+}
+goto czekaj_ltustaw
+dalej_ltustaw:
+set %lt #ltargetid
+set #sysmsgcol 1082
+event sysmessage Zapisano! Lt bedzie pod klawiszem ctrl+e!
+return

@@ -1,0 +1,33 @@
+set %jedz 0
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Czujesz_sie_dobrze in #journal
+         set %jedz 1
+      if Welcome_to_Ultima in #journal
+         {
+         wait 5s
+         if %jedz = 0
+            goto start
+         set %jedz 0
+         finditem DUF C
+         if #findkind = -1
+            {
+            set #sysmsgcol 1080
+            event sysmessage BRAK JEDZENIA
+            halt
+            }
+         set #lobjectid #findid
+         for %i 1 10
+             {
+             event macro 17 0
+             wait 30
+             }
+         }
+      }
+   }

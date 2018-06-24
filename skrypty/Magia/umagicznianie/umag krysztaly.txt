@@ -1,0 +1,249 @@
+;Skrypt bY SabiK
+;umag-tworzenie_krysztalow.txt
+;Wersja 1.6
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %ksiega VLBSJOE  ;Tutaj ustaw id ksiegi krysztalow (otworz ksiege i przepisz tutaj #lobjectid)
+set %strona lewa    ;Tutaj ustaw strone ksiegi (lewa, prawa)
+set %krysztal 4      ;Tutaj ustaw ktory krysztal chcesz robic (lewa-1-9, prawa-1-8: ognia, zimna, piorun, wytrzym,wital, madr, stabil, niewidz, swiatla, och ogn, och zimn, och piorun, obrony, mocy, sily, zrecz, int)
+set %skill 0         ;Tutaj ustaw jaki skill ma byc robiony (1 - Ukrywanie, 2 - Madrosc, 3 - Anatomia, 4 - Identyfikacja, 5 - Rozmowa z duchami, 6 - Wykrywanie, 7 - Wiedza o zwierzetach, 8 - Wiedza o broni)
+ set %delay 4s        ;TUTAJ USTAW DELAY PO WIEDZY O ZWIERZETACH LUB WIEDZY O BRONI ZANIM SKRYPT ZACZNIE ROBIC KRYSZTALY (wiedza o zwierzetach ok 4s, wiesza o broni ok 2s)
+set %bles 0          ;Tu ustaw czy skrypt ma zarzucac blesa
+ set %str 60          ;Tu ustaw ile masz str, jesli chcesz zarzucac blesa
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [umag-tworzenie_krysztalow] odpalony (by SabiK)
+wait 1
+if ( %strona <> lewa && %strona <> prawa ) || %skill < 0 || %skill > 8 || %krysztal < 1 || %krysztal > 9 || ( %bles <> 0 && %bles <> 1 )
+{
+   set #sysmsgcol 1080
+   event sysmessage Zle ustawiono zmienne. Skrypt wylaczono!
+   halt
+}
+if %strona = lewa
+   set %x 145
+if %strona = prawa
+   set %x 330
+set %y 125 + ( %krysztal * 20 )
+if %skill = 2 || %skill = 3 || %skill = 4 || %skill = 7 || %skill = 8
+{
+   wskaz_cel:
+   set #targcurs 1
+   set #sysmsgcol 1281
+   event sysmessage Wskaz na czym ma byc robiony skill.
+   set %licz #scnt2 + 100
+   repeat
+   if %licz < #scnt2
+      goto wskaz_cel
+   until #targcurs = 0
+   if #ltargetid = n/a
+      goto wskaz_cel
+   set #ltargetkind 1
+   set %lt #ltargetid
+}
+
+start:
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if %bles = 1
+{
+   if #str <= %str
+      gosub bles
+}
+gosub umag
+if %skill <> 0
+  gosub skill %skill
+goto start
+
+sub umag
+umag:
+finditem %ksiega
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono ksiegi krysztalow. Skrypt wylaczono!
+   halt
+}
+set #lobjectid #findid
+event macro 17
+set %licz #scnt2 + 30
+repeat
+if %licz < #scnt2
+   goto umag
+until #contname = generic_gump && #contsize = 520_350
+wait 1
+klik:
+click %x %y
+wait 10
+set %licz #scnt2 + 850
+repeat
+if #contname = generic_gump && #contsize = 520_350
+   goto klik
+until %licz < #scnt2 || Stworzyles_krysztal in #sysmsg || Stworzylas_krysztal in #sysmsg || Stworzyles_wyjatkowej in #sysmsg || Stworzylas_wyjatkowej in #sysmsg || Nie_udalo_ci_sie in #sysmsg
+return
+
+sub bles
+bles:
+if #mana < 9
+   goto medyt
+event macro 15 16
+set %licz #scnt2 + 50
+repeat
+if brakuje_ci_skladnikow in #sysmsg
+{
+   set %bles 0
+   set #sysmsgcol 1080
+   event sysmessage Brakuje Ci skladnikow. Skrypt nie bedzie zarzucal blesa!
+   return
+}
+if Brakuje_Ci_many in #sysmsg
+   goto medyt
+until #targcurs = 1
+wait 1
+event macro 23
+wait 10
+return
+medyt:
+event macro 13 46
+set %licz #scnt2 + 40
+repeat
+if Nie_brakuje_Ci_many in #sysmsg
+   goto bles
+scanjournal 1
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+{
+   if #journal = Nie_mozesz_sie_skoncentrowac.
+   {
+      if #mana = #maxmana
+         goto bles
+      wait 60
+      deletejournal
+      goto medyt
+   }
+}
+if #mana = #maxmana
+   goto bles
+until Rozpoczynasz_medytacje in #sysmsg || #sysmsg = Juz_medytujesz...
+koniec:
+if #mana = #maxmana || #sysmsg = Nie_brakuje_Ci_many.
+   goto bles
+if #sysmsg = Konczysz_medytacje.
+{
+   if #mana = #maxmana
+      goto bles
+   wait 20
+   goto medyt
+}
+if ( #sex = 0 && #sysmsg = Straciles_koncentracje. ) || ( #sex = 1 && #sysmsg = Stracilas_koncentracje. )
+{
+   if #mana = #maxmana
+      goto bles
+   wait 20
+   goto medyt
+}
+if Your in #sysmsg
+{
+   if #mana = #maxmana
+      goto bles
+   goto koniec
+}
+if #sysmsg = Juz_medytujesz...
+   goto koniec
+goto koniec
+
+sub skill
+if %1 = 1
+{
+   ukrywanie:
+   event macro 1 0 .um ukrywanie
+   set %licz #scnt2 + 10
+   repeat
+   if %licz < #scnt2
+      goto ukrywanie
+   if #sysmsg = Nie_uda_Ci_sie_schowac_wierzchowca!
+   {
+      set %skill 0
+      set #sysmsgcol 1080
+      event sysmessage Nie ukryjesz sie na wierzchowcu! Skrypt nie bedzie sie ukrywal!
+   }
+   until H in #charstatus || Nie_udalo_Ci_sie_ukryc in #sysmsg
+   return
+}
+if %1 = 2
+{
+   set %jaki_skill madrosc
+   gosub dokoncz_cel
+   return
+}
+if %1 = 3
+{
+   set %jaki_skill anatomia
+   gosub dokoncz_cel
+   return
+}
+if %1 = 4
+{
+   set %jaki_skill identyfikacja
+   gosub dokoncz_cel
+   return
+}
+if %1 = 5
+{
+   rozmowa:
+   event macro 1 0 .um rozmowa z duchami
+   set %licz #scnt2 + 10
+   repeat
+   if %licz < #scnt2
+      goto rozmowa
+   until Porozumiales_sie in #sysmsg || Porozumialas_sie in #sysmsg || Nie_udalo_Ci_sie in #sysmsg
+   return
+}
+if %1 = 6
+{
+   wykrywanie:
+   event macro 1 0 .um wykrywanie
+   set %licz #scnt2 + 10
+   repeat
+   if %licz < #scnt2
+      goto wykrywanie
+   until Znalazles_kogos in #sysmsg || Znalazlas_kogos in #sysmsg || Nie_znalazles_nikogo in #sysmsg || Nie_znalazlas_nikogo in #sysmsg
+   return
+}
+if %1 = 7
+{
+   set %jaki_skill wiedza , #spc , o , #spc , zwierzetach
+   gosub dokoncz_cel
+   if Nie_wiesz_jak_to_ocenic in #sysmsg || Nie_udalo_ci_sie_ocenic_tego_stworzenia in #sysmsg
+      return
+   wait %delay
+   return
+}
+if %1 = 8
+{
+   set %jaki_skill wiedza , #spc , o , #spc , broni
+   gosub dokoncz_cel
+   if Nie_wiesz_jak_to_ocenic in #sysmsg || Nie_udalo_ci_sie_ocenic in #sysmsg
+      return
+   wait %delay
+   return
+}
+return
+
+sub dokoncz_cel
+dokoncz:
+event macro 1 0 .um %jaki_skill
+set %licz #scnt2 + 10
+repeat
+if %licz < #scnt2
+   goto dokoncz
+until #targcurs = 1
+set #ltargetkind 1
+set #ltargetid %lt
+event macro 22
+return
+

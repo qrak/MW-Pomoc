@@ -1,0 +1,304 @@
+
+;Autor: [nGz]
+;Wersja: 1.1
+;%Typy - Typy NPCow jakie ma wyszukiwac (oddzielac kolejne
+typy 'podkreslnikiem' "_", np: AA_BBB_CC_DD) (IS - mezczyzni, HS -
+kobiety).
+;%Zasieg1 - zasieg, dla jakiego buttony beda podswietlone kolorem %
+KolorBGZasieg1, a text bedzie koloru %KolorTxtZasieg1 (np. yellow,
+blue, green, red, itp., btnface - standardowy szary).
+;%Zasieg2 - calkowity zasieg szukania NPCow.
+;%KolorBGZasieg2, %KolorTxtZasieg2 - okreslaja kolor tla i textu,
+dla obiektow dalszych niz %Zasieg1.
+;%RozmiarCzcionki - nie trzeba tlumaczyc...
+;%StylCzcionki - B - pogrubienie, U - podkreslenie, I - kursywa, S -
+ przekreslenie (mozna laczyc np: BI, BUI, itp).
+;%SzerokoscMenu - okresla szerokosc menu(w pixelach), z tym ze
+klawisz "Atak" ma stala dlugosc, zmienia sie tylko dlugosc tego
+pierwszego.
+;%GruboscButtona - nie trzeba tlumaczyc...
+;=====================
+set %Typy IS_HS
+set %Zasieg1 99
+set %Zasieg2 18
+set %KolorBGZasieg1 btnface
+set %KolorTxtZasieg1 black
+set %KolorBGZasieg2 red
+set %KolorTxtZasieg2 black
+set %RozmiarCzcionki 7
+set %StylCzcionki B
+set %SzerokoscMenu 190
+set %GruboscButtona 25
+;=====================
+ignoreitem #charid
+set %Null
+set %Cnt 0
+menu window title Atak Menu
+set %GruboscStartowa %GruboscButtona + 4
+menu window size %SzerokoscMenu %GruboscStartowa
+set %DlugoscKS %SzerokoscMenu / 3
+set %Xbtn3 2 * %DlugoscKS
+set %DlugoscBtn3 %SzerokoscMenu - 2 * %DlugoscKS
+set %Ykreski %GruboscButtona + 1
+gosub KlawiszeStartowe
+set %DlugoscButtona %SzerokoscMenu - 69
+set %XWybuch %DlugoscButtona + 1
+set %XIgnoreID %XWybuch + 37
+menu show
+set #menubutton N/A
+repeat
+gosub Szukaj
+if #menubutton <> N/A
+  gosub PressBtn
+if %Zmiana = 1
+  gosub UstawMenu
+until #false
+
+sub Szukaj
+set #lpc 200
+set %Zmiana 0
+finditem %Typy G_ , %Zasieg2
+if %Cnt <> #findcnt
+  goto Zmienione
+if #findkind = -1
+  goto WyjdzSzukaj
+for %i 1 #findcnt
+{
+  set #findindex %i
+  if %Id . %i <> #findid || ( #finddist <= %Zasieg1 ) <> %
+Odleglosc . %i || %Nazwa . %i = B³¹d
+    goto Zmienione
+}
+goto WyjdzSzukaj
+Zmienione:
+set %Zmiana 1
+if %Cnt <> 0
+{
+  for %i 1 %Cnt
+  {
+    set %Id . %i N/A
+    set %Nazwa . %i N/A
+    set %Odleglosc . %i N/A
+  }
+  if #findkind = -1
+  {
+    set %Cnt 0
+    goto WyjdzSzukaj
+  }
+}
+finditem %Typy G_ , %Zasieg2
+set %Cnt #findcnt
+for %i 1 #findcnt
+{
+  set #findindex %i
+  set %Id . %i #findid
+  set %Odleglosc . %i #finddist <= %Zasieg1
+  repeat
+  event property #findid
+  until #property <> %Null
+  if #property <> $
+  {
+    set %Imie #property
+    gosub UsunPrzydomki
+    set %Nazwa . %i %Imie
+  }
+  else
+    set %Nazwa . %i B³¹d
+}
+WyjdzSzukaj:
+set #lpc 10
+return
+
+sub UsunPrzydomki
+str Pos %Imie (
+if #strres = 0
+{
+  str Pos %Imie $
+  str Del %Imie #strres 1
+  set %Imie #strres
+}
+else
+{
+  set %x #strres - 1
+  str Len %Imie
+  set %dl #strres - %x + 1
+  str Del %Imie %x %dl
+  set %Imie #strres
+}
+str Count %Imie #spc
+if #strres = 0
+  return
+for %k 1 #strres
+{
+  str Pos %Imie #spc 1
+  set %dlugosc #strres - 1
+  str Mid %Imie 1 %dlugosc
+  if %k = 1
+  {
+    set %str #strres
+    str Len %str
+    str Del %str #strres 1
+  }
+  set %str _ , #strres , _
+  if %str in
+_Wyjet_spod_Prawa_Lotrowsk_Lajdack_Nieprzyjemn_Porywcz_Porzadn_Uprze
+jm_Dobr_Uczciw_Godn_Zaufania_Odrazajac_Podl_Wredn_Niehonorow_Niecn_W
+yrozniajac_sie_Przyzwoit_Honorow_Powazan_Zacn_Niegodziw_Okrutn_Hanie
+bn_Pogardy_Glosn_Szanowan_Szacunku_Podziwu_Znan_Wielk_Przerazajac_Zl
+_Nikczemn_Zlowrog_Nieslawn_Slawn_Znamienit_Oslawion_Szlachetn_Wybitn
+_Wspanial_Mroczn_Pozbawion_Honoru_Sir_Dama_Lord_Lady_
+  {
+    set %dlugosc %dlugosc + 1
+    str Del %Imie 1 %dlugosc
+    set %Imie #strres
+  }
+  else
+    break
+}
+return
+
+sub UstawMenu
+set #lpc 200
+menu clear
+gosub KlawiszeStartowe
+if %Cnt <> 0
+  set %YMenu %GruboscButtona * %Cnt + %GruboscStartowa + 1
+else
+{
+  menu window size %SzerokoscMenu %GruboscStartowa
+  set #lpc 10
+  return
+}
+menu window size %SzerokoscMenu %YMenu
+for %i 1 %Cnt
+{
+  set %Ybuttona %GruboscButtona * %i + 5
+  if %Odleglosc . %i
+  {
+    menu font bgcolor %KolorBGZasieg1
+    menu font color %KolorTxtZasieg1
+  }
+  else
+  {
+    menu font bgcolor %KolorBGZasieg2
+    menu font color %KolorTxtZasieg2
+  }
+  menu button %Id . %i 0 %Ybuttona %DlugoscButtona %GruboscButtona %
+Nazwa . %i
+  menu font bgcolor btnface
+  menu font color black
+  menu button Wybuch_ , %Id . %i %XWybuch %Ybuttona 36 %
+GruboscButtona Fiolet
+  menu button IgnoreID_ , %Id . %i %XIgnoreID %Ybuttona 31 %
+GruboscButtona Usun
+}
+set #lpc 10
+return
+
+sub PressBtn
+if #menubutton = CLOSED
+  halt
+if #menubutton = IgnoreAll || #menubutton = ResetIgnore ||
+#menubutton = btn3
+{
+  if #menubutton <> btn3
+    gosub #menubutton
+  else
+    set #menubutton N/A
+  return
+}
+if Wybuch_ in #menubutton
+{
+  gosub Wybuch
+  return
+}
+if IgnoreID_ in #menubutton
+{
+  gosub IgnoreID
+  return
+}
+gosub Atak
+return
+
+sub KlawiszeStartowe
+menu font name verdana
+menu font size %RozmiarCzcionki
+menu font style %StylCzcionki
+menu button IgnoreAll 0 0 %DlugoscKS %GruboscButtona Usun All
+menu button ResetIgnore %DlugoscKS 0 %DlugoscKS %GruboscButtona
+Reset
+menu button btn3 %Xbtn3 0 %DlugoscBtn3 %GruboscButtona
+menu shape kreska 0 %Ykreski %SzerokoscMenu 3 3 7 2 black 2 black
+return
+
+sub IgnoreAll
+set #menubutton N/A
+if %Cnt <> 0
+{
+  for %i 1 %Cnt
+    ignoreitem %Id . %i
+}
+return
+
+sub ResetIgnore
+set #menubutton N/A
+ignoreitem reset
+ignoreitem #charid
+return
+
+sub Atak
+set #ltargetid #menubutton
+set #menubutton N/A
+event macro 27
+return
+
+sub Wybuch
+str Del #menubutton 1 7
+set #menubutton N/A
+set %IdCeluWybucha #strres
+UzyjWybucha:
+finditem tuf C
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie masz Fioletowej.
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto UzyjWybucha
+if #menubutton <> N/A && #menubutton <> IgnoreAll && #menubutton <>
+ResetIgnore && #menubutton <> btn3 && Wybuch_ notin #menubutton &&
+IgnoreID_ notin #menubutton
+{
+  if #menubutton = CLOSED
+    halt
+  gosub Atak
+}
+onhotkey ESC
+{
+  set #sysmsgcol 1080
+  event sysmessage ESC fiolet.
+  return
+}
+until #targcurs = 1
+CelWybuchu:
+set #ltargetkind 1
+set #ltargetid %IdCeluWybucha
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto CelWybuchu
+until #targcurs = 0
+return
+
+sub IgnoreID
+str Del #menubutton 1 9
+set #menubutton N/A
+ignoreitem #strres
+return
+

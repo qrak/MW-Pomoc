@@ -1,0 +1,89 @@
+;Autor: [Dupol]
+;Samo pizga jakims tam czarem i czasem rzuci blesa ;)
+initevents
+start:
+set %lol1 0
+set %lol2 0
+set %czar 0
+set %licz 0
+if #mana < 13  ; <---- ponizej ilu many ma medytowac
+goto medyt
+if #str < 45  ;<---  Ponizej ilu str ma zucac blesa
+goto bles
+
+czar:
+key f7   ;<-- tu ustaw wymawiane slowo
+wait 5s
+event macro 22
+event macro 22
+event macro 22
+if Czar_sie_nie_udal #sysmsg
+{
+   if %lol1 = 1
+  set %lol2 1
+   set %lol1 1
+}
+if %czar = 0
+{
+   set %czar 1
+   goto start
+}
+wait 50
+goto start
+
+bles:
+if #mana < 15
+goto medyt
+event macro 15 16
+wait 90
+event macro 23
+event macro 23
+event macro 23
+if Czar_sie_nie_udal #sysmsg
+{
+   if %lol1 = 1
+  set %lol2 1
+   set %lol1 1
+}
+if %czar = 0
+{
+   set %czar 1
+   goto start
+}
+wait 50
+goto start
+
+medyt:
+set %licz 0
+event macro 13 46
+medyt2:
+set %licz %licz + 1
+if Rozpoczynasz_medytacje in #sysmsg
+wait 10
+goto koncz
+if %licz < 6
+goto medyt
+goto medyt2
+koncz:
+if Konczysz_medytacje in #sysmsg
+{
+   if %lol1 = 1
+  wait 10
+   if %lol2 = 1
+  wait 10
+   wait 5
+   goto start
+}
+if Nie_mozesz_sie_skoncentrowac in #sysmsg
+{
+   wait 120
+   goto medyt
+}
+if Straciles_koncentracje in #sysmsg
+{
+   wait 20
+   goto medyt
+}
+goto koncz
+
+

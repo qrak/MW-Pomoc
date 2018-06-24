@@ -1,0 +1,219 @@
+;Skrypt bY SabiK
+;umag-oltarz.txt
+;Wersja 1.1
+;Trzeba stanac od polnocy,
+;bo od poludnia nie da sie rozkladac itemow
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %item 3          ;[1 - branza, 2 - pierscionek, 3 - kolczyki]
+set %krysztal1 EEJ
+set %krysztal2 GEJ
+;------------------------------------------------------------------------------
+
+initevents
+ignoreitem reset
+set #sysmsgcol 1281
+event sysmessage Skrypt [umag-oltarz] odpalony (by SabiK)
+wait 1
+
+if %item = 1
+   set %item_rob ijg
+if %item = 2
+   set %item_rob ujg
+if %item = 3
+   set %item_rob hjg
+
+while #true
+{
+   start:
+   gosub poloz %item_rob ugj
+   gosub poloz %krysztal1 lgj
+   gosub poloz %krysztal2 bgj
+   gosub uzyj_oltarza
+   gosub grab
+   gosub relog
+}
+
+sub poloz
+podnies:
+finditem %1 C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono przedmiotu/krysztalu do polozenia! Skrypt wylaczono.
+   terminate uo
+}
+set %temp #findid
+if %2 = ugj
+   {
+   if #findcol <> 0
+      {
+      ignoreitem #findid
+      goto podnies
+      }
+   }
+exevent drag #findid 1
+set %licz #scnt2 + 25
+repeat
+if %licz < #scnt2
+   goto podnies
+finditem %temp C
+until #findkind = -1
+finditem %2 G_3
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono oltarza w zasiegu trzech pol! Skrypt wylaczono.
+   terminate uo
+}
+exevent dropg #findx #findy #findz
+return
+
+sub uzyj_oltarza
+kolumna:
+finditem yol G_2
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono kolumny w zasiegu dwoch pol! Skrypt wylaczono.
+   terminate uo
+}
+set #lobjectid #findid
+event macro 17
+set %licz #scnt2 + 25
+repeat
+for %journal 1 3
+{
+   scanjournal %journal
+   if Ten_oltarz_nie_nalezy_do_ciebie in #journal
+   {
+      set #sysmsgcol 1080
+      event sysmessage To nie twoj oltarz! Skrypt wylaczono.
+      terminate uo
+   }
+}
+if %licz < #scnt2
+   goto kolumna
+until #contname = generic_gump && #contsize = 500_360
+click 125 260
+set %licz #scnt2 + 25
+repeat
+for %journal 1 3
+{
+   scanjournal %journal
+   if Magiczny_oltarz_jest_za_slaby in #journal
+   {
+      wait 5s
+      goto kolumna
+   }
+}
+if %licz < #scnt2
+   goto kolumna
+until #contsize <> 500_360
+set %licz #scnt2 + 150
+repeat
+finditem %krysztal1 G_3
+if #findkind = -1
+{
+   finditem %krysztal2 G_3
+   if #findkind = -1
+      return
+}
+for %journal 1 3
+{
+   scanjournal %journal
+   if Magiczny_oltarz_jest_za_slaby in #journal
+   {
+      wait 5s
+      goto kolumna
+   }
+}
+until %licz < #scnt2
+return
+
+sub grab
+idz:
+set %chx #charposx
+set %chy #charposy
+finditem ugj G_3
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono oltarza w zasiegu trzech pol! Skrypt wylaczono.
+   terminate uo
+}
+set %dx #findx
+set %dy #findy
+move %dx %dy 0 10s
+set %licz #scnt2 + 50
+repeat
+if %licz < #scnt2
+   goto idz
+until #charposx = %dx && #charposy = %dy
+grab:
+event macro 1 0 .grab
+set %licz #scnt2 + 30
+while %licz > #scnt2
+{
+   for %journal 1 3
+   {
+      scanjournal %journal
+      if *yoink* in #journal
+         goto idz2
+   }
+}
+goto grab
+idz2:
+move %chx %chy 0 10s
+set %licz #scnt2 + 50
+repeat
+if %licz < #scnt2
+   goto idz2
+until #charposx = %chx && #charposy = %chy
+return
+
+sub relog
+click 1068 63 ;<--wspolrzedne klawisza z log outem
+czekaj:
+if #contsize = 178_108
+   {
+   wait 5
+   click 606 434
+   wait 180s
+   goto loguj
+   }
+goto czekaj
+
+loguj:
+if #contname = MainMenu_gump
+{
+msg z2x4   ;<--WPISZ SWOJE HASLO NA KONTO
+wait 10
+key enter
+wait 10
+goto serwer
+}
+else
+goto loguj
+
+serwer:
+if #contname = normal_gump
+{
+click 622 448
+wait 10
+goto postac
+}
+else
+goto serwer
+
+postac:
+if #contname = Login_gump
+{
+click 622 448
+wait 10s
+click 165 195 r
+return
+}
+else
+goto postac
+

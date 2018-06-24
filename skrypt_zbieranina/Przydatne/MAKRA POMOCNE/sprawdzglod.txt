@@ -1,0 +1,14 @@
+initevents
+
+start:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound D:\skrypty\scream.wav
+wait 4s
+goto start
+}
+else
+goto start
+

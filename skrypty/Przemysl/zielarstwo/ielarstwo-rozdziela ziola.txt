@@ -1,0 +1,69 @@
+;autor: dev
+;wersja: 1.1
+;potrzebny plecak, do ktorego wrzuc krzaczki do
+;rozdzielenia,a nastepnie play
+;Uwaga: makro traci stabilnosc po zapisie gry! nalezy
+;wtedy wylogowac sie
+initevents
+ignoreitem reset
+finditem zjf C , #backpackid
+if #findkind = -1
+{
+ set #sysmsgcol 1080
+ event sysmessage Nie mash plecaka do przerabiania ziolkooof
+ halt
+}
+else
+{
+ set %plecak #findid
+ set #lobjectid #findid
+ event macro 17
+ wait 15
+}
+start:
+finditem zij_lij_vij_hjj 1 C_
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nje masz kshaczkooof! Szkrypt zatshymniento
+   sound well_done.wav
+   halt
+}
+else
+{
+ set #lobjectid #findid
+ exevent drag #findid 1
+; wait 15
+ exevent dropc #backpackid
+ wait 15
+ finditem zij_lij_vij_hjj 1 C_ , #backpackid
+ if #FINDSTACK > 1
+ {
+  exevent drag #findid #findstack
+  exevent dropc %plecak
+  wait 15
+  goto start
+ }
+ else
+ {
+  set #lobjectid #findid
+  event macro 17
+ }
+; wait 15
+ set %czas1 #scnt
+ repeat
+  if Zapisywanie_Stanu_Swiata in #sysmsg
+  gosub zapis
+  set %czas2 #scnt
+  set %czas %czas2 - %czas1
+  scanjournal 1
+ until Your in #journal || Obcial in #journal || Nie_udalo in #journal || Zniszczyl in #journal || %czas >= 10 || You in #journal
+ goto start
+}
+sub zapis
+repeat
+scanjournal 1
+until Koniec_zapisywania in #journal
+return
+
+

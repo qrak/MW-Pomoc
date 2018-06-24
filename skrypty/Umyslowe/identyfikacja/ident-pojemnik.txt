@@ -1,0 +1,58 @@
+;Skrypt bY SabiK
+;identyfikacja.txt
+;Wersja 1.1
+;Po wskazaniu pojemnika z magikami, skrypt identyfikuje kazdy przedmiot dwa razy
+;Po zidentyfikowaniu wszystkich przedmiotow skrypt sie wylacza i wyswietla komunikat
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [identyfikacja] odpalony (by SabiK)
+wait 1
+
+pojemnik:
+set #targcurs 1
+set #sysmsgcol 1281
+event sysmessage Wskaz pojemnik, w ktorym znajduja sie magiki.
+set %licz #scnt2 + 100
+repeat
+if %licz < #scnt2
+   goto pojemnik
+until #targcurs = 0
+set %pojemnik #ltargetid
+
+start:
+event macro 1 0 .um identyfikacja
+set %licz #scnt2 + 8
+repeat
+if %licz < #scnt2
+   goto start
+until #targcurs = 1
+if %ile <> 1
+   finditem * C_ , %pojemnik
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Zientyfikowano wszystkie magiki. Skrypt wylaczono.
+   halt
+}
+set #ltargetid #findid
+event macro 22
+set %licz #scnt2 + 20
+repeat
+scanjournal 1
+if nie_jestes_pewny in #journal
+{
+   wait 15
+   goto nie_udalo_sie
+}
+until %licz <= #scnt2
+set %ile %ile + 1
+if %ile = 2
+{
+   set %ile 0
+   ignoreitem #findid
+}
+nie_udalo_sie:
+wait 150
+goto start
+

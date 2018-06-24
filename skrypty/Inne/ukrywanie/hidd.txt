@@ -1,0 +1,37 @@
+; HID + Stealth by Raist
+; wkomentarzak podana jest linijka w ktorej trzeba
+;wpisac imie postaci
+
+initevents
+goto hid
+
+start:
+set %czas #scnt2 + 90
+czekaj:
+if %czas < #scnt2
+goto hid
+goto czekaj
+hid:
+event macro 1 0 .um ukrywanie
+set %czas #scnt2 + 20
+
+sprawdz:
+wait 10
+scanjournal 1
+if Juz_cos_robisz. in #journal
+{
+goto hid
+}
+if Nie_udalo_ in #journal
+{
+goto start
+}
+if Ver'Say_Telnise:_ in #journal ;Zamiast Miyao_Kawayoshi wpisz imie swojej postaci
+goto start
+if Your_skill_ in #journal
+goto start
+if %czas < #scnt2
+goto hid
+goto sprawdz
+
+

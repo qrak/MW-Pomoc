@@ -1,0 +1,32 @@
+initevents
+menu Clear
+menu window title Strzaly/Belty
+menu Window size 100 60
+menu Window color black
+menu Show
+menu Font color white
+menu Font bgcolor black
+menu Font size 13
+menu Text reg010 5 0 Strz
+menu Font color White
+menu Text reg020 5 30 Belty
+menu Font color White
+
+start:
+reg1:
+menu Font color Yellow
+finditem RWF C_ , #BACKPACKID ;strzaly
+if %reg1 = #findstack
+goto reg2
+set %reg1 #findstack
+menu delete reg1
+menu Text reg1 60 0 %reg1
+reg2:
+menu Font color Yellow
+finditem LNK C_ , #BACKPACKID ;belty
+if %reg2 = #findstack
+goto start
+set %reg2 #findstack
+menu delete reg2
+menu Text reg2 60 30 %reg2
+goto start

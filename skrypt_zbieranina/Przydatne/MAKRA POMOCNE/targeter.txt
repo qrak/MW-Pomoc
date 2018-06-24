@@ -1,0 +1,93 @@
+;== tnext by SiMet v 1.81
+;===== Ponizej nalezy ustawic swoja wlasna konfiguracje (przyjaciele, klawisze)
+set %on 1
+set #SYSMSGCOL 51
+event sysmessage Skrypt target next odpalony.
+event sysmessage Made by SiMet (v 1.8)
+;Ponizej nalezy wpisac liste przyjaciol oddzielonych _ przyklad:
+; XXXXX_YYYYYY_ZZZZZZ. Podane maja byc CHARID postaci ktore chcemy
+; aby nigdy nie zaznaczalo
+set %przyjaciele ZTPBLB_
+
+;===== Ponizej nalezy ustawic swoje klawisze
+start:
+if #ltargetid = #charid
+ set #ltargetid N/A
+onHotKey 1 CTRL ;<- tutaj ustaw gdzie masz zbindowane w UO "Target next"
+ goto next
+onHotKey 5 CTRL ;<- tutaj ustaw gdzie chcesz ustawic wlaczanie/wylaczanie skryptu
+ goto off
+onHotKey 4 CTRL ; Tutaj mozesz sobie ustawic pod jakim klawiszem ma Ci pokazac kogo masz zaznaczonego
+{
+set #SYSMSGCOL 11
+event sysmessage #property
+event exmsg #ltargetid 2 139 Cel
+}
+goto start
+;================== END OF SETTLINGS ============
+
+next:
+if %on = 0
+{
+set #SYSMSGCOL 38
+event sysmessage nTarget OFF
+wait 5
+goto start
+}
+set #SYSMSGCOL 65
+event sysmessage szukam celu
+
+look:
+finditem #ltargetid
+event property #ltargetid
+
+if wedrowny in #property || drow in #property || cienia in #property || Britisha in #property
+{
+ event macro 26 0
+ goto look
+}
+if #findrep = 1 || #findrep = 2 || #findrep = 7  ;szukanie po repie
+{
+ if #findid = #CHARID
+ {
+   set #SYSMSGCOL 11
+   event sysmessage ZAZNACZYLES SIEBIE
+   set #ltargetid N/A
+   goto start
+ }
+  event macro 26 0
+  goto look
+}
+if #findtype <> HS && #findtype <> IS  && #findtype <> XU && #findtype <> AV && #findid <> #CHARID ;szukanie po grafikach (ludzie elfy)
+{
+ event macro 26 0
+ goto look
+}
+if #findid in %przyjaciele && #findid <> #charid ;omijanie friendow
+{
+ event macro 26 0
+ goto look
+}
+
+set #SYSMSGCOL 11
+event sysmessage #property
+event exmsg #ltargetid 2 139 Cel
+goto start
+
+off:
+if %on = 0
+{
+set %on 1
+set #SYSMSGCOL 65
+event sysmessage nTarget ON
+wait 5
+goto start
+}
+if %on = 1
+{
+set %on 0
+set #SYSMSGCOL 38
+event sysmessage nTarget OFF
+wait 5
+goto start
+}

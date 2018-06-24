@@ -1,0 +1,35 @@
+;Skrypt bY SabiK
+;pieczenie.txt
+;Wersja 1.1
+;Skrypt wybiera ostatnia rzecz z ksiazki i klika na nadzienie
+
+set #sysmsgcol 63
+event sysmessage Skrypt [pieczenie] odpalony (bY SabiK)
+wait 1
+
+start:
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+finditem azf C
+set #lobjectid #findid
+event macro 17
+set %licz #scnt2 + 15
+repeat
+if %licz < #scnt2
+   goto start
+until #contname = generic_gump && #contsize = 580_410
+klik:
+click 197 205
+set %licz #scnt2 + 15
+repeat
+if %licz < #scnt2
+   goto klik
+until #targcurs = 1
+finditem jgi C
+set #ltargetid #findid
+event macro 22
+wait 80
+goto start

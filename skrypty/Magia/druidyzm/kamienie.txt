@@ -1,0 +1,17 @@
+initEvents
+insc:
+if #mana > 50
+{
+kamienie:
+event macro 1 0 Artan Braile
+event SysMessage --- Kamienie ---
+wait 12s
+event SysMessage Mana: #mana
+goto insc
+}
+{
+event macro 13 46
+event SysMessage --- Medytowanie ---
+wait 9s
+goto mana
+}

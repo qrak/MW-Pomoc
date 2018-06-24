@@ -1,0 +1,22 @@
+initevents
+ignoreitem reset
+
+start:
+finditem rvh C ;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Koniec Mapek
+sound C:\missile.wav
+halt
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+wait 10
+goto end
+
+end:
+scanjournal 1
+if Udalo_Ci in #sysmsg
+ goto start
+goto end

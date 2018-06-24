@@ -1,0 +1,56 @@
+initevents
+start:
+keyloop:
+onHotKey F7 ; butla i corp
+  gosub atak1
+onHotKey F8 ; butla i flam
+  gosub atak2
+onHotKey F10
+  gosub czerwona
+onHotKey F11
+  gosub zolta
+onHotKey F9
+  gosub pomar
+; onHotKey F12
+;  gosub mana
+goto keyloop
+sub zolta
+finditem UUF
+     set #lobjectid #findid
+     event macro 17 0
+return
+sub czerwona
+finditem ZUF
+     set #lobjectid #findid
+     event macro 17 0
+return
+sub pomar
+finditem NUF
+     set #lobjectid #findid
+     event macro 17 0
+return
+; sub mana
+; finditem PUF
+;     set #lobjectid #findid
+;     event macro 17 0
+;return
+sub atak1
+finditem TUF
+set #lobjectid #findid
+event macro 17 0
+target
+key w alt
+event macro 15 41
+target 5s
+key w alt
+return
+sub atak2
+finditem TUF
+set #lobjectid #findid
+event macro 17 0
+target
+key w alt
+event macro 15 50
+target 7s
+key w alt
+return

@@ -1,0 +1,114 @@
+;Sterowanie ³ódk¹ by Pinn
+
+
+initevents
+
+start:
+
+;================================
+menu Clear
+menu Activate main
+menu HideEUO
+menu Window Size 250 210
+menu Window Title Sternik by Pinn
+menu Window Color black
+menu Font BGColor black
+menu Font Color Lime
+
+menu Font Size 8
+menu Font Name Arial
+menu Button cala_naprzod 92 12 75 25 cala naprzod
+menu Button do_portu 8 172 239 25 do portu
+menu Button skrec_w_lewo 8 44 75 25 skr. w lewo
+menu Button dryfuj 92 44 75 25 dryfuj
+menu Button ster_lewo_na_burte 8 76 75 25 lewo na burte
+menu Button status 8 140 75 25 status
+menu Button zmien_zamki 172 140 75 25 zmien zamki
+menu Button zanurz_kotwice 92 108 75 25 zan. kotwice
+menu Button skrec_w_prawo 172 44 75 25 skr. w prawo
+menu Button ster_prawo_na_burte 172 76 75 25 prawo na burte
+menu Button stop 92 76 75 25 stop
+menu Button cala_wstecz 92 140 75 25 cala wstecz
+menu show
+;=================================
+set #menubutton N/A
+set %sindex 1
+
+Petla_glowna:
+if #menubutton <> N/A && #menubutton <> CLOSED
+  gosub #menubutton 0 0
+goto Petla_glowna
+
+
+sub cala_naprzod
+deletejournal
+set #menubutton N/A
+event macro 1 0 cala naprzod
+return
+
+sub do_portu
+deletejournal
+set #menubutton N/A
+event macro 1 0 do portu
+return
+
+sub skrec_w_lewo
+deletejournal
+set #menubutton N/A
+event macro 1 0 skrec w lewo
+return
+
+sub dryfuj
+deletejournal
+set #menubutton N/A
+event macro 1 0 dryfuj
+return
+
+sub ster_lewo_na_burte
+deletejournal
+set #menubutton N/A
+event macro 1 0 ster lewo na burte
+return
+
+sub status
+deletejournal
+set #menubutton N/A
+event macro 1 0 status
+return
+
+sub zmien_zamki
+deletejournal
+set #menubutton N/A
+event macro 1 0 zmien zamki
+return
+
+sub zanurz_kotwice
+deletejournal
+set #menubutton N/A
+event macro 1 0 zanurz kotwice
+return
+
+sub skrec_w_prawo
+deletejournal
+set #menubutton N/A
+event macro 1 0 skrec w prawo
+return
+
+sub ster_prawo_na_burte
+deletejournal
+set #menubutton N/A
+event macro 1 0 ster prawo na burte
+return
+
+sub stop
+deletejournal
+set #menubutton N/A
+event macro 1 0 stop
+return
+
+sub cala_wstecz
+deletejournal
+set #menubutton N/A
+event macro 1 0 cala wstecz
+return
+

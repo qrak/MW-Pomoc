@@ -1,0 +1,84 @@
+;Take a bag, secure it in your house
+;and fill it with several kegs, over 
+;100 rzeznicze noze and 1 empty potion. 
+;Lock the doors. Minimize UO. That's it. 
+;config: 
+;f1 = lastobject 
+;f2 = lasttarget 
+;f3 = lastskill 
+;f5 = castspell heal/waitfortarg/targetself 
+;f6 = castspell cure/waitfortarg/targetself 
+
+ignoreitem reset 
+findkeg: 
+finditem qmj 
+ignoreitem #findid 
+set %kegid #findid 
+if #findkind = -1 
+halt 
+if #findkind = 1 
+goto findkeg 
+***************** 
+
+usekeg: 
+set #lobjectid %kegid 
+key f1 
+target 
+wait 10 
+scanjournal 1 
+if is_empty in #journal 
+goto findkeg 
+***************** 
+findbottle: 
+finditem wuf 
+if #findkind = 1 2 
+ignoreitem #findid 
+goto findbottle 
+fillbottle: 
+set #ltargetid #findid 
+set #ltargetkind 1 
+key f2 
+wait 30 20 
+***************** 
+useskill: 
+set #lskill 30 
+key f3 
+target 
+***************** 
+findpotion: 
+finditem avf 
+if #findkind = 1 2 
+ignoreitem #findid 
+goto findpotion 
+targetpotion: 
+set #ltargetid #findid 
+set #ltargetkind 1 
+key f2 
+wait 1
+wait 20 
+target 
+***************** 
+findknife: 
+finditem gmh 
+ignoreitem #findid 
+if #findkind = 1 
+goto findknife 
+if #findkind = -1 
+exit 
+targetknife: 
+set #ltargetid #findid 
+set #ltargetkind 1 
+key f2 
+wait 20 
+***************** 
+cure: 
+if c in #charstatus 3 
+key f6 
+wait 50 
+goto cure 
+heal: 
+if #hits < 30 
+key f5 
+wait 5s
+wait 80 20 
+goto usekeg 

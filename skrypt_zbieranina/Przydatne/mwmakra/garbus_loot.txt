@@ -1,0 +1,77 @@
+start:
+onhotkey f10
+gosub yoink
+goto start
+sub yoink
+ignoreitem reset
+set %Cial 0
+zgon:
+finditem YFM G_2
+if #findkind <> 1
+{
+ if %Cial = 0
+  event sysmessage Nie znalazles zadnego ciala...
+ return
+}
+set %Contid #contid
+set %Conttime #scnt + 2
+set #lobjectid #findid
+event macro 17
+ignoreitem #findid
+cont:
+if #condid = %Contid && %ContTime > #scnt
+ goto cont
+if #contsize <> 144_212 || #contkind <> QSM
+ goto cont
+if I_can't_see_that in #journal
+ goto zgon
+set %i #findid
+set %p #contid
+event property #findid
+if Wspomnienia in #property
+ str del #property 1 12
+else
+ str del #property 1 7
+set %imie #strRes
+str len %imie
+set %ile #strRes - 1
+str left %imie %ile
+set %EI 0
+set %Cial %Cial + 1
+exp:
+finditem * C_ , %p
+if #findkind <> 0
+{
+ if %EI = 0
+ {
+  event exmsg %i 3 0 Niczego nie znaleziono
+  goto zgon
+ }
+ else
+ {
+  if %EI = 1
+   set %Item przedmiot
+  else
+  {
+   if %EI > 1 && %EI < 5
+    set %Item przedmioty
+   else
+    set %Item przedmiotow
+  }
+ }
+ event exmsg %i 3 0 Zebrales %EI %Item
+ goto zgon
+}
+event property #findid
+if wyjatkowej in #property || bilet_na_zwierza_widmo in #property || magiczn in #property || wital in #property || stabil in #property || madr in #property || umiejetnosci in #property
+{
+ lifted:
+ if #lLiftedKind = 1
+  goto lifted
+ exevent drag #findid #findstack
+ exevent dropc #backpackid
+ set %EI %EI + 1
+}
+ignoreitem #findid
+goto exp
+

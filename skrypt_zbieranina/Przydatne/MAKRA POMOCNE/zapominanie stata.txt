@@ -1,0 +1,10 @@
+initevents
+zapominanie
+click 135 40
+wait 1s
+click 347 137 ; tu ustawiasz x/y stata: str 347 98,dex-345 118,int-345 137
+wait 1s
+click 63 94
+wait 20s
+event macro 2 0 zieeewa
+goto zapominanie

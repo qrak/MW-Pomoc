@@ -1,0 +1,39 @@
+     initevents
+repeat
+onHotKey F10   ;KLAWISZ
+gosub targnext
+until #false
+sub targnext
+start2:
+ event macro 26 0
+ finditem #ltargetid
+ if #ltargetid = #charid
+ return
+ if #ltargetid = EUUFEB || #ltargetid = MXGRIB || #ltargetid = ADWACB || #ltargetid = XCVQF || #ltargetid = HMIKR || #ltargetid = BSDZLB || #ltargetid = VCAIB || #ltargetid = XQNLU || #ltargetid = HRGJEB || #ltargetid = AYMVEB || #ltargetid = XEGJHB
+ goto start2
+ if #findrep = 4
+ return
+ if #findrep = 5
+ return
+ if ( #findtype = IS ) || ( #findtype = HS ) || ( #findtype = AV ) || ( #findtype = XU )
+ {
+  if ( #findrep = 2 ) || ( #findrep = 7 ) || ( #findrep = 1 )
+  goto start2
+  if #findrep = 6
+  goto sprnpc
+ return
+ }
+ else
+ goto start2
+sprnpc:
+event property #findid
+if ( ( #spc , - , #spc ) in #property ) || ( Uzdrowiciel in #property ) || ( pustyni in #property ) || ( ( drow , #spc ) in #property ) || ( ( khaldun ) in #property )
+goto start2
+return
+ ;EUUFEB-mag garba
+ ;VCAIB-drak
+ ;XQNLU-kamyk
+ ;HRGJEB-lucas
+ ;AYMVEB-vaincre
+ ;XEGJHB-godrik
+ ;BSDZLB-kwiatek

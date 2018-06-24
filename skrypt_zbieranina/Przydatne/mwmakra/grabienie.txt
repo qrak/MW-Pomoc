@@ -1,0 +1,70 @@
+set %Kamienie MWF_BVF_OVF_GVF_HVF_RVF_EVF_FVF_VUF
+set %Worek 0
+start:
+onhotkey n alt
+gosub pojemnik
+goto start
+sub pojemnik
+if %Worek = 0
+ gosub worek
+finditem %Worek C_ , #backpackid
+if #findkind <> 0 && %Worek <> #backpackid
+ gosub worek
+set #lobjectid #backpackid
+event macro 17
+wait 2
+if #contkind <> IWM || #contid = #backpackid
+ event sysmessage Otworz lub wybierz pojemnik...
+set %time #scnt + 2
+pojemnik:
+if #scnt > %time
+{
+ event sysmessage Czas minal!
+ return
+}
+if #contkind <> IWM || #contid = #backpackid
+ goto pojemnik
+set %Where #contid
+event sysmessage Przeszukujesz wybrany pojemnik...
+wait 10
+ignoreitem reset
+szukaj:
+finditem * C_ , %Where
+if #findkind <> 0
+{
+ if %i > 0
+  event sysmessage Skonczyles przeszukiwac pojemnik!
+ else
+  event sysmessage Nic nie znalazles!
+ return
+}
+event property #findid
+if zlote in #property || magiczn in #property || #findtype in %Kamienie
+{
+ set %i %i + 1
+ lifted:
+ if #lLiftedKind = 1
+  goto lifted
+ exevent drag #findid #findstack
+ exevent dropc %Worek
+ wait 2
+}
+ignoreitem #findid
+goto szukaj
+return
+sub worek
+event sysmessage Wybierz worek:
+set #targcurs 1
+set %time #scnt + 2
+targ:
+if #scnt > %time
+{
+ set #targcurs 0
+ set %Worek #backpackid
+ event sysmessage Przedmioty trafia do plecaka glownego!
+ return
+}
+if #targcurs = 1
+ goto targ
+set %Worek #ltargetid
+return

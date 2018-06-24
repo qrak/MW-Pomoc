@@ -1,0 +1,21 @@
+;Autor: [nGz]
+initevents
+set %lt #ltargetid
+start:
+set %licz 0
+event macro 13 6
+loop:
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 5
+   goto start
+goto loop
+dalej:
+set #ltargetid %lt
+set #ltargetkind 1
+event macro 22
+wait 180 5
+goto start

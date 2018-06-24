@@ -1,0 +1,9 @@
+initevents
+tworzenie:
+event macro 17 0
+wait 1s
+event macro 22 0
+wait 1s
+click 135 390
+wait 8s
+goto tworzenie

@@ -1,0 +1,12 @@
+;Skrypt by [V]ariat  
+initevents
+hop:
+if #weight > 740
+{
+ sound D:\skrypty\scream.wav   scieszka do dzwiek
+}
+event Macro 17
+target 1s
+event Macro 22
+event Macro 1 0 .um Ukrywanie
+wait 3s

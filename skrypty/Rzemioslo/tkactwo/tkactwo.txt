@@ -1,0 +1,33 @@
+;Skrypt na tkactwo
+;Autor: Pepe
+;Nalezy raz zrobic r&#281;cznie!!!
+ 
+set #sysmsgcol 1283
+event sysmessage Skrypt tkactwo odpalony
+wait 1s
+;--------------------------------------------
+ 
+start:
+finditem DFF
+if #findkind = -1
+{
+set #sysmsgcol 40
+event sysmessage Brak narzedzi!
+halt
+}
+if #findkind = 1
+{
+ignoreitem #findid
+goto narzedzia
+}
+set #lobjectid #findid
+event macro 17
+target 5s
+event macro 22
+wait 3
+click 509 63
+wait 3
+click 104 338
+ 
+wait 7s ; Czas tworzenia przedmiotu
+goto start

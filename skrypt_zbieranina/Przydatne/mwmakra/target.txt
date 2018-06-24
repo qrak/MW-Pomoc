@@ -1,0 +1,46 @@
+keyloop:
+onhotkey x
+gosub targnext
+goto keyloop
+
+sub targnext
+start2:
+ event macro 26 0
+ finditem #ltargetid
+ if #ltargetid = #charid
+ return
+ if #ltargetid = QEUXGB || #ltargetid = ATKDFB || #ltargetid = SBEM || #ltargetid = XCVQF || #ltargetid = EUUFEB || #ltargetid = VCAIB || #ltargetid = XQNLU || #ltargetid = HRGJEB || #ltargetid = AYMVEB || #ltargetid = XEGJHB || #ltargetid = CWWAKB || #ltargetid = LGUMU
+ goto start2
+ if #findrep = 4
+ return
+ if #findrep = 5
+ return
+ if ( #findtype = IS ) || ( #findtype = HS ) || ( #findtype = AV ) || ( #findtype = XU )
+ {
+  if ( #findrep = 2 ) || ( #findrep = 7 ) || ( #findrep = 1 )
+     goto start2
+  if #findrep = 6
+     goto sprnpc
+  return
+ }
+ if #findtype = FH   ;wilkolak
+    return
+ else
+ goto start2
+sprnpc:
+event property #findid
+if ( ( #spc , - , #spc ) in #property ) || ( Uzdrowiciel in #property ) || ( pustyni in #property ) || ( ( drow , #spc ) in #property ) || ( ( khaldun ) in #property )
+goto start2
+return
+ ;LGUMU-raist
+ ;EUUFEB-mag garba
+ ;VCAIB-drak
+ ;XQNLU-kamyk
+ ;HRGJEB-lucas
+ ;AYMVEB-vaincre
+ ;XEGJHB-godrik
+ ;CWWAKB-nil
+ ;XCVQF-neribczlowiek
+ ;SBEM-nimfa
+ ;ATKDFB-dedz
+ ;QEUXGB-potis

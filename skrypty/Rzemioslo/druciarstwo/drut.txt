@@ -1,0 +1,26 @@
+initevents
+narzedzia:
+if #weight > 1000
+{
+set #sysmsgcol 1080
+event sysmessage WAZYSZ 180 kamieni !
+halt
+}
+finditem JTL
+if #findkind = -1
+halt
+if #findkind = 1
+{
+ignoreitem #findid
+goto narzedzia
+}
+set %licz 0
+set #lobjectid #findid
+event macro 17
+target 5s
+event macro 22
+wait 3
+click 135 390
+wait 7s
+
+

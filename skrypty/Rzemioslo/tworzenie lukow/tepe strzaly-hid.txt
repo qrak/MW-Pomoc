@@ -1,0 +1,17 @@
+initevents
+for %20 1 10
+{
+event macro 17
+target 5s
+event macro 22
+wait 1s
+click 135 390 d
+wait 9s
+key f9
+wait 1
+}
+msg $
+wait 1
+click 70 96
+
+

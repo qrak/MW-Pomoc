@@ -1,0 +1,100 @@
+;Makro na butle by Raist
+;makro oprocz lykania butli kontroluje ich ilosc
+
+initevents
+
+repeat
+onHotKey F1   ;biala
+gosub F1
+onHotKey F2   ;niebieska
+gosub F2
+onHotKey F3   ;zolta
+gosub zolta
+onHotKey F4    ;czerwony pot
+gosub F4
+onHotKey F5    ;pomarancz
+gosub F5
+;onHotKey F8   ;bandaz
+;gosub bandaz
+until #false
+
+sub F1
+finditem XUF C ;wybuch
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz bialych
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl bialych
+return
+
+sub F2
+finditem YUF C ;Heal
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz niebieskich
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl niebieskich
+return
+
+sub F4
+finditem ZUF C ;czerwony pot
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz czerwieni
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl czerwieni
+return
+
+sub zolta
+finditem UUF C ;Heal
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz zoltych
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl zoltych
+return
+
+sub bandaz
+myj:
+finditem amf C ;
+if #findkind = -1
+   return
+set #lobjectid #findid
+event macro 17 0
+target 5s
+event macro 22 0
+set %czas #scnt2 + 30
+czekaj:
+if Umyles in #sysmsg || Umylas in #sysmsg
+goto myj
+if %czas < #scnt2
+goto myj
+else
+goto czekaj
+
+
+

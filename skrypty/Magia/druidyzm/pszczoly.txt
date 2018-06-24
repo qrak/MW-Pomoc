@@ -1,0 +1,25 @@
+initEvents
+mana: 
+if #mana < 19
+{
+event macro 13 46
+event SysMessage --- Medytowanie ---
+wait 9s
+goto mana
+}
+insc:
+if #mana > 20
+{
+event macro 1 0 .um wiedza o zwierzetach
+event SysMessage --- Wiedza ---
+wait 1s
+event macro 22 0
+wait 5s
+event macro 1 0 Sgob Sgaoth
+event SysMessage --- Pszczoly ---
+wait 7s
+event macro 23 0
+wait 1s
+event SysMessage Mana: #mana
+goto insc
+}

@@ -1,0 +1,5 @@
+initevents
+atak:
+event macro 27 0
+wait 10s
+goto atak

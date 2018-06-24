@@ -1,0 +1,21 @@
+initevents
+
+keyloop:
+onHotKey F6  ;dlugi lub yumi
+gosub F6
+onHotKey F7 ;krotki
+gosub F7
+goto keyloop
+
+sub F6
+finditem SPO_GBP C;
+set #lobjectid #findid
+event macro 17 0
+return
+
+sub F7
+finditem WOH C;
+set #lobjectid #findid
+event macro 17 0
+return
+

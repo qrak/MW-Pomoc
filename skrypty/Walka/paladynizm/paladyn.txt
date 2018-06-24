@@ -1,0 +1,119 @@
+;Skrypt bY SabiK
+;paladynizm
+;Wersja 1.1
+;Skrypt wymawia modlitwe (fajnie flooduje), jak skonczy sie mana to medytuje :))
+;Modlitwy z targetem rzuca w siebie. Jak skonczy sie mana, skrypt medytuje
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %wymowa 3        ;[1 - mowa, 3 - szept, 4 - krzyk]
+set %slowa xxx       ;Tutaj wpisz nazwe modlitwy (modlitwy dwuczlonowe wpisuj wg wzoru: 'nazwa , #spc , modlitwy')
+set %z_targetem 0    ;Tutaj ustaw czy wymawiasz modlitwe, ktora rzucasz w wybrany cel (ma targeta) [1 - TAK, 0 - NIE]
+set %mana 10         ;Tutaj ustaw ile many zabiera wymawiana modlitwa
+;-------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [paladynizm] odpalony (by SabiK)
+wait 1
+
+start:
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+if #mana < %mana
+   gosub medyt
+event macro %wymowa 0 .rzuc p %slowa
+if %z_targetem = 1
+   goto z_targetem
+set %licz #scnt + 40
+repeat
+if Nie_udalo in #sysmsg
+   goto start
+until %licz < #scnt2
+goto start
+
+z_targetem:
+set %licz #scnt2 + 100
+repeat
+if %licz < #scnt2
+   goto start
+until #targcurs = 1 || Nie_udalo in #sysmsg
+if #targcurs = 1
+   event macro 23
+goto start
+
+sub medyt
+if #targcurs = 1
+   key esc
+if *STOP = 1
+{
+   repeat
+   until *STOP = 0
+}
+medyt:
+event macro 1 0 .um medytacja
+set %licz #scnt2 + 20
+repeat
+if #mana = #maxmana
+   return
+if Nie_brakuje_Ci_many in #sysmsg
+   return
+scanjournal 1
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+{
+   if #journal = Nie_mozesz_sie_skoncentrowac.
+   {
+      if #mana = #maxmana
+         return
+      wait 60
+      deletejournal
+      goto medyt
+   }
+}
+if %licz < #scnt2
+   goto medyt
+until Rozpoczynasz_medytacje in #sysmsg || #sysmsg = Juz_medytujesz...
+koniec:
+repeat
+scanjournal 1
+if #sysmsg = Nie_mozesz_sie_skoncentrowac.
+{
+   if #journal = Nie_mozesz_sie_skoncentrowac.
+   {
+      if #mana = #maxmana
+         return
+      wait 60
+      goto medyt
+   }
+}
+if #sex = 0
+{
+   if #sysmsg = Straciles_koncentracje.
+   {
+      if #mana = #maxmana
+         return
+      goto medyt
+   }
+}
+if #sex = 1
+{
+   if #sysmsg = Stracilas_koncentracje.
+   {
+      if #mana = #maxmana
+         return
+      goto medyt
+   }
+}
+if Your in #sysmsg
+{
+   if #mana = #maxmana
+      return
+   goto koniec
+}
+if #sysmsg = Juz_medytujesz...
+   goto koniec
+until #mana = #maxmana || #sysmsg = Konczysz_medytacje. || #sysmsg = Nie_brakuje_Ci_many.
+return
+

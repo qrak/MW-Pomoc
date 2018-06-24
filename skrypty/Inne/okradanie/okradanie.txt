@@ -1,0 +1,274 @@
+;Autor: [nGz] mod by Raist
+;Wersja 1.4.1
+;! ! ! WAZNE ! ! !
+;Wlacz w EasyUO opcje Enable Event Sysmessage(Options-->Configuration).
+;Wloz do SWOJEGO PLECAKA przedmiot, ktory chcesz okradac
+;(np.100 bandazy - na nich bylo testowane), zostanie on pojedynczo przelozony do plecaka ofiary.
+;Po wlaczeniu skrypt poprosi Cie o wskazanie zwierzecia, ktore chcesz okradac
+;oraz przedmiot(ktory MUSISZ miec w swoim plecaku!)
+;WAZNE tez jest aby nic nie klikac po tym jak wskazesz te cele!
+;Mozesz jeszcze ustawic czy ma grac na gitarze lub bebenku -
+;- jesli tak to ustaw %graj na 1(set %graj 1).
+set %zajrzyj 100      ;<----- TUTAJ wpisz co ile sekund ma ponowic otwierac
+set %graj 1         	;<----- TUTAJ ustawiasz czy ma grac na gitarze/bebenku miedzy przerwami (0-nie; 1-tak)
+initevents
+wait 35
+start:
+set %licz 0
+set #targcurs 1
+petla:
+set %licz %licz + 1
+if #targcurs = 1
+ {
+   wskter:
+   set #sysmsgcol 1152
+   event sysmessage Wskaz teraz zwierze, ktore chcesz okradac!
+   set %licz 0
+   goto petla2
+ }
+if %licz > 50
+   goto start
+goto petla
+petla2:
+set %licz %licz + 1
+if #targcurs = 0
+   goto wskaz
+if %licz > 300
+   goto wskter
+goto petla2
+wskaz:
+wait 18
+set %lta #ltargetid
+wait 2
+przed:
+set %licz 0
+set #targcurs 1
+pynt:
+set %licz %licz + 1
+if #targcurs = 1
+ {
+   wskt:
+   set #sysmsgcol 1152
+   event sysmessage Teraz wskaz przedmiot, ktory chcesz krasc!
+   set %licz 0
+   goto pynt2
+ }
+if %licz > 50
+   goto przed
+goto pynt
+pynt2:
+set %licz %licz + 1
+if #targcurs = 0
+   goto wskyz
+if %licz > 300
+   goto wskt
+goto pynt2
+wskyz:
+wait 10
+finditem #ltargetid
+set %ltp #findtype
+set %pojem #contid
+set %czas 0
+zagla:
+if %czas > #scnt2
+   goto zagla
+if #chardir <> 0
+   event macro 5 1
+else
+   event macro 5 5
+set %licz2 0
+zajrz:
+set %licz2 %licz2 + 1
+set %licz 0
+if %licz2 > 10
+   goto zagla
+event macro 1 0 .um zagladanie
+loop:
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 4
+   goto zajrz
+goto loop
+dalej:
+set #ltargetid %lta
+event macro 22
+event macro 22
+event macro 22
+set %licz #scnt2 + 160
+loop2:
+nextcpos 360 495
+if Anulowano in #sysmsg
+ {
+   wait 1
+   set #sysmsgcol 1080
+   event sysmessage Zatrzymuje makro - zle wskazany cel do okradania!
+   halt
+ }
+if Nie_udalo_ci_sie in #sysmsg
+ {
+   wait 10
+   gosub graj
+   wait 10
+   goto zagla
+ }
+if Udalo_ci_sie_otworzyc_plecak_ in #sysmsg
+   {
+   set %czaspon #scnt + %zajrzyj
+   goto pojemn
+   }
+if Your_skill_in in #sysmsg
+   goto pojemn
+if Stoisz_za_daleko in #sysmsg
+   halt
+if %licz < #scnt2
+   goto zagla
+goto loop2
+pojemn:
+gosub graj
+set %licz 0
+if %iprzed > 0
+ {
+   wait 20
+   goto okrad2
+ }
+pojemnik:
+set %licz %licz + 1
+if %pojem <> #contid
+ {
+   set %pojemnik #contid
+   set %czas #scnt2 + 160
+   goto znajp
+ }
+if %licz > 60
+   goto zagla
+goto pojemnik
+znajp:
+set %iprzed 0
+znap:
+if #contid = %pojemnik
+ {
+   set %x #contposx + 175
+   set %y #contposy + 60
+ }
+else
+ {
+   if %x = N/A
+      goto zagla
+ }
+finditem %ltp C_ , %pojem
+if #findkind = -1
+ {
+   if %iprzed > 0
+      goto zagla
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono przedmiotu!
+   halt
+ }
+event drag #findid
+if #findstack > 1
+ {
+   wait 1
+   set %licz 0
+   kolko:
+   set %licz %licz + 1
+   if #conttype = %ltp
+      goto wcis
+   if %licz > 15
+      goto znap
+   goto kolko
+   wcis:
+   wait 2
+   msg 1 $
+   wait 2
+ }
+set %timerek #scnt2 + 15
+zostaw:
+wait 4
+click %x %y
+wait 4
+if %timerek < #scnt2
+   goto zagla
+if #lliftedkind = 1
+   goto zostaw
+set %iprzed %iprzed + 1
+if That_item_is_too_heavy in #sysmsg
+   goto zagla
+if %iprzed > 129
+   goto zagla
+goto znap
+okrad:
+gosub graj
+okrad2:
+wait 20
+ignoreitem reset
+finditem %ltp C_ , %pojemnik
+if #findkind = -1
+   goto znajp
+okr:
+set %licz 0
+event macro 1 0 .um okradanie
+loop3:
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto krad
+if %licz > 4
+   goto okr
+goto loop3
+krad:
+if %czaspon < #scnt
+   goto zagla
+set #ltargetid #findid
+event macro 22
+event macro 22
+event macro 22
+set %licz #scnt2 + 160
+loop4:
+scanjournal 1
+if %czaspon < #scnt
+   goto zagla
+if Udalo_Ci_sie in #journal
+   goto okrad
+if Your_skill_in_ in #journal
+   goto okrad
+if Your_dexterity in #journal
+   goto okrad
+if Ujawnil in #journal
+   goto okrad
+if Tego_nie_uda_Ci_sie_ukrasc in #journal
+   goto zagla
+if %licz < #scnt2
+   goto okrad
+goto loop4
+sub graj
+if %graj <> 1
+   return
+graj:
+finditem mqf_qrf
+if #findkind = -1
+ {
+   finditem prf_qrf
+   if #findkind = -1
+    {
+      set #sysmsgcol 1080
+      event sysmessage Nie znaleziono bebenka/gitary!
+      halt
+    }
+ }
+if #findkind = 1
+ {
+   ignoreitem #findid
+   goto graj
+ }
+set #lobjectid #findid
+event macro 17
+wait 4
+if I_am_already_doing_some in #sysmsg
+   return
+goto graj
+
+

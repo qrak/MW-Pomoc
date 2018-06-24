@@ -1,0 +1,45 @@
+initevents
+set %profile 520_390
+
+finditem DYM G_2
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage STOISZ ZA DALEKO OD KSIEGI
+}
+set %ksiazka #findid
+start:
+onhotkey F6 alt
+halt
+set #lobjectid %ksiazka
+event macro 17 0 ;last object
+wait 1
+set %czas #scnt2 + 10
+
+inskr:
+if #CONTSIZE = %profile
+{
+klik:
+click 474 302  ; click
+wait 1
+if #contname = generic_gump
+{
+if #CONTSIZE = %profile
+goto start
+sound C:\missile.wav
+wait 4s
+goto start
+}
+goto start
+}
+if #CONTNAME = waiting_gump
+{
+sound C:\missile.wav
+wait 4s
+}
+if %czas > #scnt2
+goto klik
+else
+{
+goto inskr
+}

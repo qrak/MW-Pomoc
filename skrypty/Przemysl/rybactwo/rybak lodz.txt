@@ -1,0 +1,100 @@
+; f12 - pause
+set %ukrywanie 1
+
+set %time 0
+start:
+onhotkey f12
+gosub pause
+if %pause = 1
+goto start
+if #enemyid <> N/A
+{
+gosub zdejmij
+event macro 1 0 dryfuj
+event macro 1 0 dryfuj
+event macro 1 0 cala naprzod
+sound C:\WINDOWS\Media\notify.wav
+set %eTime #scnt + 10
+enemy:
+if #enemyid <> N/A
+  goto enemy
+event macro 1 0 stop
+event macro 1 0 zanurz kotwice
+goto start
+}
+if %time < #scnt && %ukrywanie = 1
+{
+event macro 1 0 .um ukrywanie
+set %time #scnt + 10
+}
+finditem PVI_NVI_TVI_ZVI_HUF_LXF_YWF_ZWF_GXF_AXF_XWF_KXF_IEF_XDF_HEF_YDF_EQD_GQD_FQD_DQD C_ , #backpackid
+if #findkind = 0
+{
+exevent drag #findid #findstack
+exevent dropg #charposx #charposy
+}
+finditem XHF
+if #findkind = 0
+{
+set %random #random % 12
+set %x #charposx - 6 + %random
+set %random #random % 12
+set %y #charposy - 6 + %random
+set #lobjectid #findid
+event macro 17
+target
+set #ltargetx %x
+set #ltargety %y
+set #ltargetkind 2
+set %jID #jindex
+event macro 22
+set %czas #scnt + 4
+journal:
+onhotkey f11
+  gosub pause
+set %ile #jindex - %jID
+if %czas < #scnt
+  goto start
+if %ile > 0
+{
+  for %i 1 %ile
+  {
+   scanjournal %i
+   if Udalo in #journal || Dorwal in #journal || nadziala in #journal || nie_bylo_nic in #journal || slabo in #journal || Rybactwo in #journal || Wylowil in #journal || Nie_widzisz in #journal || Oops in #journal || Wyglada in #journal
+    goto start
+  }
+  set %jID #jindex
+}
+goto journal
+}
+goto start
+
+sub pause
+if %pause = 1
+{
+  gosub zaloz
+  set %pause 0
+}
+else
+  set %pause 1
+event sysmessage Pause: %pause
+wait 10
+return
+
+sub zdejmij
+finditem XHF C_ , #charid
+if #findkind = 0
+{
+  exevent drag #findid
+  exevent dropc #backpackid
+}
+return
+
+sub zaloz
+finditem XHF C_ , #backpackid
+if #findkind = 0
+{
+  set #lobjectid #findid
+  event macro 17
+}
+

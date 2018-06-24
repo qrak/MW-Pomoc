@@ -1,0 +1,82 @@
+initevents
+set %profile 560_460
+set %hid 1
+
+start:
+set %jrnl #jindex
+finditem FSF C_ , #charid  ; szuka narzedzi szklarza
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage BRAK TOPORKA
+sound c:\missile.wav
+halt
+}
+set %mlotek #findid
+set #lobjectid %mlotek  ; ustawia je jako lastobject
+finditem TLK C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC DESEK
+sound c:\missile.wav
+halt
+}
+set #ltargetid #findid
+event macro 17 0
+target 5s
+event macro 22 0
+set %timer #scnt2 + 20
+
+kuciegump:
+if #CONTSIZE = %profile
+{
+click 137 390   ; rob ostatnie ostatnie
+set %timer #scnt2 + 120
+wait 10
+set %jrnl #jindex
+goto pat
+}
+if %timer < #scnt2
+goto start
+else
+goto kuciegump
+
+
+pat:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Zrobilas in #journal || Zrobiles in #journal
+         {
+         goto hid
+         }
+      }
+   }
+
+hid:
+if %hid = 1
+{
+set %jrnl #jindex
+event macro 1 0 .um ukrywanie
+goto czekajhid
+}
+goto start
+
+czekajhid:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if ukryles in #journal || ukrylas in #journal || Nie_udalo_ci_sie_ukryc in #journal || || Juz_cos in #journal
+         {
+         goto start
+         }
+      }
+   }
+

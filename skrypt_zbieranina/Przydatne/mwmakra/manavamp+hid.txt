@@ -1,0 +1,25 @@
+initevents
+
+start:
+event macro 15 52
+target 50s
+event macro 23
+wait 1s //jak nie bedzie chcialo medytowac ten wait trzeba zwiekszyc
+event macro 13 46
+goto sprawdzmedit
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+goto hid
+}
+else
+{
+goto sprawdzmedit
+}
+
+hid:
+event macro 13 21
+wait 1s
+goto start

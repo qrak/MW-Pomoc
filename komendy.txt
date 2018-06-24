@@ -1,0 +1,53 @@
+
+.e - pojawia sie i znika
+.talk - wskazujesz osobe, przedmiot, i piszesz. wtedy wyglada to jak by ta osoba mowila.Aby 		przerwac nacisnac ESC
+.nsight - swiatlo
+.tame - oswajasz sobie cos.
+.u - dobre wejscie, cos jak .e
+.teleto - wskazujesz cos i docelowe miejsce gdzie to przeniesc.
+.summon - przywolujesz gracza wybranego z listy
+.showstats - nie musze tlumaczyc
+.bcast <txt> - piszesz ogolna wiadomosc do graczy
+.color - wiadomo
+.go
+.goto
+.mtele
+.goxyz - cos jak go, ale podajesz xyz np. go 1200 680 0
+.gotip - to nie dziala, ale pokazuje gracza i ip.
+.warn - jak ktos cie wkurwia to walisz ostrzezenie
+.where - podaje wspolrzedne xyz gdzie jestes
+.resme - resa ciebie
+.res - wskrzeszasz, ale nie uzywaj raczej bo lekko zbugowana jest
+.refreshme - odswieza hp stame i mane
+.powerup
+.powerdown
+.tele
+.bitchslap - sprawdz sobie
+.d - cos jak .e
+.ip
+.iponline
+.un - ciekawe
+.priv - wskaz osobe ktora chcesz przeniesc do pokoju zwierzen
+.gmbcast - cos jak .bcast
+.wyjechal - mrozisz konto
+.bank
+.rename - zmienia imie
+.info
+.create
+.openpack - otwiera plecak
+.createnpc - tworzy moba
+.lor - daje lora
+.ucisz - daje +m osobie
+.gmpage
+
+
+==eventy==
+
+
+.forcectf - odpala ctf - haslo "supercwel"
+.forceig - igrzyska
+.forcedm - DED MECZ
+.forcektm - kill the monster
+.forcezlapqraka - zlap qraka
+
+

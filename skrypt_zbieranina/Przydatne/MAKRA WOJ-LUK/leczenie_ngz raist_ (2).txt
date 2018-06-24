@@ -1,0 +1,93 @@
+linesPerCycle 20
+set %hp #hits
+set %czas 0
+set %jrnl #jindex
+set %leczenie 0
+
+start:
+if #charghost = yes
+   {
+   set %leczenie 0
+   set #sysmsgcol 1080
+   set %c #random % 7
+   if %c = 0
+   event sysmessage ZNOWU KURWA ZLAMILES
+   if %c = 1
+   event sysmessage JA PIERDOLE NIE ZNOWU
+   if %c = 2
+   event sysmessage KURWA CO TY ROBISZ
+   if %c = 3
+   event sysmessage I ZNOW KURWA SZARO
+   if %c = 4
+   event sysmessage NIE NO WEZ WYLACZ TA GRE
+   if %c = 5
+   event sysmessage WEZ SKONCZ I NIE LAM
+   if %c = 6
+   event sysmessage BERSERKER!!!!!
+   wait 10s
+   }
+if #hits <> %hp
+   {
+   if #hits > 150 || #hits = 0  || #ar = 0
+      goto start2
+   set %dmg %hp - #hits
+   if %dmg < 0
+      {
+      set %dmg ( %dmg * ( -1 ) )
+      set #sysmsgcol 1264
+      event sysmessage Odzyskales %dmg hp
+      set %hp #hits
+      goto start2
+      }
+   set #sysmsgcol 1063
+   event sysmessage Straciles %dmg hp
+   set %hp #hits
+   }
+start2:
+if #jindex > %jrnl
+   {
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+   if Zaczynasz_siebie_leczyc... in #journal
+      {
+      set %leczenie 1
+      set %czasb #scnt2
+      set %czasc #scnt2 + 10
+      }
+   if Wyleczyles in #journal || Nie_udalo_Ci in #journal || Przestales in #journal
+      {
+      if %leczenie = 1
+         {
+         set %leczenie 0
+         set %czasb ( ( #scnt2 - %czasb ) / 10 )
+         set #sysmsgcol 1264
+         event sysmessage Czas leczenia trwal %czasb s
+         }
+      }
+   }
+if %czasc <= #scnt2 && %leczenie = 1
+   {
+   set %ilelecze ( ( #scnt2 - %czasb ) / 10 )
+   if %ilelecze > 12
+      {
+      set #sysmsgcol 1090
+      event sysmessage Lecze juz %ilelecze s. BANDAZ ZBLOKOWANY
+      set %czasc #scnt2 + 10
+      }
+   if %ilelecze <= 12
+      {
+      set #sysmsgcol 1091
+      event sysmessage Lecze juz %ilelecze s
+      set %czasc #scnt2 + 10
+      }
+   }
+if %czas < #scnt2
+{
+if #hits < 50
+   {
+   set #sysmsgcol 1080
+   event sysmessage MASZ #hits HP
+   set %czas #scnt2 + 40
+   }
+}
+goto start

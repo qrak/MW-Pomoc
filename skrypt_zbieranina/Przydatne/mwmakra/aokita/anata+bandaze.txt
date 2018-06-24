@@ -1,0 +1,50 @@
+;Leczenie + anatka by Raist
+
+initevents
+set %czas 140 ;<---ustaw czas leczenia bandazami
+set %timer1 0
+set %timer2 0
+ignoreitem #charid
+
+mainloop:
+;if %timer1 < #scnt2
+;goto umyslowy
+if #hits < #maxhits
+goto lecz
+goto mainloop
+
+lecz:
+finditem zlf C ;
+if #findkind = -1
+{
+set #sysmsgcol 1063
+event sysmessage Nie masz bandazy
+wait 3s
+goto mainloop
+}
+set #lobjectid #findid
+event macro 17 0
+target 3s
+event macro 23 0
+set %timer2 #scnt2 + %czas
+czekaj:
+scanjournal 1
+if Wyleczyles in #journal || Wyleczylas in #journal || Your_skill_in_Uzdrawianie in #journal || Nie_udalo_Ci in #journal || Przestales in #journal || Przestalas in #journal || Stoisz_za in #journal || Nie_mozesz_tego in #journal
+goto mainloop
+if Nie_mozesz_teraz in #journal
+{
+wait 3s
+goto mainloop
+}
+if %timer2 < #scnt2
+goto mainloop
+goto czekaj
+
+umyslowy:
+event macro 1 0 .um anatomia
+target 3s
+event macro 22 0
+set %timer1 #scnt2 + 95
+goto mainloop
+
+

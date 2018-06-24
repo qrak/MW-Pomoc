@@ -1,0 +1,111 @@
+;Naprawianie by Raist v 1.0 (kowalka/krawiec)
+;Makro naprawia przedmioty z pojemnika
+;sztaby/skory/tkanina nie powinny znajdowac sie w
+;pojemniku z przedmiotami tylko luzem w plecaku gracza
+;Mlotek kowalski nalezy trzymac w reku, narzedzia
+;szewskie luzem w plecaku
+;----------------------------------------------------------
+initevents
+ignoreitem reset
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z przedmiotami
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+set %ple #ltargetid  ;ustawia plecak z itemkami
+set #lobjectid %ple
+event macro 17 0
+set %czas #scnt2 + 20
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+until ( #contid = #ltargetid )
+
+start:
+finditem * C_ , %ple
+if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage NAPRAWIONE
+   halt
+   }
+set %przedmiot #findid
+finditem GBG_TLH C_ , #charid
+if #findkind = -1
+   {
+   finditem HAG C_ , #backpackid
+   if #findkind = -1
+      {
+      set #sysmsgcol 1080
+      event sysmessage NIE MASZ ODPOWIDNICH NARZEDZI
+      halt
+      }
+   }
+set #lobjectid #findid
+event macro 17 0
+set %czas #scnt2 + 20
+
+delay:
+if #contsize = 560_460
+   {
+   wait 1
+   click 135 421
+   target 2s
+   set #ltargetid %przedmiot
+   event macro 22 0
+   set %czas #scnt2 + 70
+   goto naprawa
+   }
+if #targcurs = 1
+   {
+   set #ltargetid %przedmiot
+   event macro 22 0
+   set %czas #scnt2 + 70
+   goto naprawa
+   }
+if %czas < #scnt2
+   goto start
+goto delay
+
+naprawa:
+scanjournal 1
+if Nie_masz_materialu in #journal
+   {
+   set #sysmsgcol 1080
+   event sysmessage BRAK MATERIALOW DO NAPRAWY - OMIJAM PRZEDMIOT
+   ignoreitem %przedmiot
+   goto start
+   }
+if Tak_tego_nie_naprawisz in #journal || Tego_sie_nie_da_naprawic in #journal || Naprawilas_ten_przedmiot_calkowicie in #journal || Naprawiles_ten_przedmiot_calkowicie in #journal || Przedmiot_nie_jest_zniszczony in #journal
+   {
+   ignoreitem %przedmiot
+   goto start
+   }
+if Musisz_byc_blisko in #journal
+   {
+   set #sysmsgcol 1080
+   event sysmessage STOISZ ZA DALEKO OD KOWADLA
+   halt
+   }
+if Czesciowo_naprawilas in #journal || Czesciowo_naprawiles in #journal
+   {
+   goto start
+   }
+if %czas < #scnt2
+   goto start
+goto naprawa

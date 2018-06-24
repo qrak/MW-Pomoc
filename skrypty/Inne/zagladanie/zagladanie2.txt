@@ -1,0 +1,129 @@
+initevent
+set %plecak #CONTID ; FFFGUBE ;  ;xbdvfbe
+set %lama #ltargetid ; DSGEHB; JLIIGB ;<- Durlin
+set %przed CQF_PMH_DWJ_NPF_ZLF_ENK
+set %good 0
+set %bed 0
+
+start:
+ event sysmessage Zagladam :D
+wait 10
+key up
+key up
+key down
+key down
+wait 3
+event macro 1 0 .um zagladanie
+wait 4
+if do_czyjego_plecaka in #sysmsg
+goto dalej
+if juz_cos_robisz in #sysmsg && #TARGCURS = 1
+goto dalej
+
+goto start
+
+dalej:
+target 6s
+finditem %lama
+if #findkind <> 1
+{
+event sysmessage hop
+halt
+}
+set #LTARGETID %lama
+
+event macro 22
+wait 10
+
+set %licz 0
+czekaj_zagl:
+set %licz %licz + 1
+if %licz > 17
+{
+event sysmessage Za dluuugo...
+goto start
+}
+
+if Nie_udalo_Ci_sie_otworzyc_plecaka in #sysmsg
+{
+wait 50
+event sysmessage Ups... nie otworzylem
+goto start
+}
+if Your_skill_in in #sysmsg
+{
+wait 1s
+event sysmessage Zgainowalem
+goto okradanie1
+}
+if Udalo_Ci_sie_otworzyc_plecak in #sysmsg
+{
+wait 1s
+event sysmessage Otworzylem
+goto okradanie1
+}
+ wait 1s
+goto czekaj_zagl
+
+okradanie1:
+set %licz1 0
+;finditem %plecak
+;set #CONTID #FINDID
+;event macro 17
+
+okradanie:
+set %licz1 %licz1 + 1
+
+if %licz1 > 4
+{
+event sysmessage Wiecej jak 4 od nowa!
+event sysmessage Udanych %good Nieudanych %bed
+goto start
+}
+wait 48
+
+finditem * C_ , %plecak
+set #ltargetid #findid
+if #findkind <> 0
+goto start
+
+
+event macro 1 0 .um okradanie
+  wait 4
+if Juz_cos_robisz in #sysmsg
+{
+%set %licz1 %licz1 - 1
+wait 1s
+goto okradanie
+}
+target 5s
+
+event macro 22
+
+set %licz 0
+czekaj_okad:
+set %licz %licz + 1
+ if %licz > 30
+   goto start
+if Nie_Udalo_Ci_sie_ukrasc_ in #sysmsg
+{
+wait 1s
+set %bed %bed + 1
+goto okradanie
+}
+if Udalo_Ci_sie_ukrasc_ in #sysmsg
+{
+wait 1s
+set %good %good + 1
+goto okradanie
+}
+if Your_skill_in in #sysmsg
+{
+wait 1s
+set %good %good + 1
+goto okradanie
+}
+
+
+wait 10
+goto czekaj_okad

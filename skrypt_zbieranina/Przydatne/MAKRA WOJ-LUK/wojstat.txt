@@ -1,0 +1,114 @@
+;Skrypt bY SabiK
+;woj-stats.txt
+;Wersja 1.1
+;Skrypt pokazuje tabelke z hp/stam, waga bandazami i butlami
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [woj-stats] odpalony (by SabiK)
+wait 1
+
+menu hide
+menu Clear
+menu window title Stats bY SabiK
+menu Window size 225 110
+menu Window color black
+menu Font color white
+menu Font bgcolor black
+menu Font size 19
+menu Text reg010 5 2 HP:
+menu Text reg020 5 31 ST:
+menu Font size 15
+menu Text reg020 3 70 WAGA:
+menu Font size 8
+menu Font color gray
+menu Text reg090 125 0 Bandaze
+menu Font color silver
+menu Text reg0110 125 17 Sily
+menu Text reg0120 125 30 Zrecznosci
+menu Text reg0130 125 43 Czerwone
+menu Text reg0130 125 56 Leczenia
+menu Text reg0140 125 69 Uzdrowienia
+menu Text reg0150 125 82 Wybuchy
+menu Text reg0150 125 95 Trutki
+menu Font color red
+menu Show
+
+start:
+reg6:
+menu delete reg6
+menu Font size 20
+menu Text reg6 50 0 #hits
+menu Font size 8
+   goto reg7
+
+reg7:
+menu delete reg7
+menu Font size 20
+menu Text reg7 50 30 #stamina
+menu Font size 8
+   goto reg8
+
+reg8:
+menu delete reg8
+menu Font size 19
+menu Text reg8 75 67 #weight
+menu Font size 8
+   goto reg9
+
+reg9:
+finditem zlf C
+   set %reg9 #findstack
+   menu delete reg9
+   menu Text reg9 195 0 %reg9
+   goto reg10
+
+reg10:
+finditem xuf C
+   set %reg10 #findstack
+   menu delete reg10
+   menu Text reg10 195 17 %reg10
+   goto reg11
+
+reg11:
+finditem yuf C
+   set %reg11 #findstack
+   menu delete reg11
+   menu Text reg11 195 30 %reg11
+   goto reg111
+
+reg111:
+finditem zuf C
+   set %reg111 #findstack
+   menu delete reg111
+   menu Text reg111 195 43 %reg111
+   goto reg12
+
+reg12:
+finditem uuf C
+   set %reg12 #findstack
+   menu delete reg12
+   menu Text reg12 195 56 %reg12
+   goto reg13
+
+reg13:
+finditem nuf C
+   set %reg13 #findstack
+   menu delete reg13
+   menu Text reg13 195 69 %reg13
+   goto reg14
+
+reg14:
+finditem tuf C
+   set %reg14 #findstack
+   menu delete reg14
+   menu Text reg14 195 82 %reg14
+   goto reg15
+
+reg15:
+finditem avf C
+   set %reg15 #findstack
+   menu delete reg15
+   menu Text reg15 195 95 %reg15
+wait 10
+goto start

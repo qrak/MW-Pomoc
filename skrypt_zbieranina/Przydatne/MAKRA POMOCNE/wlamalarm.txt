@@ -1,0 +1,15 @@
+set %linijka #jindex
+start:
+if #jindex > %linijka
+   {
+   set %linijka %linijka + 1
+   scanjournal %linijka
+   if You_see: in #journal
+      {
+       set #sysmsgcol 1080
+       sound C:\missile.wav
+       wait 1
+       goto start
+      }
+   }
+

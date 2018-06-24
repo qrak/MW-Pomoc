@@ -1,0 +1,721 @@
+;autor: ReDrack
+;Skrypt sluzy do odmierzania czasu i przewidywania kolejnych gain'ow poszczegolnych skilli
+;Mozna wybrac do 6 umiejetnosci z listy wszystkich skill'i dostepnych na shardzie MW
+;Aby skrypt poprawnie dzialal, nalezy miec ustawione wyswietlanie informacji o wzroscie umiejetnosci o kazde 0.1%
+;W tym celu nalezy wejsc Options->Miscellaneous(4. od gory, z prawej strony) i zaznaczyc "1" na pasku pod napisem "Inform me when my skills improve this much (in tenths)"
+;Po wlaczeniu odmierzania i przed pierwszym gain'em skill'a nie wolno zakladac magikow do umiejetnosci, gdyz skrypt moze policzyc to jako pierwszy gain
+;W razie problemow lub ewentualnych brakow prosze o kontakt ze mna na ircu (nick: Redrack lub Redrack|AW)
+
+initevents
+introduce:
+set #sysmsgcol 1100
+set #menuButton N/A
+set %used 0
+set %skill1 ------
+set %skill2 ------
+set %skill3 ------
+set %skill4 ------
+set %skill5 ------
+set %skill6 ------
+set %time1a -- , #spc
+    set %time1b #spc , -- , #spc
+        set %time1c #spc , --
+set %time2a -- , #spc
+    set %time2b #spc , -- , #spc
+        set %time2c #spc , --
+set %time3a -- , #spc
+    set %time3b #spc , -- , #spc
+        set %time3c #spc , --
+set %time4a -- , #spc
+    set %time4b #spc , -- , #spc
+        set %time4c #spc , --
+set %time5a -- , #spc
+    set %time5b #spc , -- , #spc
+        set %time5c #spc , --
+set %time6a -- , #spc
+    set %time6b #spc , -- , #spc
+        set %time6c #spc , --
+set %left1a -- , #spc
+    set %left1b #spc , -- , #spc
+        set %left1c #spc , --
+set %left2a -- , #spc
+    set %left2b #spc , -- , #spc
+        set %left2c #spc , --
+set %left3a -- , #spc
+    set %left3b #spc , -- , #spc
+        set %left3c #spc , --
+set %left4a -- , #spc
+    set %left4b #spc , -- , #spc
+        set %left4c #spc , --
+set %left5a -- , #spc
+    set %left5b #spc , -- , #spc
+        set %left5c #spc , --
+set %left6a -- , #spc
+    set %left6b #spc , -- , #spc
+        set %left6c #spc , --
+
+menu clear
+menu window title Stoper gain'owy #spc v1.5
+menu window size 250 345
+menu window color btnface
+
+menu font name arial
+menu font size 11
+menu font color black
+menu font bgcolor btnface
+menu font style b
+menu text textskill 49 5 Wybierz umiejetnosci:
+menu text textskill 49 95 Odmierzanie gain'ow:
+
+menu font size 9
+menu font bgcolor white
+menu font style
+menu combo create skill 25 30 200
+menu combo add skill --- Walka ---            ; 1
+menu combo add skill Barbarzynstwo            ; 2
+menu combo add skill Fanatyzm                 ; 3
+menu combo add skill Gorliwosc                ; 4
+menu combo add skill Kensai                   ; 5
+menu combo add skill Lucznictwo               ; 6
+menu combo add skill Obrona                   ; 7
+menu combo add skill Paladynizm               ; 8
+menu combo add skill Taktyka                  ; 9
+menu combo add skill Walka mieczami           ; 10
+menu combo add skill Walka obuchami           ; 11
+menu combo add skill Walka szpadami           ; 12
+menu combo add skill Walka piesciami          ; 13
+menu combo add skill --- Magia ---            ; 14
+menu combo add skill Druidyzm                 ; 15
+menu combo add skill Inskrypcja               ; 16
+menu combo add skill Magia                    ; 17
+menu combo add skill Medytacja                ; 18
+menu combo add skill Nekromancja              ; 19
+menu combo add skill Odpornosc na magie       ; 20
+menu combo add skill Umagicznianie            ; 21
+menu combo add skill Wampiryzm                ; 22
+menu combo add skill --- Rzemioslo ---        ; 23
+menu combo add skill Alchemia                 ; 24
+menu combo add skill Druciarstwo              ; 25
+menu combo add skill Gotowanie                ; 26
+menu combo add skill Kartografia              ; 27
+menu combo add skill Kowalstwo                ; 28
+menu combo add skill Krawiectwo               ; 29
+menu combo add skill Malarstwo                ; 30
+menu combo add skill Stolarstwo               ; 31
+menu combo add skill Tkactwo                  ; 32
+menu combo add skill Tworzenie lukow          ; 33
+menu combo add skill --- Przemysl ---         ; 34
+menu combo add skill Drwalstwo                ; 35
+menu combo add skill Gornictwo                ; 36
+menu combo add skill Rolnictwo                ; 37
+menu combo add skill Rybactwo                 ; 38
+menu combo add skill Zielarstwo               ; 39
+menu combo add skill --- Umyslowe ---         ; 40
+menu combo add skill Anatomia                 ; 41
+menu combo add skill Identyfikacja            ; 42
+menu combo add skill Madrosc                  ; 43
+menu combo add skill Rozmowa z duchami        ; 44
+menu combo add skill Wiedza o broni           ; 45
+menu combo add skill Wiedza o zwierzetach     ; 46
+menu combo add skill --- Bard ---             ; 47
+menu combo add skill Muzykalnosc              ; 48
+menu combo add skill Oczarowanie              ; 49
+menu combo add skill Prowokacja               ; 50
+menu combo add skill Uspokajanie              ; 51
+menu combo add skill --- Inne ---             ; 52
+menu combo add skill Likantropia              ; 53
+menu combo add skill Obozowanie               ; 54
+menu combo add skill Okradanie                ; 55
+menu combo add skill Oswajanie                ; 56
+menu combo add skill Sledzenie                ; 57
+menu combo add skill Ukrywanie                ; 58
+menu combo add skill Usuwanie pulapek         ; 59
+menu combo add skill Uzdrawianie              ; 60
+menu combo add skill Weterynaria              ; 61
+menu combo add skill Wlamywanie               ; 62
+menu combo add skill Wykrywanie               ; 63
+menu combo add skill Zagladanie               ; 64
+menu combo add skill Zakradanie               ; 65
+menu combo add skill Zatruwanie               ; 66
+menu combo add skill Zebranie                 ; 67
+menu combo select skill 0
+
+menu font size 8
+menu font bgcolor btnface
+menu text textskill 24 118 Odmierzane
+menu text textskill 23 130 umiejetnosci:
+menu text textskill 147 118 Czas
+menu text textskill 145 130 gain'a:
+menu text textskill 194 118 Nastepny
+menu text textskill 206 130 gain:
+
+menu HideEUO
+
+change:
+menu font size 8
+
+menu text skill1 10 161 %skill1
+menu text time1 140 161 %time1a , : , %time1b , : , %time1c
+menu text left1 197 161 %left1a , : , %left1b , : , %left1c
+
+menu text skill2 10 186 %skill2
+menu text time2 140 186 %time2a , : , %time2b , : , %time2c
+menu text left2 197 186 %left2a , : , %left2b , : , %left2c
+
+menu text skill3 10 211 %skill3
+menu text time3 140 211 %time3a , : , %time3b , : , %time3c
+menu text left3 197 211 %left3a , : , %left3b , : , %left3c
+
+menu text skill4 10 236 %skill4
+menu text time4 140 236 %time4a , : , %time4b , : , %time4c
+menu text left4 197 236 %left4a , : , %left4b , : , %left4c
+
+menu text skill5 10 261 %skill5
+menu text time5 140 261 %time5a , : , %time5b , : , %time5c
+menu text left5 197 261 %left5a , : , %left5b , : , %left5c
+
+menu text skill6 10 286 %skill6
+menu text time6 140 286 %time6a , : , %time6b , : , %time6c
+menu text left6 197 286 %left6a , : , %left6b , : , %left6c
+
+menu font size 10
+if %used <> 6
+{
+   menu button accept 50 60 150 20 Zatwierdz umiejetnosc!
+   menu button metter 10 315 115 20 Odmierzaj gain'y
+   menu button reset 135 315 105 20 RESET
+}
+
+start:
+if #menubutton = reset
+   goto introduce
+if #menubutton = metter || %used = 6
+{
+   if %used = 0
+   {
+      event sysmessage Nie wybrales zadnej umiejetnosci, nie mozesz odpalic stopera!
+      set #menubutton N/A
+      goto start
+   }
+   wait 1
+   set %used 6
+   menu delete accept
+   menu delete metter
+   menu delete reset
+   menu button anmetter 50 315 150 20 Przerwij odmierzanie!
+   liczenie:
+   if Your_skill_in_ , %skill1 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill1 , _wzrosla_o in #sysmsg
+   {
+      if %l1 = N/A
+      {
+         set %czas1 #scnt
+         set %l1 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill1
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas1 ) > 10
+      {
+         set %time1a ( #scnt - %czas1 ) / 3600
+         set %time1b ( ( #scnt - %czas1 ) - ( %time1a * 3600 ) ) / 60
+         set %time1c ( ( #scnt - %czas1 ) - ( %time1a * 3600 ) -  ( %time1b * 60 ) )
+         if %time1a < 10
+            set %time1a 0 , %time1a
+         if %time1b < 10
+            set %time1b 0 , %time1b
+         if %time1c < 10
+            set %time1c 0 , %time1c
+         str right #time 2
+         set %left1c #strres
+         str mid #time 3 2
+         set %left1b #strres
+         str left #time 2
+         set %left1a #strres
+         if ( %left1c + %time1c ) > 59
+            set %left1b %left1b + 1
+         if ( %left1b + %time1b ) > 59
+            set %left1a %left1a + 1
+         set %left1c ( %left1c + %time1c ) - ( ( %left1c + %time1c ) / 60 ) * 60
+         set %left1b ( %left1b + %time1b ) - ( ( %left1b + %time1b ) / 60 ) * 60
+         set %left1a ( %left1a + %time1a ) - ( ( %left1a + %time1a ) / 24 ) * 24
+         if %left1a < 10
+            set %left1a 0 , %left1a
+         if %left1b < 10
+            set %left1b 0 , %left1b
+         if %left1c < 10
+            set %left1c 0 , %left1c
+         set %czas1 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time1a , : , %time1b , : , %time1c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left1a , : , %left1b , : , %left1c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if Your_skill_in_ , %skill2 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill2 , _wzrosla_o in #sysmsg
+   {
+      if %l2 = N/A
+      {
+         set %czas2 #scnt
+         set %l2 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill2
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas2 ) > 10
+      {
+         set %time2a ( #scnt - %czas2 ) / 3600
+         set %time2b ( ( #scnt - %czas2 ) - ( %time2a * 3600 ) ) / 60
+         set %time2c ( ( #scnt - %czas2 ) - ( %time2a * 3600 ) -  ( %time2b * 60 ) )
+         if %time2a < 10
+            set %time2a 0 , %time2a
+         if %time2b < 10
+            set %time2b 0 , %time2b
+         if %time2c < 10
+            set %time2c 0 , %time2c
+         str right #time 2
+         set %left2c #strres
+         str mid #time 3 2
+         set %left2b #strres
+         str left #time 2
+         set %left2a #strres
+         if ( %left2c + %time2c ) > 59
+            set %left2b %left2b + 1
+         if ( %left2b + %time2b ) > 59
+            set %left2a %left2a + 1
+         set %left2c ( %left2c + %time2c ) - ( ( %left2c + %time2c ) / 60 ) * 60
+         set %left2b ( %left2b + %time2b ) - ( ( %left2b + %time2b ) / 60 ) * 60
+         set %left2a ( %left2a + %time2a ) - ( ( %left2a + %time2a ) / 24 ) * 24
+         if %left2a < 10
+            set %left2a 0 , %left2a
+         if %left2b < 10
+            set %left2b 0 , %left2b
+         if %left2c < 10
+            set %left2c 0 , %left2c
+         set %czas2 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time2a , : , %time2b , : , %time2c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left2a , : , %left2b , : , %left2c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if Your_skill_in_ , %skill3 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill3 , _wzrosla_o in #sysmsg
+   {
+      if %l3 = N/A
+      {
+         set %czas3 #scnt
+         set %l3 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill3
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas3 ) > 10
+      {
+         set %time3a ( #scnt - %czas3 ) / 3600
+         set %time3b ( ( #scnt - %czas3 ) - ( %time3a * 3600 ) ) / 60
+         set %time3c ( ( #scnt - %czas3 ) - ( %time3a * 3600 ) -  ( %time3b * 60 ) )
+         if %time3a < 10
+            set %time3a 0 , %time3a
+         if %time3b < 10
+            set %time3b 0 , %time3b
+         if %time3c < 10
+            set %time3c 0 , %time3c
+         str right #time 2
+         set %left3c #strres
+         str mid #time 3 2
+         set %left3b #strres
+         str left #time 2
+         set %left3a #strres
+         if ( %left3c + %time3c ) > 59
+            set %left3b %left3b + 1
+         if ( %left3b + %time3b ) > 59
+            set %left3a %left3a + 1
+         set %left3c ( %left3c + %time3c ) - ( ( %left3c + %time3c ) / 60 ) * 60
+         set %left3b ( %left3b + %time3b ) - ( ( %left3b + %time3b ) / 60 ) * 60
+         set %left3a ( %left3a + %time3a ) - ( ( %left3a + %time3a ) / 24 ) * 24
+         if %left3a < 10
+            set %left3a 0 , %left3a
+         if %left3b < 10
+            set %left3b 0 , %left3b
+         if %left3c < 10
+            set %left3c 0 , %left3c
+         set %czas3 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time3a , : , %time3b , : , %time3c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left3a , : , %left3b , : , %left3c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if Your_skill_in_ , %skill4 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill4 , _wzrosla_o in #sysmsg
+   {
+      if %l4 = N/A
+      {
+         set %czas4 #scnt
+         set %l4 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill4
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas4 ) > 10
+      {
+         set %time4a ( #scnt - %czas4 ) / 3600
+         set %time4b ( ( #scnt - %czas4 ) - ( %time4a * 3600 ) ) / 60
+         set %time4c ( ( #scnt - %czas4 ) - ( %time4a * 3600 ) -  ( %time4b * 60 ) )
+         if %time4a < 10
+            set %time4a 0 , %time4a
+         if %time4b < 10
+            set %time4b 0 , %time4b
+         if %time4c < 10
+            set %time4c 0 , %time4c
+         str right #time 2
+         set %left4c #strres
+         str mid #time 3 2
+         set %left4b #strres
+         str left #time 2
+         set %left4a #strres
+         if ( %left4c + %time4c ) > 59
+            set %left4b %left4b + 1
+         if ( %left4b + %time4b ) > 59
+            set %left4a %left4a + 1
+         set %left4c ( %left4c + %time4c ) - ( ( %left4c + %time4c ) / 60 ) * 60
+         set %left4b ( %left4b + %time4b ) - ( ( %left4b + %time4b ) / 60 ) * 60
+         set %left4a ( %left4a + %time4a ) - ( ( %left4a + %time4a ) / 24 ) * 24
+         if %left4a < 10
+            set %left4a 0 , %left4a
+         if %left4b < 10
+            set %left4b 0 , %left4b
+         if %left4c < 10
+            set %left4c 0 , %left4c
+         set %czas4 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time4a , : , %time4b , : , %time4c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left4a , : , %left4b , : , %left4c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if Your_skill_in_ , %skill5 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill5 , _wzrosla_o in #sysmsg
+   {
+      if %l5 = N/A
+      {
+         set %czas5 #scnt
+         set %l5 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill5
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas5 ) > 10
+      {
+         set %time5a ( #scnt - %czas5 ) / 3600
+         set %time5b ( ( #scnt - %czas5 ) - ( %time5a * 3600 ) ) / 60
+         set %time5c ( ( #scnt - %czas5 ) - ( %time5a * 3600 ) -  ( %time5b * 60 ) )
+         if %time5a < 10
+            set %time5a 0 , %time5a
+         if %time5b < 10
+            set %time5b 0 , %time5b
+         if %time5c < 10
+            set %time5c 0 , %time5c
+         str right #time 2
+         set %left5c #strres
+         str mid #time 3 2
+         set %left5b #strres
+         str left #time 2
+         set %left5a #strres
+         if ( %left5c + %time5c ) > 59
+            set %left5b %left5b + 1
+         if ( %left5b + %time5b ) > 59
+            set %left5a %left5a + 1
+         set %left5c ( %left5c + %time5c ) - ( ( %left5c + %time5c ) / 60 ) * 60
+         set %left5b ( %left5b + %time5b ) - ( ( %left5b + %time5b ) / 60 ) * 60
+         set %left5a ( %left5a + %time5a ) - ( ( %left5a + %time5a ) / 24 ) * 24
+         if %left5a < 10
+            set %left5a 0 , %left5a
+         if %left5b < 10
+            set %left5b 0 , %left5b
+         if %left5c < 10
+            set %left5c 0 , %left5c
+         set %czas5 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time5a , : , %time5b , : , %time5c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left5a , : , %left5b , : , %left5c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if Your_skill_in_ , %skill6 , _has_increased in #sysmsg || Twa_umiejetnosc_ , %skill6 , _wzrosla_o in #sysmsg
+   {
+      if %l6 = N/A
+      {
+         set %czas6 #scnt
+         set %l6 1
+         wait 1
+         event sysmessage Odmierzasz gain'a dla: %skill6
+         goto liczenie
+      }
+      if 0.1% in #sysmsg && ( #scnt - %czas6 ) > 10
+      {
+         set %time6a ( #scnt - %czas6 ) / 3600
+         set %time6b ( ( #scnt - %czas6 ) - ( %time6a * 3600 ) ) / 60
+         set %time6c ( ( #scnt - %czas6 ) - ( %time6a * 3600 ) -  ( %time6b * 60 ) )
+         if %time6a < 10
+            set %time6a 0 , %time6a
+         if %time6b < 10
+            set %time6b 0 , %time6b
+         if %time6c < 10
+            set %time6c 0 , %time6c
+         str right #time 2
+         set %left6c #strres
+         str mid #time 3 2
+         set %left6b #strres
+         str left #time 2
+         set %left6a #strres
+         if ( %left6c + %time6c ) > 59
+            set %left6b %left6b + 1
+         if ( %left6b + %time6b ) > 59
+            set %left6a %left6a + 1
+         set %left6c ( %left6c + %time6c ) - ( ( %left6c + %time6c ) / 60 ) * 60
+         set %left6b ( %left6b + %time6b ) - ( ( %left6b + %time6b ) / 60 ) * 60
+         set %left6a ( %left6a + %time6a ) - ( ( %left6a + %time6a ) / 24 ) * 24
+         if %left6a < 10
+            set %left6a 0 , %left6a
+         if %left6b < 10
+            set %left6b 0 , %left6b
+         if %left6c < 10
+            set %left6c 0 , %left6c
+         set %czas6 #scnt
+         wait 1
+         event sysmessage Czas gain'a wyniosl:
+         set #sysmsgcol 1090
+         event sysmessage %time6a , : , %time6b , : , %time6c
+         set #sysmsgcol 1100
+         event sysmessage Najprawdopodobniej nastepny gain bedzie:
+         set #sysmsgcol 1090
+         event sysmessage %left6a , : , %left6b , : , %left6c
+         set #sysmsgcol 1100
+         goto change
+      }
+      goto liczenie
+   }
+   if #menubutton = anmetter
+      goto introduce
+   if #menubutton = closed
+   {
+      menu hide
+      event sysmessage Okno stopera zostalo zamkniete, skrypt zostaje wylaczony...
+      halt
+   }
+   goto liczenie
+}
+if #menubutton = accept
+{
+   menu getnum skill
+   if #menures = 2
+      set %skill Barbarzynstwo
+   if #menures = 3
+      set %skill Fanatyzm
+   if #menures = 4
+      set %skill Gorliwosc
+   if #menures = 5
+      set %skill Kensai
+   if #menures = 6
+      set %skill Lucznictwo
+   if #menures = 7
+      set %skill Obrona
+   if #menures = 8
+      set %skill Paladynizm
+   if #menures = 9
+      set %skill Taktyka
+   if #menures = 10
+      set %skill Walka , #spc , mieczami
+   if #menures = 11
+      set %skill Walka , #spc , obuchami
+   if #menures = 12
+      set %skill Walka , #spc , szpadami
+   if #menures = 13
+      set %skill Walka , #spc , piesciami
+   if #menures = 15
+      set %skill Druidyzm
+   if #menures = 16
+      set %skill Inskrypcja
+   if #menures = 17
+      set %skill Magia
+   if #menures = 18
+      set %skill Medytacja
+   if #menures = 19
+      set %skill Nekromancja
+   if #menures = 20
+      set %skill Odpornosc , #spc , na , #spc , magie
+   if #menures = 21
+      set %skill Umagicznianie
+   if #menures = 22
+      set %skill Wampiryzm
+   if #menures = 24
+      set %skill Alchemia
+   if #menures = 25
+      set %skill Druciarstwo
+   if #menures = 26
+      set %skill Gotowanie
+   if #menures = 27
+      set %skill Kartografia
+   if #menures = 28
+      set %skill Kowalstwo
+   if #menures = 29
+      set %skill Krawiectwo
+   if #menures = 30
+      set %skill Malarstwo
+   if #menures = 31
+      set %skill Stolarstwo
+   if #menures = 32
+      set %skill Tkactwo
+   if #menures = 33
+      set %skill Tworzenie , #spc , lukow
+   if #menures = 35
+      set %skill Drwalstwo
+   if #menures = 36
+      set %skill Gornictwo
+   if #menures = 37
+      set %skill Rolnictwo
+   if #menures = 38
+      set %skill Rybactwo
+   if #menures = 39
+      set %skill Zielarstwo
+   if #menures = 41
+      set %skill Anatomia
+   if #menures = 42
+      set %skill Identyfikacja
+   if #menures = 43
+      set %skill Madrosc
+   if #menures = 44
+      set %skill Rozmowa , #spc , z , #spc , duchami
+   if #menures = 45
+      set %skill Wiedza , #spc , o , #spc , broni
+   if #menures = 46
+      set %skill Wiedza , #spc , o , #spc , zwierzetach
+   if #menures = 48
+      set %skill Muzykalnosc
+   if #menures = 49
+      set %skill Oczarowanie
+   if #menures = 50
+      set %skill Prowokacja
+   if #menures = 51
+      set %skill Uspokajanie
+   if #menures = 53
+      set %skill Likantropia
+   if #menures = 54
+      set %skill Obozowanie
+   if #menures = 55
+      set %skill Okradanie
+   if #menures = 56
+      set %skill Oswajanie
+   if #menures = 57
+      set %skill Sledzenie
+   if #menures = 58
+      set %skill Ukrywanie
+   if #menures = 59
+      set %skill Usuwanie , #spc , pulapek
+   if #menures = 60
+      set %skill Uzdrawianie
+   if #menures = 61
+      set %skill Weterynaria
+   if #menures = 62
+      set %skill Wlamywanie
+   if #menures = 63
+      set %skill Wykrywanie
+   if #menures = 64
+      set %skill Zagladanie
+   if #menures = 65
+      set %skill Zakradanie
+   if #menures = 66
+      set %skill Zatruwanie
+   if #menures = 67
+      set %skill Zebranie
+   wait 1
+   if #menures = N/A || %skill = N/A || %skill = %skill1 || %skill = %skill2 || %skill = %skill3 || %skill = %skill4 || %skill = %skill5
+   {
+      event sysmessage Wybrana umiejetnosc jest blednie wskazana lub jest juz mierzona... sprobuj ponownie!
+      set #menubutton N/A
+      goto start
+   }
+   wait 1
+   if %skill1 = ------
+   {
+      set %skill1 %skill
+      set %used 1
+      goto finish
+   }
+   wait 1
+   if %skill2 = ------
+   {
+      set %skill2 %skill
+      set %used 2
+      goto finish
+   }
+   wait 1
+   if %skill3 = ------
+   {
+      set %skill3 %skill
+      set %used 3
+      goto finish
+   }
+   if %skill4 = ------
+   {
+      set %skill4 %skill
+      set %used 4
+      goto finish
+   }
+   if %skill5 = ------
+   {
+      set %skill5 %skill
+      set %used 5
+      goto finish
+   }
+   wait 1
+   set %skill6 %skill
+   set %used 6
+   finish:
+   set #menubutton N/A
+   set %skill N/A
+   goto change
+}
+if #menubutton = closed
+{
+   menu hide
+   event sysmessage Okno stopera zostalo zamkniete, skrypt zostaje wylaczony...
+   halt
+}
+goto start
+
+
+

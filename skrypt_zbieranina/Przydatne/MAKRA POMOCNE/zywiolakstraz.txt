@@ -1,0 +1,24 @@
+;Skrypt bY SabiK
+;zywiolak.txt
+;Wersja 1.0
+;Gdy ktos nas atakuje lub pojawi sie zywiolak ziemii skrypt zaklada krisa i pawez, po czym wait 30sekund
+
+set #sysmsgcol 1281
+event sysmessage Skrypt [zywiolak] odpalony (by SabiK)
+wait 1
+
+while #true
+{
+   for %tmp 1 3
+   {
+      scanjournal %tmp
+      if ( zywiolak_ziemi in #journal && #enemyid <> n/a ) || #enemyid <> n/a
+      {
+         gosub krzycz
+         wait 600
+      }
+   }
+}
+
+sub krzycz
+event macro 1 0 STRAZ!!! Bija mnie! STRAZ!!!

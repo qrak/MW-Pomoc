@@ -1,0 +1,333 @@
+;Skrypt bY SabiK
+;bc-przekladnie_pior.txt
+;Wersja 1.5
+;Skrypt przeklada do worka 1 pioro, i robi strzaly lub belty
+;Skrypt pije mixy lub rzuca blesa z tolerancja +5 str/dex.
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %skill 2    ;[1-anatomia, 2-hiding]
+set %item 2     ;[1-strzaly, 2-belty]
+set %mixy 2     ;[1-pij mixy, 2-nie]
+set %bles 2     ;[1-tak, 2-nie]
+set %str 10
+set %dex 45
+;------------------------------------------------------------------------------------------------------------
+
+set #sysmsgcol 63
+event sysmessage Skrypt [bc-przekladnie_pior] odpalony (bY SabiK)
+wait 1
+set %tak 0
+set %nie 0
+
+finditem CKF_ZJF C_ , #backpackid
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono worka/plecaka w plecaku glownym postaci
+   halt
+}
+set %worek #findid
+set #lobjectid %worek
+event macro 17
+wait 20
+
+if %skill = 1
+{
+   ltanatomia:
+   set #targcurs 1
+   set #sysmsgcol 63
+   event sysmessage Wskaz cel do anatomii
+   set %tmp #scnt2 + 38
+   repeat
+   if %tmp < #scnt2
+      goto ltanatomia
+   until #targcurs = 0
+   set %lt #ltargetid
+   set #sysmsgcol 88
+   event sysmessage Zapisano cel anatomii
+}
+
+start:
+if *STOP = 1
+{
+   if #CONTSIZE = 296_136
+      click 50 10 r
+   if #targcurs = 1
+      key esc
+   repeat
+   until *STOP = 0
+}
+if #clilogged <> 1
+{
+   repeat
+   until #clilogged = 1
+   wait 220
+   goto start
+}
+if %mixy = 1
+{
+   if #str < ( %str + 5 )
+      gosub mixy xuf sily
+   if #dex < ( %dex + 5 )
+      gosub mixy yuf zrecznosci
+}
+if %bles = 1
+{
+   if #str < ( %str + 5 )
+      gosub bles
+}
+finditem VLK C_ , %worek
+if #findkind = -1
+{
+   gosub przeloz_piora
+   if ! #result
+      goto start
+}
+set %przelozono_piora 0
+finditem SLK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono tepych strzal
+   halt
+}
+set %lo #findid
+piora:
+finditem VLK C_ , %worek
+if #findkind = -1
+   goto start
+set %ltp #findid
+set #lobjectid %lo
+event macro 17
+set %tmp #scnt2 + 30
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if #jindex > %jrnl
+{
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+}
+if #CONTSIZE = 296_136
+{
+   if #contposx <> 0 || #contposy <> 0
+   {
+      set #contposx 0
+      set #contposy 0
+   }
+   goto klik
+}
+if %tmp < #scnt2
+   goto piora
+until #targcurs = 1
+set #ltargetkind 1
+set #ltargetid %ltp
+event macro 22
+set %tmp #scnt2 + 30
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if %tmp < #scnt2
+   goto start
+if #CONTSIZE = 296_136
+{
+   if #contposx <> 0 || #contposy <> 0
+   {
+      set #contposx 0
+      set #contposy 0
+   }
+   klik:
+   if %item = 1
+   click 60 60 d
+   else
+   click 105 60 d
+   set %tmpgo1 1
+}
+until %tmpgo1 = 1
+set %tmpgo1 0
+set %jrnl #jindex
+set %licz #scnt2 + 90
+repeat
+if #CONTSIZE = 296_136
+{
+   if #contposx <> 0 || #contposy <> 0
+   {
+      set #contposx 0
+      set #contposy 0
+   }
+   goto klik
+}
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if %przelozono_piora <> 1
+{
+   gosub przeloz_piora
+   if ! #result
+      goto start
+}
+if #jindex > %jrnl
+{
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+}
+if Masz_za_malo_materialu in #journal
+{
+   set #sysmsgcol 1080
+   event sysmessage Masz za malo materialu! Skrypt wylaczono.
+   halt
+}
+until %licz < #scnt2 || s_troche_ostrych in #journal || s_troche_materialu in #journal || oddalil in #journal
+if s_troche_ostrych in #journal
+set %tak %tak + 1
+if s_troche_materialu in #journal
+set %nie %nie + 1
+set #sysmsgcol 88
+event sysmessage Udanych: %tak Nieudanych: %nie
+if %skill = 1
+   gosub anatomia
+if %skill = 2
+   gosub hiding
+goto start
+
+;----- SUBS -----
+
+sub przeloz_piora
+finditem VLK C_ , #backpackid
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono pior w plecaku glownym postaci
+   halt
+}
+set %stack #findstack
+exevent drag #findid 1
+set %tmp1 #scnt2 + 80
+drop:
+exevent dropc %worek
+set %tmp #scnt2 + 30
+repeat
+finditem VLK C_ , %worek
+if %tmp < #scnt2
+   goto drop
+if #clilogged <> 1 || %tmp1 < #scnt2 || *STOP = 1
+   return #false
+until #findkind <> -1
+set %przelozono_piora 1
+return #true
+
+sub anatomia
+anatomia:
+event macro 1 0 .um anatomia
+set %tmp #scnt2 + 30
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if #jindex > %jrnl
+   set %jrnl %jrnl + 1
+scanjournal %jrnl
+if %tmp < #scnt2
+   goto anatomia
+until #targcurs = 1
+anattarg:
+set #ltargetid %lt
+set #ltargetkind 1
+event macro 22
+set %jrnl #jindex
+set %tmp #scnt2 + 30
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if #jindex > %jrnl
+   set %jrnl %jrnl + 1
+scanjournal %jrnl
+if %tmp < #scnt2
+{
+   if #targcurs = 1
+   goto anattarg
+   else
+   goto anatomia
+}
+until Cel_wyglada in #journal || nie_jestes_pewn in #journal
+return
+
+sub hiding
+hid:
+event macro 1 0 .um ukrywanie
+set %jrnl #jindex
+set %tmp #scnt2 + 30
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if #jindex > %jrnl
+   set %jrnl %jrnl + 1
+scanjournal %jrnl
+if %tmp < #scnt2
+   goto hid
+if #targcurs = 1
+   key esc
+until ukryl in #journal || Nie_udalo_ci_sie_ukryc in #journal || Nie_uda_Ci_sie_schowac_wierzchowca in #journal
+return
+
+sub mixy
+mixy:
+finditem %1 C
+if %bag <> 1
+{
+   if #findbagid = #backpackid
+   {
+      ignoreitem #findid 5
+      goto mixy
+   }
+}
+if #findkind = -1
+{
+   if %bag = 1
+      goto koncz_mixy
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa %2 , ! Szukam w innych plecakach.
+   ignoreitem reset 5
+   set %bag 1
+   goto mixy
+}
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+   set #sysmsgcol 88
+   set %ile #findstack - 1
+   if #sex = 0
+      event sysmessage Uzyles miksa %2 , #dot Zostalo %ile
+   if #sex = 1
+      event sysmessage Uzylas miksa %2 , #dot Zostalo %ile
+   set %bag 0
+   return
+}
+koncz_mixy:
+set #sysmsgcol 1080
+event sysmessage Nie masz miksa %2 , !
+set %bag 0
+return
+
+sub bles
+if #str = 0
+   return
+event macro 15 16
+set %licz #scnt2 + 40
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if %licz < #scnt2
+   return
+until #targcurs = 1
+klik_bles:
+event macro 23
+set %licz #scnt2 + 3
+repeat
+if *STOP = 1 || #clilogged <> 1
+   goto start
+if %licz < #scnt2
+   goto klik_bles
+until #targcurs = 0
+wait 5
+return
+

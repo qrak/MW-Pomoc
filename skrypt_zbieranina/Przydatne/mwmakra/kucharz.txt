@@ -1,0 +1,44 @@
+initevents
+set %cel #ltargetid
+set %profile 580_410
+
+start:
+event macro 17 0
+
+inskr:
+if #CONTSIZE = %profile
+{
+click 200 208
+goto pat
+}
+else
+{
+goto inskr
+}
+
+pat:
+if Udalo_ci_sie in #sysmsg
+{
+goto sprawdzglod
+}
+if Nie_udalo in #sysmsg
+{
+goto sprawdzglod
+}
+else
+goto pat
+
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+else
+goto petla

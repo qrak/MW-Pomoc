@@ -1,0 +1,2 @@
+event macro 1 0 .um ukrywanie
+wait 120s

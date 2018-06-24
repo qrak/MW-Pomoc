@@ -1,0 +1,129 @@
+;Tworzenie beltow/strzal by Raist v1.4
+;piora i patyki musza znajdowac sie luzem w plecaku glowny
+;konieczne jest posiadanie otwartego worka lub plecaka
+;w plecaku glownym (do niego beda przenoszone piora)
+;-----------------------------------------------------------
+set %hid 1 ;<-0 - bez hida 1 - z hidem
+;-----------------------------------------------------------
+initevents
+set %profile 296_136
+set %plecak #BACKPACKID
+finditem CKF_ZJF C_ , %plecak ;woreczek lub plecak
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ WORKA
+sound C:\missile.wav
+halt
+}
+else
+set %worek #FINDID
+
+start:
+finditem VLK C_ , %worek ; znajduje pioro w worku
+if #findkind = -1
+   goto przekladaj
+set #ltargetid #findid
+finditem SLK C_ , %plecak ;znajduje strzaly
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ STRZAL
+sound C:\missile.wav
+halt
+}
+else
+set #lobjectid #findid
+event macro 17 0 ;last opbject
+target 2s
+event macro 22 0 ;last target
+goto luk
+
+przekladaj:
+finditem VLK C_ , %plecak ; znajduje piora w w plecaku
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ PIOR
+sound C:\missile.wav
+halt
+}
+set %tmp #findstack
+exdrag:
+exevent drag #findid ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag
+finditem VLK C_ , %plecak
+until #findstack <> %tmp
+exdrop:
+exevent dropc %worek ;poloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop
+finditem VLK C_ , %worek
+until #findkind <> -1
+goto start
+
+luk:
+if #CONTSIZE = %profile
+{
+click 105 63 d  ;wspolrzedne klika
+wait 5
+goto pat
+}
+else
+{
+goto luk
+}
+
+
+pat:
+set %jrnl #jindex
+while #true
+   {
+   if #CONTSIZE = %profile
+      {
+      if #contposx <> 0 || #contposy <> 0
+         {
+         set #contposx 0
+         set #contposy 0
+         }
+      goto luk
+      }
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Stworzylas in #journal || Stworzyles in #journal || Zniszczylas in #journal || Zniszczyles in #journal
+         {
+         wait 10
+         goto hid
+         }
+      }
+   }
+
+hid:
+if %hid = 1
+{
+set %jrnl #jindex
+event macro 1 0 .um ukrywanie
+goto czekajhid
+}
+goto start
+
+czekajhid:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if ukryles in #journal || ukrylas in #journal || Nie_udalo_ci_sie_ukryc in #journal || Juz_cos in #journal
+         {
+         goto start
+         }
+      }
+   }

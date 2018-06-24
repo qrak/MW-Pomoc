@@ -1,0 +1,77 @@
+set %licz 0
+
+start:
+if #charname = N/A
+ goto start
+
+set %tm ( #time / 100 ) % 100
+str len %tm
+if #strres = 1
+ set %tm 0 , %tm
+set %tg #time / 10000
+str len %tg
+if #strres = 1
+ set %tg 0 , %tg
+set %ts #time % 100
+str len %ts
+if #strres = 1
+ set %ts 0 , %ts
+
+if #CHARGHOST = no
+{
+ if #STAMINA < 25
+ {
+   if %red > 0
+     {
+      set #sysmsgcol 48
+      event sysmessage #STAMINA stam( %red )
+     }
+   else
+     {
+      set #sysmsgcol 38
+      event sysmessage #STAMINA stam.
+     }
+  }
+if #HITS < 61
+ {
+  set #sysmsgcol 1080
+  event sysmessage #HITS HP ( %yellow , )!
+  if %licz % 4 = 0
+   sound
+  set %licz %licz + 1
+ }
+else
+set %licz 0
+}
+finditem zlf C_ , #BACKPACKID
+set %bandaze #findstack
+finditem xuf C_ , #BACKPACKID ;biala
+set %white #findstack
+finditem yuf C_ , #BACKPACKID ;blue
+set %blue #findstack
+finditem uuf C_ , #BACKPACKID ;leczenia
+set %yellow #findstack
+finditem zuf C_ , #BACKPACKID ;czerwona
+set %red #findstack
+finditem tuf C_ , #BACKPACKID ;fioletowa
+set %fiolet #findstack
+finditem avf C_ , #BACKPACKID ;zielona
+set %green #findstack
+
+if #CHARGHOST = no
+{
+ if %bandaze < 21
+ {
+  set #sysmsgcol 91
+  if %liczb % 4 = 0
+   event sysmessage BANDAZE: %bandaze !!
+  set %liczb %liczb + 1
+ }
+ else
+ set %liczb 0
+}
+setUOtitle UO (MW) #charname | HP #hits , | ST  #stamina , | bandaze %bandaze | Biala %white Niebieska %blue | Czerwona %red Zolta %yellow | Fiolet %fiolet Zielona %green | %tg , : , %tm , : , %ts
+
+wait 1s
+goto start
+

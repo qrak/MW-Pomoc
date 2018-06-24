@@ -1,0 +1,122 @@
+;Przerabianie welny by Raist
+;Przerabia welne na bele materialu, po czym
+;tnie bele na tkanine, moze to robic z hidem
+;------------------------------------------------------------------------------------
+set %hajd 1 ; 0-bez hida 1-z hidem
+;------------------------------------------------------------------------------------
+initevents
+
+finditem xeg_jfg_GFG_mkg G_1 ;   znajduje kolowrotek
+set #ltargetid #findid
+
+welna:
+finditem off C ;    znajduje welne
+if #findkind = -1
+goto przedza
+set #lobjectid #findid
+event macro 17 0 ;lobject
+target 20s
+event macro 22 0 ;ltarget
+
+czekaj:
+if Stworzylas in #sysmsg || Stworzyles in #sysmsg
+{
+if %hajd = 1
+   gosub hid
+goto welna
+}
+else
+goto czekaj
+
+
+przedza:
+finditem plf C ;    znajduje przedze
+if #findkind = -1
+{
+finditem idg_vcg G_1 ;   znajduje narzedzie tkackie
+set #ltargetid #findid
+goto nici
+}
+set #lobjectid #findid
+event macro 17 0 ;lobject
+target 20s
+event macro 22 0 ;ltarget
+
+czekaj2:
+if Zwinalas in #sysmsg || Zwinales in #sysmsg
+{
+if %hajd = 1
+   gosub hid
+goto przedza
+}
+else
+goto czekaj2
+
+nici:
+finditem uag C ;    znajduje nici
+if #findkind = -1
+{
+finditem kag C ;   znajduje nozyczki
+set #ltargetid #findid
+goto ciecie
+}
+set #lobjectid #findid
+event macro 17 0 ;lobject
+target 20s
+event macro 22 0 ;ltarget
+
+czekaj3:
+if Stworzylas in #sysmsg || Stworzyles in #sysmsg
+{
+if %hajd = 1
+   gosub hid
+goto nici
+}
+if Masz_za in #sysmsg
+{
+goto ciecie
+}
+else
+goto czekaj3
+
+ciecie:
+finditem kag C ;   znajduje nozyczki
+set #lobjectid #findid
+finditem oag_mag_lag_zzf C ;    znajduje tkanine
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Welna przerobiona
+halt
+}
+set #ltargetid #findid
+event macro 17 0 ;lobject
+target 20s
+event macro 22 0 ;ltarget
+
+czekaj4:
+if Pocielas in #sysmsg || Pociales in #sysmsg
+{
+if %hajd = 1
+   gosub hid
+goto ciecie
+}
+else
+goto czekaj4
+
+sub hid
+set %jrnl #jindex
+event macro 1 0 .um ukrywanie
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Juz_cos in #journal || ukrylas in #journal || ukryles in #journal || Nie_udalo in #journal
+         return
+      }
+   }
+
+

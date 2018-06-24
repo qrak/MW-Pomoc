@@ -1,0 +1,197 @@
+;Autor: [nGz]
+;Wersja: 3.5
+;Leczy automatycznie hp i lyka miksa czerwonego gdy masz mniej jak 4 staminy.
+;Jesli wlaczysz w Easyuo opcje Enable Event Sysmessage(Options-->Configuration)
+;to skrypt powiadomi Cie gdy bedziesz mial mniej niz 11 bandazy lub mniej niz 20 HP.
+initevents
+set %band 0
+set %stna 0
+set %licz3 0
+start1:
+set %useba 0
+set %licz #scnt2 + 180
+set %hp #hits
+start:
+if #str = N/A
+ {
+   set %stna 1
+   event macro 8 2
+ }
+ignoreitem reset
+if H in #charstatus
+   goto start1
+if %useba = 1
+   goto stamina
+if #hits < #maxhits
+ {
+   bandaze:
+   finditem zlf
+   if #findkind = -1
+    {
+      set %band 1
+      goto stamina
+    }
+   if #findkind = 1
+    {
+      ignoreitem #findid
+      goto bandaze
+    }
+   set %hp #hits + 3
+   wiecej:
+   set %licz2 0
+   if #shard = DREAM , #spc , MASTERS
+      event macro 1 0 .um uzdrawianie
+   else
+    {
+      set #lobjectid #findid
+      event macro 17
+    }
+   loop:
+   scanjournal 1
+   set %licz2 %licz2 + 1
+   wait 1
+   wait 1
+   if #targcurs = 1
+      goto tself
+   if I_am_frozen in #journal
+      goto start1
+   if I_am_already in #sysmsg
+      goto czekaj
+   if Nie_mozesz_teraz in #sysmsg
+      goto tself
+   if Nie_mozesz_tego in #sysmsg
+      goto tself
+   if %licz2 > 8
+      goto wiecej
+   goto loop
+   tself:
+   event macro 23
+   event macro 23
+   event macro 23
+   if Kogo_Chcial in #sysmsg
+      goto tself
+   set %useba 1
+   set %licz #scnt2 + 180
+   set %iband #findstack - 1
+   set #sysmsgcol 1080
+   if %iband < 11
+    {
+      if %iband > 0
+         event sysmessage Koncza Ci sie bandaze: %iband
+    }
+   if %iband = 0
+      event sysmessage Skonczyly Ci sie bandaze!!!
+   if #targcurs = 1
+      goto tself
+ }
+stamina:
+if %useba = 1
+ {
+   if #stamina < 2
+      goto stam2
+   if %licz - #scnt2 < 100
+      goto czekaj
+ }
+stam2:
+if #stamina < 4
+ {
+   if #stamina = 0
+    {
+      if %stna = 1
+       {
+         set %stna 0
+         wait 5
+         goto czekaj
+       }
+    }
+   if #stamina = N/A
+    {
+      set %stna 1
+      goto czekaj
+    }
+   miks:
+   finditem zuf
+   if #findkind = -1
+    {
+      if %band = 1
+         halt
+      goto czekaj
+    }
+   if #findkind = 1
+    {
+      ignoreitem #findid
+      goto miks
+    }
+   set #lobjectid #findid
+   event macro 17
+   wait 10
+ }
+czekaj:
+if #sex = 1
+ {
+   if #sysmsg = Przestalas_sie_leczyc.
+      goto start1
+   if Wyleczylas_sie in #sysmsg
+      goto start1
+ }
+if #sex = 0
+ {
+   if #sysmsg = Przestales_sie_leczyc.
+      goto start1
+   if Wyleczyles_sie in #sysmsg
+      goto start1
+ }
+if Your_skill_in_Healing in #sysmsg
+ {
+   scanjournal 1
+   if Your_skill_in_Healing in #journal
+      goto start1
+ }
+if Your_skill_in_Uzdrawianie in #sysmsg
+ {
+   scanjournal 1
+   if Your_skill_in_Uzdrawianie in #journal
+      goto start1
+ }
+if Your_dexterity in #sysmsg
+ {
+   scanjournal 1
+   if Your_dexterity in #journal
+      goto start1
+ }
+if #sysmsg = Nie_udalo_ci_sie_wyleczyc_tej_osoby.
+   goto start1
+if #sysmsg = Anulowano.
+   goto start1
+if %licz3 > 0
+ {
+   set %licz3 %licz3 + 1
+   if %licz3 > 17
+      set %licz3 0
+   goto ohptxt
+ }
+if #hits < 20
+ {
+   set %licz3 1
+   set #sysmsgcol 1080
+   event sysmessage MASZ #hits HP!!!
+   sound E:\Mp3\kryt2.wav
+ }
+ohptxt:
+if #hits = #maxhits
+   goto start1
+if #hits > %hp
+   goto start1
+if %licz < #scnt2
+   goto start1
+if Tego_nie_uda_Ci_sie_wskrzesic in #sysmsg
+   goto start1
+if Nie_widzisz_tego in #sysmsg
+   goto start1
+if To_zwierze_jest_w in #sysmsg
+   goto start1
+if Nie_mozesz_go_wyleczyc in #sysmsg
+   goto start1
+if Nie_mozesz_tego_wyleczyc in #sysmsg
+   goto start1
+goto start

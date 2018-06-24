@@ -1,0 +1,108 @@
+;Macro bY SabiK
+;ciecie_bel_materialu-eval-hiding-anatomia-jedzenie
+;Wersja 1.2
+;U W A G A !!!
+;Przed wlaczeniem skryptu zrob najpierw dana czynnosc recznie
+initevents
+set #sysmsgcol 1082
+event sysmessage Skrypt [ciecie_bel_materialu-eval-hiding-anatomia-jedzenie] odpalony (by SabiK)
+wait 1
+set %lt #ltargetid
+ignoreitem #charid
+set %skill 2 	;Tu ustaw jaki skill ma byc robiony z cieciem (0 - Nic, 1 - Madrosc, 2 - Hiding, 3 - Anatomia)
+
+
+start:
+madrosc:
+if %skill <> 1
+   goto hiding
+set #ltargetid %lt
+event macro 1 ^ .um madrosc
+set %licz #scnt2 + 20
+czekaj_madrosc:
+if #targcurs = 1
+   goto dalej_madrosc
+if %licz < #scnt2
+   goto madrosc
+goto czekaj_madrosc
+dalej_madrosc:
+event macro 22
+goto ciecie
+
+hiding:
+if %skill <> 2
+   goto anatomia
+event macro 1 ^ .um ukrywanie
+set %licz #scnt2 + 20
+czekaj_hiding:
+scanjournal 1
+if H in #charstatus
+   goto ciecie
+if Schowal in #journal || Ukryl in #journal || Nie_uda in #journal
+   goto ciecie
+if %licz < #scnt2
+   goto hiding
+goto czekaj_hiding
+
+anatomia:
+if %skill <> 3
+   goto ciecie
+set #ltargetid %lt
+event macro 1 ^ .um anatomia
+set %licz #scnt2 + 20
+czekaj_anatomia:
+if #targcurs = 1
+   goto dalej_anatomia
+if %licz < #scnt2
+   goto anatomia
+goto czekaj_anatomia
+dalej_anatomia:
+event macro 22
+goto ciecie
+
+ciecie:
+finditem kag C
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+}
+if #findkind = 1
+{
+   ignoreitem #findid
+   goto ciecie
+}
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz nozyczek! Skrypt wylaczono!
+   halt
+}
+set %noz 0
+czekaj_nozyczki:
+set %noz %noz + 1
+if #targcurs = 1
+   goto dalej_nozyczki
+if %noz > 50
+   goto ciecie
+goto czekaj_nozyczki
+dalej_nozyczki:
+finditem zzf_mag_oag C
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 22
+}
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz bel materialu! Skrypt wylaczono!
+   halt
+}
+koniec:
+if Pocial in #sysmsg
+      goto start
+if Nie_udalo_Ci in #sysmsg
+      goto start
+goto koniec
+

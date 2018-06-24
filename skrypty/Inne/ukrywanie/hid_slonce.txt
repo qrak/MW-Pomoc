@@ -1,0 +1,21 @@
+; HID + Stealth by Raist
+; wkomentarzak podana jest linijka w ktorej trzeba
+;wpisac imie postaci
+
+initevents
+set %czas #scnt2 + 100
+
+
+start:
+if %czas < #scnt2
+goto hid
+if #charstatus = H
+goto start
+
+hid:
+event macro 1 0 .um ukrywanie
+wait 20
+set %czas #scnt2 + 1800
+goto start
+
+

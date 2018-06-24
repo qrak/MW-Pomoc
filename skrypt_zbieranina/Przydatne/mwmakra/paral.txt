@@ -1,0 +1,54 @@
+initevents
+
+keyloop:
+onHotKey F2   ;wybuch
+gosub F2
+onHotKey F3   ;zolta
+gosub F3
+onHotKey F4    ;czerwony pot
+gosub F4
+onHotKey F5    ;pomarancz
+gosub F5
+;onHotKey F6     ;pot many
+;gosub F6
+onHotKey F10   ;drzwi
+gosub F10
+goto keyloop
+
+sub F2
+finditem TUF C ;wybuch
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F3
+finditem UUF C ;Heal
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F4
+finditem ZUF C ;czerwony pot
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F5
+finditem NUF C ;pomarancz
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F6
+finditem XUF C ;bialy pot
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+
+sub F10
+finditem XG_ZG_TG_VG_FH_HH_BH_DH_AY_ZX_CY_BY_XGB_ZGB_JHB_LHB_FHB_HHB_RHB_THB_NHB_PHB_ZHB_BIB_VHB_XHB_HIB_JIB_DIB_FIB_PIB_RIB_LIB_NIB_ZDB_BEB_VDB_XDB_HEB_JEB_DEB_FEB_PEB_REB_LEB_NEB_XEB_ZEB_TEB_VEB_FFB_HFB_FJC_IJC_HJC_SJC_RJC_UJC_TJC_OJC_NJC_QJC_PJC_YOC_XOC_APC_ZOC_UOC_TOC_WOC_VOC_GPC_FPC_IPC_HPC_CPC_BPC_EPC_DPC_OPC_NPC_QPC_PPC_KPC_JPC_MPC_LPC_WPC_VPC_YPC_XPC_SPC_RPC_UPC_TPC_EQC_DQC_GQC_FQC_AQC_ZPC_CQC_BQC_MQC_LQC_OQC_NQC_IQC_HQC_KQC_JQC_UQC_TQC_WQC_VQC_QQC_PQC_SQC_RQC_CRC_BRC_ERC_DRC_YQC_XQC_ARC_ZQC_MMC_LMC_OMC_NMC_IMC_HMC_KMC_JMC_UMC_TMC_WMC_VMC_QMC_PMC_SMC_RMC_CNC_BNC_ENC_DNC_YMC_XMC_ANC_ZMC_KNC_JNC_MNC_LNC_GNC_FNC_INC_HNC_SNC_RNC_UNC_TNC_ONC_NNC_QNC_PNC_AOC_ZNC_COC_BOC_WNC_VNC_YNC_XNC_IOC_HOC_KOC_JOC_EOC_IPJ_HPJ_RPL_UPL_TPL_OPL_NPL_QPL_PPL_AQL_ZPL_CQL_BQL_WPL_VPL_YPL_XPL_IQL_HQL_KQL_JQL_EQL_DQL_GQL_FQL_QQL_PQL_SQL_RQL_MQL_LQL_OQL_NQL_YQL_XQL_ARL_ZQL_UQL_ZZL_CAM_BAM_MAM_LAM_OAM_NAM_IAM_HAM_KAM_JAM_UAM_TAM_WAM_VAM_QAM_FUN_QUN_PUN_SUN_RUN_MUN_GRO_IRO_EWP_DWP_KWP_JWP_HAQ_KAQ_JAQ_UAQ_TAQ_WAQ_VAQ_QAQ  G_1 ;
+if #findkind = -1
+finditem PAQ_SAQ_RAQ_CBQ_BBQ_EBQ_DBQ_YAQ_XAQ_ABQ_ZAQ_KBQ_JBQ_MBQ_LBQ_GBQ G_1 ;
+set #lobjectid #findid
+event macro 17 0 ;last object
+return

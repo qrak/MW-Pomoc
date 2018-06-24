@@ -1,0 +1,105 @@
+;Autor: [nGz]
+;Gra na bebenku i gitarze.
+;Zaglada do ostatnio przez Ciebie wskazany cel.
+;Nie przejmuj sie tymi message'ami ala "Juz cos robisz" - to tak musi byc, zeby szybciej robilo to co ma robic ;)
+initevents
+set %lt #ltargetid
+start:
+if #chardir <> 0
+   event macro 5 1
+else
+   event macro 5 5
+set %nieud 0
+set %licz 0
+event macro 1 0 .um zagladanie
+loop:
+set #ltargetkind 1
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 3
+   goto start
+goto loop
+dalej:
+set #ltargetid %lt
+event macro 22
+event macro 22
+event macro 22
+set %licz #scnt2 + 140
+loop2:
+scanjournal 1
+if Anulowano in #journal
+   halt
+if Stoisz_za_daleko in #journal
+   halt
+if Nie_udalo_ci_sie in #journal
+ {
+   set %nieud 1
+   goto graj
+ }
+if Udalo_ci_sie_otworzyc_plecak_ in #sysmsg
+ {
+   udalosie:
+   wait 10
+   if #chardir <> 0
+      event macro 5 1
+   else
+      event macro 5 5
+   goto wpizdu
+ }
+if Your_skill_in in #sysmsg
+   goto udalosie
+if %licz < #scnt2
+   goto start
+goto loop2
+wpizdu:
+set %licz 0
+graj:
+finditem mqf
+if #findkind = -1
+ {
+   finditem prf
+   if #findkind = -1
+      halt
+ }
+if #findkind = 1
+ {
+   ignoreitem #findid
+   goto graj
+ }
+set #lobjectid #findid
+event macro 17
+wait 4
+if I_am_already_doing_some in #sysmsg
+   goto graj2
+goto graj
+graj2:
+wait 20
+if %licz > 2
+ {
+   wait 20
+   goto start
+ }
+if %nieud = 1
+ {
+   wait 20
+   goto start
+ }
+set %licz2 #scnt2 + 90
+petla:
+event macro 1 0 .um zagladanie
+wait 3
+scanjournal 1
+if Musisz_chwile_odczekac in #journal
+ {
+   set %licz %licz + 1
+   goto graj
+ }
+wait 8
+if #targcurs = 1
+   goto dalej
+if %licz2 < #scnt2
+   goto start
+goto petla

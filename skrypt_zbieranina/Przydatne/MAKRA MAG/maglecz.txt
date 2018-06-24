@@ -1,0 +1,368 @@
+;Skrypt bY SabiK
+;leczenie_mag
+;Wersja 1.4
+;Skrypt leczy bandazami, zarzuca blesa, prota i reactiva
+;Gdy masz wiecej niz 65hp ponizej maxhp lub mniej niz 25hp skrypt odtwarza dzwiek
+;Jezeli %lecz_in_vas_mani jest ustawione na 1 to gdy mamy wiecej niz 40hp ponizej maxhp lub ponizej 30hp skrypt leczy In Vas Mani
+;Jesli wpiszesz '.myj' skrypt zacznie myc bandaze
+;Jesli ustawisz %madrosc na 1 skrypt bedzie robil evala na atakowanym mobie
+;Skrypt mozna wylaczyc wciskajac (ew. przytrzymujac przez chwile) przycisk '%key'
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %key insert               ;Tu ustaw klawisz pod ktorym bedziesz mogl wylaczyc skrypt
+set %sciezka D:\xxx.wav       ;Tu ustaw sciezke do dzwieku
+set %bles 1                   ;Tu ustaw czy skrypt ma zarzucac blesa
+set %prot 1                   ;Tu ustaw czy skrypt ma zarzucac prota
+set %reactiv 0                ;Tu ustaw czy skrypt ma zarzucac reactiv armor
+set %str 60                   ;Tu ustaw ponizej ilu sily skrypt ma zarzucac blesa
+set %lecz_in_vas_mani 1       ;Tu ustaw czy skrypt ma leczyc In Vas Mani gdy masz wiecej niz 40hp ponizej maxhp
+set %madrosc 1                ;Tu ustaw czy skrypt ma robic madrosc na atakowanym mobie
+;-------------------------------------------------------------------------------------
+
+set %sound 0
+set %madr 0
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [leczenie_mag] odpalony (by SabiK)
+wait 1
+
+start:
+gosub sprawdz_wylacz
+if H in #charstatus
+   goto start
+gosub sprawdz_dzwiek
+if %bles = 1
+   gosub sprawdz_bles
+if #hits < #maxhits
+   gosub leczenie
+if #sysmsg = unknown_command:_.myj
+   gosub myj_bandaze
+if %madrosc = 1 && %madr = 0
+   gosub madrosc
+if %madr = 1
+   set %madr 0
+goto start
+
+;---- Sub sprawdz_wylacz ----
+sub sprawdz_wylacz
+if #charghost = YES
+{
+   set #sysmsgcol 1080
+   event sysmessage Jestes marty. Wylaczono skrypt [leczenie]
+   halt
+}
+onhotkey %key
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [leczenie]
+   halt
+}
+return
+
+;---- Sub sprawdz_dzwiek ----
+sub sprawdz_dzwiek
+if %sound = 1
+{
+   if %sound1 < #scnt2
+      set %sound 0
+}
+if %sound = 0
+{
+   if #hits < ( #maxhits - 65 ) || #hits <= 25
+      gosub dzwiek
+}
+if %lecz_in_vas_mani = 1
+{
+   if #hits < ( #maxhits - 40 ) || #hits <= 30
+      gosub lecz_in_vas_mani
+}
+return
+
+;---- Sub sprawdz_bles ----
+sub sprawdz_bles
+if #str = 0
+   return
+if #str <= %str
+   gosub bles
+return
+
+;---- Sub sprawdz_czy_biegnie ----
+sub sprawdz_czy_biegnie
+sprawdzaj:
+set %x #charposx
+set %y #charposy
+set %z #charposz
+set %ch #chardir
+wait 20
+gosub sprawdz_wylacz
+if #charposx = %x
+{
+   if #charposy = %y
+   {
+      if #charposz = %z
+      {
+         if #chardir = %ch
+         return
+      }
+   }
+}
+goto sprawdzaj
+
+;---- Sub dzwiek ----
+sub dzwiek
+sound %sciezka
+if #hits < 35
+{
+   set #sysmsgcol 1080
+   event sysmessage Masz #hits , hp!
+}
+set %sound 1
+set %sound1 #scnt2 + 40
+return
+
+;---- Sub lecz_in_vas_mani ----
+sub lecz_in_vas_mani
+lecz_invas:
+gosub sprawdz_wylacz
+if #hits > ( #maxhits - 40 )
+   return
+gosub sprawdz_czy_biegnie
+event macro 15 28
+set %licz #scnt2 + 60
+repeat
+gosub sprawdz_wylacz
+if #sex = 0
+{
+   if Straciles_koncentracje in #sysmsg
+      return
+}
+if #sex = 1
+{
+   if Stracilas_koncentracje in #sysmsg
+      return
+}
+if ( %licz - 45 ) > #scnt2
+{
+   if #sysmsg = You_are_already_doing_something_else.
+   {
+      if #targcurs = 1
+         key esc
+      wait 30
+      goto lecz_invas
+   }
+}
+if brakuje in #sysmsg
+{
+   sound %sciezka
+   set #sysmsgcol 1080
+   event sysmessage Brakuje Ci skladnikow lub many! Skrypt nie bedzie leczyl In Vas Mani!
+   set %lecz_in_vas_mani 0
+   return
+}
+if %licz < #scnt2
+   goto lecz_invas
+until #targcurs = 1
+klik_lecz:
+gosub sprawdz_wylacz
+event macro 23
+set %licz #scnt2 + 3
+repeat
+gosub sprawdz_wylacz
+if %licz < #scnt2
+   goto klik_lecz
+until #targcurs = 0
+wait 5
+return
+
+;---- Sub leczenie ----
+sub leczenie
+leczenie:
+finditem zlf C
+if #findkind = -1
+{
+   sound %sciezka
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono bandazy!
+   set %nie_ma_bandazy %nie_ma_bandazy + 1
+   set %nie_ma_bandazy_czas #scnt2 + 300
+   if %nie_ma_bandazy >= 3
+   {
+      event sysmessage Trzy razy nie znaleziono bandazy! Wylaczono skrypt [leczenie]
+      halt
+   }
+   wait 40
+   return
+}
+if %nie_ma_bandazy_czas < #scnt2
+   set %nie_ma_bandazy 0
+set #lobjectid #findid
+event macro 17
+set %licz #scnt2 + 15
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_bles
+if #sysmsg = You_are_already_doing_something_else.
+{
+   if #targcurs = 1
+      key esc
+   wait 30
+   goto leczenie
+}
+scanjournal 1
+if I_am_frozen in #journal || stoisz_za in #journal || nie_mozesz in #journal
+   return
+if %licz < #scnt2
+   return
+until #targcurs = 1
+set %hp #hits + 3
+kliknij:
+event macro 23
+set %licz #scnt2 + 150
+repeat
+if ( %licz - 130 ) > #scnt2
+{
+   if #targcurs = 1
+      goto kliknij
+}
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_bles
+scanjournal 1
+until #sysmsg = Wyleczyles_sie. || #sysmsg = Przestales_sie_leczyc. || #sysmsg = Wyleczylas_sie. || #sysmsg = Przestalas_sie_leczyc. || #sysmsg = Nie_udalo_ci_sie_wyleczyc_tej_osoby. || #sysmsg = Anulowano. || Your_skill_in_Healing in #sysmsg || #hits > %hp || %licz < #scnt2 || I_am_frozen in #journal || stoisz_za in #journal || nie_mozesz in #journal
+if %madrosc = 1
+{
+   set %madr 1
+   gosub madrosc
+}
+return
+
+;---- Sub bles ----
+sub bles
+if #str = 0
+   return
+if %bles = 0
+   goto prot
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_czy_biegnie
+event macro 15 16
+set %licz #scnt2 + 40
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+if %licz < #scnt2
+   return
+until #targcurs = 1
+klik_bles:
+event macro 23
+set %licz #scnt2 + 3
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+if %licz < #scnt2
+   goto klik_bles
+until #targcurs = 0
+wait 5
+prot:
+if %prot = 0
+   goto reactiv
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_czy_biegnie
+event macro 15 14
+wait 45
+reactiv:
+if %reactiv = 0
+   return
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_czy_biegnie
+event macro 15 6
+wait 50
+return
+
+;---- Sub myj_bandaze ----
+sub myj_bandaze
+set %Myl_bandaze 0
+bandaze:
+finditem amf C
+if #findkind = -1
+{
+   set #sysmsgcol 1281
+   event sysmessage Skonczono myc bandaze!
+   return
+}
+set #lobjectid #findid
+event macro 17
+set %licz #scnt2 + 5
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_bles
+if %licz < #scnt2
+  goto bandaze
+until #targcurs = 1
+klik_bandaze:
+if %Myl_bandaze = 1
+{
+  event macro 22
+  goto czekaj_bandaze
+}
+set #sysmsgcol 1281
+event sysmessage Wskaz gdzie maja byc myte bandaze.
+set %licz #scnt2 + 50
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_bles
+onhotkey ESC || #sysmsg =  Anulowano.
+{
+  if #targcurs = 0
+  {
+      set #sysmsgcol 1080
+      event sysmessage Anulowano mycie bandazy!
+      return
+  }
+}
+if %licz < #scnt2
+  goto klik_bandaze
+until #targcurs = 0
+set %Myl_bandaze 1
+czekaj_bandaze:
+set %Timer #scnt2 + 45
+repeat
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+gosub sprawdz_bles
+if %Timer < #scnt2
+  break
+scanjournal 1
+if Stoisz_za_daleko in #journal || W_tym_nie_umyjesz_bandaza in #journal || Musisz_wskazac_miejsce in #journal || Nie_widzisz_tego in #journal || Oddalil in #journal
+{
+   set %Myl_bandaze 0
+   break
+}
+until Umyl in #journal
+goto bandaze
+
+sub madrosc
+madrosc:
+gosub sprawdz_wylacz
+gosub sprawdz_dzwiek
+if #hits < #maxhits && %madr = 0
+   return
+finditem #enemyid
+if #findkind <> 1 || #findid <> #enemyid || #targCurs = 1 || #enemyid = n/a || #enemyhits < 300 || #finddist > 2 || #finddist = n/a || #findid = n/a
+   return
+set #ltargetkind 1
+set #ltargetid #findid
+event macro 1 0 .um madrosc
+set %licz #scnt2 + 40
+repeat
+if %licz <= #scnt2
+   goto madrosc
+until #targcurs = 1
+wait 1
+event macro 22 0
+return

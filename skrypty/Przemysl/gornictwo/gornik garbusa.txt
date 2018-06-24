@@ -1,0 +1,415 @@
+initevents
+set #sysmsgcol 0
+
+// Options
+set %Umiejetnosc 0
+set %Jedzenie 0
+set %Przeciazenie 0
+set %Ostrzezenie 0
+
+// Variables
+set %Gdzie 26
+set %StartTime #scnt
+set %STimeout 0
+set %GTimeout 0
+
+if %Gdzie < 26
+ event sysmessage Zaczynasz kopac...
+else
+ event sysmessage Aby zaczac kopac nacisnij F9...
+start:
+onhotkey f8
+{
+ gosub zapisz
+ gosub przenies
+ gosub backpacks
+}
+onhotkey F9
+ gosub beyond
+onhotkey F10
+ gosub stats
+onhotkey F11
+ gosub pause
+onhotkey F12
+ gosub backpacks
+// Przeciazenie
+scanjournal 1
+if ( #weight > #maxweight && Wazysz notin #journal ) && %Przeciazenie = 1
+{
+ str Right #weight 1
+ set %Last1 #strRes
+ str Right #weight 2
+ set %Last2 #strRes
+ if %Last1 = 2 || %Last1 = 3 || %Last1 = 4
+ {
+  if %Last2 = 12 || %Last2 = 13 || %Last2 = 14
+   set %Kamien kamieni
+  else
+   set %Kamien kamienie
+ }
+ else
+  set %Kamien kamieni
+ str Lower %Kamien
+ event sysmessage * Wazysz #weight #strRes
+ gosub zapisz
+ gosub przenies
+ gosub backpacks
+}
+// Ostrzezenie
+if ( Slam_podchodzi in #journal || Przyciagnales_uwage in #journal || #enemyid <> n/a ) && %Ostrzezenie = 1
+{
+ if %pause <> 1
+ {
+  sound C:\WINDOWS\Media\notify.wav
+  event sysmessage [Auto-Pause] Nie mozesz teraz kopac...
+  set %Pause 1
+ }
+}
+// Jedzenie
+if %GTimeout < #scnt && #enemyid = N/A && %Jedzenie = 1
+{
+ set %GTimeout #scnt + 60
+ finditem ZPE_AQD_HND_TWI_FWI_QQD_UWI
+ if #findkind = 0
+ {
+  set #lobjectid #findid
+  event macro 17
+  wait 15
+  if Nie_mozesz notin #sysmsg && Juz_cos_robisz notin #sysmsg
+  {
+   wait 15
+   set %GTimeout #scnt - 1
+  }
+ }
+}
+if %Gdzie > 25 || %Pause = 1
+ goto start
+// Ukrywanie
+if %Umiejetnosc = 1 && %STimeout < #scnt
+{
+ set %STimeout #scnt + 9
+ event macro 13 21
+ wait 2
+}
+// Wiedza o broni
+if %Umiejetnosc = 2 && %STimeout < #scnt
+{
+ finditem NPF
+ if #findkind = 0
+ {
+  event macro 13 4
+  target
+  set #ltargetid #findid
+  set #ltargetkind 1
+  event macro 22
+  set %STimeout #scnt + 9
+  wait 2
+ }
+}
+// Anatomia
+if %Umiejetnosc = 3 && %STimeout < #scnt
+{
+ finditem BO_WN G_5
+ if #findkind = 1
+ {
+  event macro 13 1
+  target
+  set #ltargetid #findid
+  set #ltargetkind 1
+  event macro 22
+  set %STimeout #scnt + 9
+ }
+ wait 2
+}
+if %Gdzie = 1
+{
+ set %GdzieX #charposx
+ set %GdzieY #charposy
+}
+if %Gdzie = 2
+{
+ set %GdzieX #charposx
+ set %GdzieY #charposy - 1
+}
+if %Gdzie = 3
+{
+ set %GdzieX #charposx + 1
+ set %GdzieY #charposy - 1
+}
+if %Gdzie = 4
+{
+ set %GdzieX #charposx + 1
+ set %GdzieY #charposy
+}
+if %Gdzie = 5
+{
+ set %GdzieX #charposx + 1
+ set %GdzieY #charposy + 1
+}
+if %Gdzie = 6
+{
+ set %GdzieX #charposx
+ set %GdzieY #charposy + 1
+}
+if %Gdzie = 7
+{
+ set %GdzieX #charposx - 1
+ set %GdzieY #charposy + 1
+}
+if %Gdzie = 8
+{
+ set %GdzieX #charposx - 1
+ set %GdzieY #charposy
+}
+if %Gdzie = 9
+{
+ set %GdzieX #charposx - 1
+ set %GdzieY #charposy - 1
+}
+if %Gdzie = 10
+{
+ set %GdzieX #charposx - 1
+ set %GdzieY #charposy - 2
+}
+if %Gdzie = 11
+{
+ set %GdzieX #charposx
+ set %GdzieY #charposy - 2
+}
+if %Gdzie = 12
+{
+ set %GdzieX #charposx + 1
+ set %GdzieY #charposy - 2
+}
+if %Gdzie = 13
+{
+ set %GdzieX #charposx + 2
+ set %GdzieY #charposy - 2
+}
+if %Gdzie = 14
+{
+ set %GdzieX #charposx + 2
+ set %GdzieY #charposy - 1
+}
+if %Gdzie = 15
+{
+ set %GdzieX #charposx + 2
+ set %GdzieY #charposy
+}
+if %Gdzie = 16
+{
+ set %GdzieX #charposx + 2
+ set %GdzieY #charposy + 1
+}
+if %Gdzie = 17
+{
+ set %GdzieX #charposx + 2
+ set %GdzieY #charposy + 2
+}
+if %Gdzie = 18
+{
+ set %GdzieX #charposx + 1
+ set %GdzieY #charposy + 2
+}
+if %Gdzie = 19
+{
+ set %GdzieX #charposx
+ set %GdzieY #charposy + 2
+}
+if %Gdzie = 20
+{
+ set %GdzieX #charposx - 1
+ set %GdzieY #charposy + 2
+}
+if %Gdzie = 21
+{
+ set %GdzieX #charposx - 2
+ set %GdzieY #charposy + 2
+}
+if %Gdzie = 22
+{
+ set %GdzieX #charposx - 2
+ set %GdzieY #charposy + 1
+}
+if %Gdzie = 23
+{
+ set %GdzieX #charposx - 2
+ set %GdzieY #charposy
+}
+if %Gdzie = 24
+{
+ set %GdzieX #charposx - 2
+ set %GdzieY #charposy - 1
+}
+if %Gdzie = 25
+{
+ set %GdzieX #charposx - 2
+ set %GdzieY #charposy - 2
+}
+
+kilof:
+finditem NPF C
+if #findkind <> 0
+{
+ event sysmessage Nie masz kilofu...
+ halt
+}
+set #lobjectid #findid
+event macro 17
+target
+set #ltargetx %GdzieX
+set #ltargety %GdzieY
+set #ltargetz #charposz
+set #ltargetkind 3
+event macro 22
+set %MTime #scnt
+set %i 0
+text:
+onhotkey f8
+{
+ gosub zapisz
+ gosub przenies
+ gosub backpacks
+}
+onhotkey F10
+ gosub stats
+onhotkey F11
+ gosub pause
+onhotkey F12
+ gosub backpacks
+if %i <> 1
+ set %i 1
+else
+ set %i 2
+set %Cz #scnt - %MTime
+scanjournal %i
+if Zasoby in #journal || Przestales in #journal || Nie_mozesz in #journal
+{
+ if Zasoby in #journal || Nie_mozesz in #journal
+ {
+  set %Gdzie %Gdzie + 1
+  if %Gdzie > 25
+  {
+   set %Time #scnt - %StartTime
+   set %Min %Time / 60
+   set %Sek %Time - ( %Min * 60 )
+   event sysmessage Czas kopania: %Min , m %Sek , s
+   sound sounds/macro.wav
+  }
+ }
+ if Trzasnales_sie in #journal
+  wait 15s
+ goto start
+}
+goto text
+
+sub beyond
+ event sysmessage Zaczynasz kopac...
+ set %Gdzie 1
+ set %StartTime #scnt
+ return
+
+sub pause
+ if %Pause <> 1
+ {
+  set %Pause 1
+  event sysmessage Zatrzymales kopanie...
+ }
+ else
+ {
+  set %Pause 0
+  event sysmessage Wznowiles kopanie...
+ }
+ return
+
+sub backpacks
+ ignoreitem reset
+ set %X 440
+ set %Y 480
+ szukaj:
+ set %X %x + 20
+ set %Y %y + 10
+ finditem BO_WN G_1
+ if #findkind = -1
+  return
+ set #lobjectid #findid
+ event macro 17
+ set %ContID #contid
+ set %CTime #scnt2
+ wait1:
+ set %Czas #scnt2 - %CTime
+ if #contid = %ContID && %Czas < 10
+  goto wait1
+ contpos %X %Y
+ ignoreitem #findid
+ goto szukaj
+
+sub stats
+ if %Gdzie = 26
+ {
+  event sysmessage * Skonczyles kopac, nacisnij F9 aby znow zaczac...
+  return
+ }
+ if %Pause = 1
+  event sysmessage Kopanie wstrzymane...
+ event sysmessage * Kopiesz w miejscu: %Gdzie , /25
+ set %Time #scnt - %StartTime
+ set %Min %Time / 60
+ set %Sek %Time - ( %Min * 60 )
+ event sysmessage * Czas kopania: %Min , m %Sek , s
+ str Right #weight 1
+ set %Last1 #strRes
+ str Right #weight 2
+ set %Last2 #strRes
+ if %Last1 = 2 || %Last1 = 3 || %Last1 = 4
+ {
+  if %Last2 = 12 || %Last2 = 13 || %Last2 = 14
+   set %Kamien kamieni
+  else
+   set %Kamien kamienie
+ }
+ else
+  set %Kamien kamieni
+ str Lower %Kamien
+ event sysmessage * Wazysz #weight #strRes
+ return
+
+sub zapisz
+ ignoreitem reset
+ deleteVar ruda*
+ deleteVar rudaIle*
+ szukaj:
+ finditem DWJ C_ , #backpackid
+ if #findkind = -1
+  return
+ set %ruda . #findcol #findid
+ set %rudaIle . #findcol #findstack
+ ignoreitem #findid
+ goto szukaj
+
+sub przenies
+ ignoreitem reset
+ juki:
+ finditem BO_WN G_1
+ if #findkind <> 1
+  return
+ set #lobjectid #findid
+ event macro 17
+ wait 5
+ set %p #contid
+ ignoreitem #findid
+ ruda:
+ finditem DWJ C_ , %p
+ if #findkind <> 0
+  goto juki
+ if %ruda . #findcol <> 0 && %ruda . #findcol <> N/A
+ {
+  exevent drag %ruda . #findcol %rudaIle . #findcol
+  exevent dropc #findbagid
+  set %ruda , #findcol 0
+ }
+ ignoreitem #findid
+ goto ruda
+ return
+
+

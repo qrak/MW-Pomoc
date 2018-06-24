@@ -1,0 +1,34 @@
+initevents
+event macro 1 0 .glod
+
+start:
+if Czujesz_sie_dobrze in #sysmsg
+{
+finditem duf c
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+wait 4s
+goto start
+}
+jem:
+set #lobjectid #findid
+event macro 17 0
+wait 25
+set %czas #scnt2 + 20
+event macro 1 0 .glod
+sprawdz:
+if Czujesz_sie_w_pelni_sil in #sysmsg
+goto start
+if Czujesz_sie_dobrze in #sysmsg
+goto jem
+if %czas < #scnt2
+goto jem
+else
+goto sprawdz
+}
+else
+goto start
+

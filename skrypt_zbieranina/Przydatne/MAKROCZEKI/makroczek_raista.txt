@@ -1,0 +1,18 @@
+initevents
+set %pro 218_142
+
+start:
+if #CONTSIZE = %pro
+{
+goto dzwiek
+)
+else
+{
+wait 1s
+goto start
+}
+
+dwiek:
+sound C:\Program Files\Gadu-Gadu\sounds/start.wav  tu wpisz sciezke do dzwieku
+wait 6s
+goto start

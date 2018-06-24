@@ -1,0 +1,161 @@
+INITEVENTS
+SET %delay 10
+SET %count 0
+set %ile 1000 //ile ziol ma przeniesc do drugiego plecaka
+set %szafirow 0
+set %kdemona 0
+set #sysmsgcol 1281
+event sysmessage Skrypt [przerzucanie ziol] odpalony (by Seth)
+set #sysmsgcol 1082
+event sysmessage Pierwszy plecak (z ktorego mam wyciagac ziola)
+
+  SET #TARGCURS 1
+  SET #LTARGETID null
+  ltargetloop1:
+  IF #LTARGETID = null
+  GOTO ltargetloop1
+  WAIT %delay
+  SET %reg_bag_id #LTARGETID
+  WAIT %delay
+  
+event sysmessage Teraz drugi plecak (do ktorego bede wplacac ziola)
+SET #TARGCURS 1
+  SET #LTARGETID null
+  ltargetloop1:
+  IF #LTARGETID = null
+  GOTO ltargetloop1
+  WAIT %delay
+  SET %reg_bag2_id #LTARGETID
+  WAIT %delay
+
+set #LOBJECTID %reg_bag_id
+event macro 17
+wait %delay
+
+finditem KUF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono perel
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej perel
+  Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+finditem JUF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono krwawych
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej krwawych
+  Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem KZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono czosnku
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej czosnku
+  Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem JZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono zenszenia
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej zenszenia
+	Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem MZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono mangory
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej mangory
+  Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem WZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono jagod
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej jagod
+	Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem RZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono sieci
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej sieci
+	Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+finditem SZF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono siarki
+{
+  IF #FINDSTACK < %ile
+  event sysmessage znaleziono mniej siarki
+	Exevent Drag #findid %ile
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+
+finditem FVF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono szafirow
+{
+  IF #FINDSTACK < %szafirow
+  event sysmessage znaleziono mniej szafirow
+	Exevent Drag #findid %szafirow
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+
+finditem FVF C_ , %reg_bag_id
+IF #FINDKIND = -1
+event sysmessage nie znaleziono kosci demona
+{
+  IF #FINDSTACK < %kdemona
+  event sysmessage znaleziono mniej kosci demona
+	Exevent Drag #findid %kdemona
+	wait 10
+	Exevent Dropc %reg_bag2_id
+	wait 10
+}
+event sysmessage koniec przerzucania ziol
+halt

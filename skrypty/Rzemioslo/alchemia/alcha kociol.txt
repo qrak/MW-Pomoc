@@ -1,0 +1,1124 @@
+;Autor: [nGz]
+;Wersja: 1.2
+;Alchemia z menu.
+;Ponizsze zmienne mozna edytowac dla wlasnych potrzeb, okreslaja one jak ma byc ustawione menu zaraz po wlaczeniu skryptu.
+;%StartMikstura - okresla, ktora mikstura ma byc wybrana na liscie (domyslnie 1, zakres 1-50).
+;%StartKociol - okresla, czy pole "Kociol" ma byc zaznaczone (domyslnie #false, #true - zaznaczone, #false - odznaczone).
+;%StartIlosc - okresla, jaka wartosc ma byc wpisana w pole "Ilosc" (domyslnie 0, zakres 0-x).
+;%StartLiczExpy - okresla, czy pole "Uwzglednij wyjatki w liczeniu" ma byc zaznaczone (domyslnie #false, #true - zaznaczone, #false - odznaczone).
+;%StartSkill - okresla, ktory skill ma byc wybrany na liscie "Skill" (domyslnie 1, 1 - Zaden, 2 - Anatomia, 3 - Wiedza o Zwierzetach, 4 - Identyfikacja, 5 - Wiedza o Broni, 6 - Wykrywanie, 7 - Madrosc, 8 - Ukrywanie, 9 - Rozmowa z duchami).
+;%SkillPowtorzenia - okresla jak czesto skrypt ma wykonywac skill(co ktore uzycie Alchemii) (domyslnie 1 [czyli po kazdym uzyciu Alchemii], zakres 1-x). Zmienna ta nie wystepuje w menu poniewaz jest ona malo wazna i raczej rzadko kiedy jest potrzeba zmieniania jej.
+;========================
+set %StartMikstura 1        ;[1-50]
+set %StartKociol #false     ;[#true, #false]
+set %StartIlosc 0           ;[0-x]
+set %StartLiczExpy #false   ;[#true, #false]
+set %StartSkill 1           ;[1-9]
+set %SkillPowtorzenia 1     ;[1-x]
+;========================
+
+set #lpc 200
+set %LicznikPowtorzen %SkillPowtorzenia
+set %MenuSizeX 260
+set %MenuSizeY 340
+menu hide
+menu clear
+menu window color btnface
+menu window size %MenuSizeX %MenuSizeY
+menu window title Menu Alchemii by [nGz] v1.2
+menu font name verdana
+menu font size 8
+menu font color black
+menu font bgcolor white
+menu font style
+
+;================== Mikstury ====================
+set %ComboMiksturyWidth %MenuSizeX - 20
+menu combo create mikstury 10 10 %ComboMiksturyWidth
+menu combo add mikstury Mikstury:
+menu combo add mikstury ----------------------------------
+menu combo add mikstury To co ostatnio
+menu combo add mikstury Leczenie:
+menu combo add mikstury - #spc , slaba mikstura leczenia
+menu combo add mikstury - #spc , mikstura leczenia
+menu combo add mikstury - #spc , mocna mikstura leczenia
+menu combo add mikstury Trucizny:
+menu combo add mikstury - #spc , slaba trujaca mikstura
+menu combo add mikstury - #spc , trujaca mikstura
+menu combo add mikstury - #spc , mocna trujaca mikstura
+menu combo add mikstury - #spc , zabojcza trujaca mikstura
+menu combo add mikstury Uzdrowienia:
+menu combo add mikstury - #spc , slaba mikstura uzdrowienia
+menu combo add mikstury - #spc , mikstura uzdrowienia
+menu combo add mikstury - #spc , mocna mikstura uzdrowienia
+menu combo add mikstury Zrecznosci:
+menu combo add mikstury - #spc , slaba mikstura zrecznosci
+menu combo add mikstury - #spc , mikstura zrecznosci
+menu combo add mikstury - #spc , mocna mikstura zrecznosci
+menu combo add mikstury Sily:
+menu combo add mikstury - #spc , slaba mikstura sily
+menu combo add mikstury - #spc , mikstura sily
+menu combo add mikstury - #spc , mocna mikstura sily
+menu combo add mikstury Wybuchowe:
+menu combo add mikstury - #spc , slaba wybuchajaca mikstura
+menu combo add mikstury - #spc , wybuchajaca mikstura
+menu combo add mikstury - #spc , mocna wybuchajaca mikstura
+menu combo add mikstury Odswiezania:
+menu combo add mikstury - #spc , odswiezajaca mikstura
+menu combo add mikstury - #spc , mocna odswiezajaca mikstura
+menu combo add mikstury Oslabienia:
+menu combo add mikstury - #spc , slaba mikstura oslabienia
+menu combo add mikstury - #spc , mikstura oslabienia
+menu combo add mikstury - #spc , mocna mikstura oslabienia
+menu combo add mikstury Inne:
+menu combo add mikstury - #spc , mikstura jasnosci
+menu combo add mikstury - #spc , elixir czystej krwi
+menu combo add mikstury - #spc , mikstura oslepienia
+menu combo add mikstury - #spc , mikstura ochrony przed trucizna
+menu combo add mikstury - #spc , mikstura many
+menu combo add mikstury - #spc , mikstura przemiany
+menu combo add mikstury - #spc , mikstura na wyleczenie wilkolactwa
+menu combo add mikstury Eliksiry:
+menu combo add mikstury - #spc , slaby eliksir zycia
+menu combo add mikstury - #spc , eliksir zycia
+menu combo add mikstury - #spc , slaby eliksir many
+menu combo add mikstury - #spc , eliksir many
+menu combo add mikstury - #spc , slaby eliksir wytrzymalosci
+menu combo add mikstury - #spc , eliksir wytrzymalosci
+menu combo select mikstury %StartMikstura
+
+;================== Skille ====================
+set %SkillTxtX 10
+set %SkillTxtY 165
+set %SkillComboX %SkillTxtX + 36
+set %SkillComboY %SkillTxtY - 3
+menu combo create cskill %SkillComboX %SkillComboY 150
+menu combo add cskill Zaden
+menu combo add cskill Anatomia
+menu combo add cskill Wiedza o Zwierzetach
+menu combo add cskill Identyfikacja
+menu combo add cskill Wiedza o Broni
+menu combo add cskill Wykrywanie
+menu combo add cskill Madrosc
+menu combo add cskill Ukrywanie
+menu combo add cskill Rozmowa z duchami
+menu combo select cskill %StartSkill
+
+;================== Ilosc ======================
+set %Prostokat1X 4
+set %Prostokat1Y 59
+set %TxtIloscX %Prostokat1X + 6
+set %TxtIloscY %Prostokat1Y + 6
+set %LiczbaMiksowEditX %TxtIloscX + 36
+set %LiczbaMiksowEditY %TxtIloscY - 3
+set %ZeroInfTxtX %LiczbaMiksowEditX + 46
+set %ChLiczExpyY %Prostokat1Y + 29
+set %Kreska1X %Prostokat1X + 1
+set %Kreska1Y %Prostokat1Y + 26
+set %Kreska2Y %Prostokat1Y + 56
+set %UwagaTxtX %Prostokat1X + 3
+set %Uwaga1TxtY %Kreska2Y + 1
+set %Uwaga2TxtY %Uwaga1TxtY + 12
+set %Uwaga3TxtY %Uwaga2TxtY + 12
+menu edit liczbamiksow %LiczbaMiksowEditX %LiczbaMiksowEditY 41 %StartIlosc
+menu font bgcolor btnface
+menu text txtilosc %TxtIloscX %TxtIloscY Ilosc:
+menu shape prostokat1 %Prostokat1X %Prostokat1Y 252 97 3 7 1 black 2 black
+menu shape kreska1 %Kreska1X %Kreska1Y 250 1 3 7 1 black 2 black
+menu shape kreska2 %Kreska1X %Kreska2Y 250 1 3 7 1 black 2 black
+menu font size 7
+menu check liczexpy %TxtIloscX %ChLiczExpyY 245 25 %StartLiczExpy Uwzglednij wyjatki w liczeniu (przy uzywaniu mozdzierza)
+menu text zeroinf %ZeroInfTxtX %TxtIloscY (0 = nieskonczonosc)
+menu text uwaga1 %UwagaTxtX %Uwaga1TxtY Uwaga: w przypadku uzywania mozdzierza "Ilosc"
+menu text uwaga2 %UwagaTxtX %Uwaga2TxtY oznacza ilosc roztartych mikstur. Natomiast w
+menu text uwaga3 %UwagaTxtX %Uwaga3TxtY przypadku kotla oznacza ona ilosc udanych prob.
+menu font size 8
+
+;==============================================
+menu check kociol 10 38 60 15 %StartKociol Kociol
+menu text txtskill %SkillTxtX %SkillTxtY Skill:
+
+;=================== Status ===================
+set %Prostokat2X 14
+set %Prostokat2Y 194
+set %ProstokatStatusW 232
+set %ProstokatStatusH 85
+set %ProstokatStanH 28
+set %Prostokat3Y %Prostokat2Y + %ProstokatStatusH - 1
+set %StatusTxtX ( %ProstokatStatusW / 2 ) + %Prostokat2X - 21
+set %StatusTxtY %Prostokat2Y - 7
+set %Prostokat4X %StatusTxtX - 1
+set %Prostokat4Y %StatusTxtY - 1
+set %SMiksyTxtX %Prostokat2X + 13
+set %SMiksyTxtY %Prostokat2Y + 7
+set %SNarzedzieTxtX %Prostokat2X + 5
+set %SNarzedzieTxtY %Prostokat2Y + 22
+set %SNarzedzieNazwaOKX %SNarzedzieTxtX + 86
+set %SNarzedzieNazwaBladX %SNarzedzieTxtX + 98
+set %SNarzedzieNazwaY %SNarzedzieTxtY + 1
+set %SIloscTxtX %Prostokat2X + 34
+set %SIloscTxtY %Prostokat2Y + 37
+set %SIloscStatusMiksCntX %SIloscTxtX + 117
+set %SIloscStatusNieskY %SIloscTxtY + 1
+set %SLiczExpyTxtX %Prostokat2X + 8
+set %SLiczExpyTxtY %Prostokat2Y + 52
+set %SSkillTxtX %Prostokat2X + 37
+set %SSkillTxtY %Prostokat2Y + 67
+set %SSkillStatusY %SSkillTxtY + 1
+set %SAllStatusX %SMiksyTxtX + 58
+set %SStanTxtX %Prostokat2X + 32
+set %SStanTxtY %Prostokat3Y + %ProstokatStanH / 2 - 7
+set %SStan2lvlTxtY1 %SStanTxtY - 6
+set %SStan2lvlTxtY2 %SStanTxtY + 6
+menu shape prostokat2 %Prostokat2X %Prostokat2Y %ProstokatStatusW %ProstokatStatusH 3 7 1 blue 7 $F0F0E9
+menu shape prostokat3 %Prostokat2X %Prostokat3Y %ProstokatStatusW %ProstokatStanH 3 7 1 blue 7 $C0F0C0
+menu shape prostokat4 %Prostokat4X %Prostokat4Y 43 15 3 7 1 blue 7 $F0F0E9
+menu font transparent #true
+menu font style b
+menu text txtstatus %StatusTxtX %StatusTxtY Status
+menu text txtstan %SStanTxtX %SStanTxtY Stan:
+menu font style
+menu font bgcolor btnface
+menu text txtsmiksy %SMiksyTxtX %SMiksyTxtY Mikstura:
+menu text txtsnarzedzie %SNarzedzieTxtX %SNarzedzieTxtY Narzedzie:
+menu text txtsilosc %SIloscTxtX %SIloscTxtY Ilosc:
+menu text txtsliczexpy %SLiczExpyTxtX %SLiczExpyTxtY Licz Expy:
+menu text txtsskill %SSkillTxtX %SSkillTxtY Skill:
+
+;==============================================
+set %AnulujBtnX %MenuSizeX - 74
+set %AnulujStopBtnY %MenuSizeY - 29
+menu button anuluj %AnulujBtnX %AnulujStopBtnY 70 25 Anuluj
+menu font style b
+gosub ButtonStart
+menu show
+menu hideEuo
+gosub StatusStan Oczekuje
+;==============================================
+PetlaGlowna:
+set #lpc 10
+set #menubutton N/A
+repeat
+if #menubutton <> N/A
+  goto #menubutton
+until #false
+
+Start:
+set #lpc 200
+gosub ClearStatus
+gosub StatusStan Inicjalizacja
+gosub NrMikstury
+if ! %NrMikstury && %NrMikstury <> last
+{
+  gosub BladMikstura
+  gosub StatusStan Oczekuje
+  goto PetlaGlowna
+}
+gosub OKMikstura
+gosub FindNarzedzie
+if #findkind = -1
+{
+  gosub BladNarzedzie
+  gosub StatusStan Oczekuje
+  goto PetlaGlowna
+}
+gosub OKNarzedzie
+gosub PobierzIlosc
+gosub StatusIlosc
+if %Ilosc = Blad
+{
+  gosub StatusStan Oczekuje
+  goto PetlaGlowna
+}
+gosub StatusLiczExpy
+gosub PobierzSkill
+gosub StatusSkill
+if %SkillName = Blad
+{
+  gosub StatusStan Oczekuje
+  goto PetlaGlowna
+}
+gosub ButtonStop
+gosub UstawCelSkilla
+if #menubutton = Stop
+  goto Stop
+if %CelSkilla = _Blad
+{
+  gosub ButtonStart
+  gosub StatusStan Oczekuje
+  goto PetlaGlowna
+}
+gosub UstawXYmikstury
+set #lpc 10
+gosub Alchemia
+if #menubutton = Stop || #menubutton = CLOSED || #menubutton = Anuluj
+  goto #menubutton
+gosub ButtonStart
+goto PetlaGlowna
+
+Stop:
+gosub ClearStatus
+gosub ButtonStart
+gosub StatusStan Oczekuje
+goto PetlaGlowna
+
+;======================= Alchemia =========================
+sub Alchemia
+set %RezultatS N/A
+set #menubutton N/A
+set %JIndexAlch N/A
+PetlaAlchemii:
+if #menubutton <> N/A
+  return
+if %SkillName <> Zaden
+{
+  if %LicznikPowtorzen = %SkillPowtorzenia
+  {
+    gosub StatusStan UseSkill
+    gosub %SkillName
+  }
+  set %LicznikPowtorzen %LicznikPowtorzen - 1
+  if %LicznikPowtorzen <= 0
+    set %LicznikPowtorzen %SkillPowtorzenia
+}
+if #menubutton <> N/A
+  return
+gosub StatusStan ChooseMix
+set %CntUseNarzedzie 0
+set %CntPonownychKlikow 0
+FindNarzedzie:
+set %CntUseNarzedzie %CntUseNarzedzie + 1
+if %CntUseNarzedzie > 40
+{
+  gosub StatusStan BladUseNarzedzie
+  if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+    click 285 225 r
+  return
+}
+if %nazwaNarzedzia = (kociol)
+  finditem %TypNarzedzia G_1
+else
+  finditem %TypNarzedzia C
+if #findkind = -1
+{
+  gosub BladNarzedzie
+  gosub StatusStan Oczekuje
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 4
+repeat
+if %Timer < #scnt2
+  goto FindNarzedzie
+if #menubutton <> N/A
+{
+  if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+    click 285 225 r
+  return
+}
+scanjournal 1
+if Twa_wiedza_o_alchemii_jest_za_mala_by_wiedziec_jak_to_uzyc in #journal
+{
+  gosub StatusStan Alch_malo_kociol
+  return
+}
+if Zapisywanie_Stanu_Swiata in #journal
+  gosub WaitForSaveEnd %Timer Timer
+until #contname = generic_gump && #contsize = 540_420
+if %JIndexAlch = N/A
+  set %JIndexAlch #jindex
+;wait 1
+set %CntUseNarzedzie 0
+set %CntKlikow 0
+Kliki:
+set %CntKlikow %CntKlikow + 1
+if %CntKlikow > 3
+{
+  set %CntPonownychKlikow %CntPonownychKlikow + 1
+  if %CntPonownychKlikow > 5
+  {
+    gosub StatusStan BladChooseMix
+    if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+      click 285 225 r
+    return
+  }
+  goto FindNarzedzie
+}
+if #menubutton <> N/A
+{
+  if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+    click 285 225 r
+  return
+}
+click %x1 %y1
+if %NrMikstury <> last
+{
+  set %Timer #scnt2 + 30
+  repeat
+  if %Timer < #scnt2
+    goto Kliki
+  if #menubutton <> N/A
+  {
+    if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+      click 285 225 r
+    return
+  }
+  until #contname = generic_gump && #contsize = 540_420
+  ;wait 1
+  click %x2 %y2
+}
+set %Timer #scnt2 + 20
+repeat
+if %Timer < #scnt2
+  goto Kliki
+if #menubutton <> N/A
+{
+  if #contname = generic_gump && #contsize = 540_420 && #contposx > -248 && #contposx < 251 && #contposy > -190 && #contposy < 187
+    click 285 225 r
+  return
+}
+until #contname <> generic_gump || #contsize <> 540_420
+if %NrMikstury <> last
+{
+  set %NrMikstury last
+  gosub UstawXYmikstury
+}
+gosub StatusStan WaitingForMixEnd
+if %nazwaNarzedzia = (kociol)
+  set %Timer #scnt2 + 185
+else
+  set %Timer #scnt2 + 125
+repeat
+if #menubutton <> N/A
+  return
+until #jindex <> %JIndexAlch || %Timer < #scnt2
+repeat
+if #menubutton <> N/A
+  return
+scanjournal 1
+if ( _zenszen in #journal || _wilcze_jagody in #journal || _czosnek in #journal || _krwawy_mech in #journal || _mandragora in #journal || _siarka in #journal || _czarne_perly in #journal || _obsydian in #journal || _pajecze_sieci in #journal || _rubiny in #journal || _otoczak in #journal || _zyzna_gleba in #journal ) && #jcolor = 40 || Nie_masz_pustych_butelek in #journal || Masz_za_malo_butelek in #journal
+{
+  gosub Brak_SkladnikowButelek
+  if %i <> 13
+    return
+  scanjournal 1
+}
+if Zapisywanie_Stanu_Swiata in #journal
+  gosub WaitForSaveEnd %Timer Timer
+until %Timer < #scnt2 || Oddalil in #journal || s_miksture_i_wlozyl in #journal || Nie_udalo_Ci_sie_rozetrzec_skladnikow in #journal || s_wyjatkowej_jakosci_miksture_i_wlozyl in #journal || _mikstur_w_kotle in #journal || Your_skill_in_Alch in #journal
+set %JIndexAlch #jindex
+if Oddalil in #journal
+  goto FindNarzedzie
+if Your_skill_in_Alch in #journal
+{
+  for %i 1 3
+  {
+    scanjournal %i
+    if s_miksture_i_wlozyl in #journal || s_wyjatkowej_jakosci_miksture_i_wlozyl in #journal || _mikstur_w_kotle in #journal
+      break
+  }
+  if %i = 4
+    scanjournal 1
+}
+if s_miksture_i_wlozyl in #journal || s_wyjatkowej_jakosci_miksture_i_wlozyl in #journal && %LiczExpy || _mikstur_w_kotle in #journal
+{
+  if %Ilosc <> Nieskonczonosc
+  {
+    set %Ilosc %Ilosc - 1
+    gosub StatusIlosc
+    if %Ilosc = 0
+    {
+      gosub StatusStan Skonczono
+      return
+    }
+  }
+  if %Ilosc = Nieskonczonosc
+  {
+    set %MiksCnt %MiksCnt + 1
+    gosub StatusSetMiksCnt
+  }
+}
+goto PetlaAlchemii
+
+;==================================================================
+sub WaitForSaveEnd
+set %TimerSave #scnt2 + 1000
+repeat
+scanjournal 1
+until Zapisywanie_Stanu_Swiata notin #journal && ( You_see:_ notin #journal || #jcolor <> 995 ) || %TimerSave < #scnt2
+set % , %2 %1 + 1005 - ( %TimerSave - #scnt2 )
+return
+
+sub Brak_SkladnikowButelek
+set %JournalMem #journal
+set %i 0
+if Nie_masz_pustych_butelek notin #journal && Masz_za_malo_butelek notin #journal
+{
+  for %i 1 12
+  {
+    scanjournal %i
+    if #journal = Potrzebujesz: && #jcolor = 40
+      break
+  }
+}
+if %i <> 13
+  gosub StatusStan %JournalMem
+return
+
+;==================================================================
+sub UstawXYmikstury
+if %NrMikstury = last
+{
+  set %x1 510
+  set %y1 60
+  return
+}
+if %NrMikstury >= 1 && %NrMikstury <= 3
+  set %x1 118
+if %NrMikstury >= 4 && %NrMikstury <= 7
+  set %x1 218
+if %NrMikstury >= 8 && %NrMikstury <= 10
+  set %x1 338
+if %NrMikstury >= 11 && %NrMikstury <= 13
+  set %x1 448
+if %NrMikstury >= 14 && %NrMikstury <= 16
+  set %x1 513
+if %NrMikstury >= 17 && %NrMikstury <= 19
+  set %x1 143
+if %NrMikstury >= 20 && %NrMikstury <= 21
+  set %x1 263
+if %NrMikstury >= 22 && %NrMikstury <= 24
+  set %x1 368
+if %NrMikstury >= 25 && %NrMikstury <= 31
+  set %x1 428
+if %NrMikstury >= 32 && %NrMikstury <= 37
+  set %x1 513
+
+if %NrMikstury >= 1 && %NrMikstury <= 16
+  set %y1 114
+if %NrMikstury >= 17 && %NrMikstury <= 37
+  set %y1 385
+
+if %NrMikstury = 1 || %NrMikstury = 8 || %NrMikstury = 11 || %NrMikstury = 14 || %NrMikstury = 17 || %NrMikstury = 22 2
+  set %x2 314
+  set %y2 210
+if %NrMikstury = 2 || %NrMikstury = 6 || %NrMikstury = 9 || %NrMikstury = 12 || %NrMikstury = 15 || %NrMikstury = 18 || %NrMikstury = 23 2
+  set %x2 184
+  set %y2 300
+if %NrMikstury = 3 || %NrMikstury = 7 || %NrMikstury = 10 || %NrMikstury = 13 || %NrMikstury = 16 || %NrMikstury = 19 || %NrMikstury = 24 2
+  set %x2 394
+  set %y2 300
+if %NrMikstury = 4 2
+  set %x2 184
+  set %y2 210
+if %NrMikstury = 5 2
+  set %x2 394
+  set %y2 210
+if %NrMikstury = 20 2
+  set %x2 184
+  set %y2 250
+if %NrMikstury = 21 2
+  set %x2 394
+  set %y2 250
+if %NrMikstury = 25 2  ;jasnosci
+  set %x2 114
+  set %y2 210
+if %NrMikstury = 26 2
+  set %x2 284
+  set %y2 195
+if %NrMikstury = 27 2
+  set %x2 444
+  set %y2 210
+if %NrMikstury = 28 2
+  set %x2 284
+  set %y2 265
+if %NrMikstury = 29 2
+  set %x2 114
+  set %y2 300
+if %NrMikstury = 30 2
+  set %x2 444
+  set %y2 300
+if %NrMikstury = 31 2
+  set %x2 284
+  set %y2 330
+if %NrMikstury = 32 2
+  set %x2 154
+  set %y2 210
+if %NrMikstury = 33 2
+  set %x2 154
+  set %y2 305
+if %NrMikstury = 34 2
+  set %x2 294
+  set %y2 210
+if %NrMikstury = 35 2
+  set %x2 294
+  set %y2 305
+if %NrMikstury = 36 2
+  set %x2 434
+  set %y2 210
+if %NrMikstury = 37 2
+  set %x2 434
+  set %y2 305
+return
+
+;========================== Skille ============================
+sub Anatomia
+set %SkroconaNazwa ana
+gosub UzyjSkillaZTargetem
+if #targcurs = 1
+  key ESC
+return
+
+sub AnimalLore
+set %SkroconaNazwa wie
+gosub UzyjSkillaZTargetem
+set %TimerAL #scnt2 + 30
+repeat
+scanjournal 1
+until _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal || To_stworzenie_ in #journal || Nie_udalo_Ci_sie_ocenic_tego_zwierzecia in #journal || Nie_wiesz_jak_to_ocenic in #journal || Stoisz_za_daleko in #journal || %TimerAL < #scnt2 || %RezultatS = Blad_Cel || #menubutton <> N/A
+if %RezultatS <> Blad_Cel && #menubutton = N/A
+{
+  if _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal
+  {
+    set %TimerAL #scnt2 + 9
+    repeat
+    scanjournal 1
+    until To_stworzenie_ in #journal || %TimerAL < #scnt2 || #menubutton <> N/A
+  }
+  if To_stworzenie_ in #journal
+  {
+    set %TimerAL #scnt2 + 8
+    repeat
+    until %TimerAL < #scnt2 || #menubutton <> N/A
+  }
+}
+if #targcurs = 1
+  key ESC
+return
+
+sub Ident
+set %SkroconaNazwa ide
+gosub UzyjSkillaZTargetem
+if #targcurs = 1
+  key ESC
+return
+
+sub ArmsLore
+set %SkroconaNazwa bro
+gosub UzyjSkillaZTargetem
+if #targcurs = 1
+  key ESC
+return
+
+sub Wykrywanie
+set %JIndexSkill #jindex
+WykrywanieLoop:
+event macro 1 0 .um wyk
+set %TimerSkilla #scnt2 + 10
+repeat
+if %TimerSkilla < #scnt2
+  goto WykrywanieLoop
+if #menubutton <> N/A
+  return
+until #jindex <> %JIndexSkill
+set %TimerSkilla #scnt2 + 4
+repeat
+if %TimerSkilla < #scnt2
+  goto WykrywanieLoop
+if #menubutton <> N/A
+  return
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until Nie_znalazl in #journal || :_Znalazl in #journal || Your_skill_in_Wyk in #journal || Your_skill_in_Det in #journal
+return
+
+sub Madrosc
+set %SkroconaNazwa mad
+gosub UzyjSkillaZTargetem
+if #targcurs = 1
+  key ESC
+return
+
+sub Ukrywanie
+if H in #charstatus
+  set %BylUkryty #true
+else
+  set %BylUkryty #false
+set %JIndexSkill #jindex
+UkrywanieLoop:
+event macro 1 0 .um ukr
+set %TimerSkilla #scnt2 + 10
+repeat
+if %TimerSkilla < #scnt2
+  goto UkrywanieLoop
+if #menubutton <> N/A
+  return
+until #jindex <> %JIndexSkill
+set %TimerSkilla #scnt2 + 4
+repeat
+if %TimerSkilla < #scnt2
+  goto UkrywanieLoop
+if #menubutton <> N/A
+  return
+if H notin #charstatus
+  set %BylUkryty #false
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until ( H in #charstatus && ! %BylUkryty ) || ukryl in #journal || nie_udalo_Ci_sie_ukryc in #journal || Nie_uda_Ci_sie_schowac_wierzchowca in #journal || Wrog_Cie_juz in #journal || Your_skill_in_Ukr in #journal || Your_skill_in_Hid in #journal
+return
+
+sub SpiritSpeak
+set %JIndexSkill #jindex
+SpiritSLoop:
+event macro 1 0 .um roz
+set %TimerSkilla #scnt2 + 10
+repeat
+if %TimerSkilla < #scnt2
+  goto SpiritSLoop
+if #menubutton <> N/A
+  return
+until #jindex <> %JIndexSkill
+set %TimerSkilla #scnt2 + 4
+repeat
+if %TimerSkilla < #scnt2
+  goto SpiritSLoop
+if #menubutton <> N/A
+  return
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until _z_drugim_swiatem. in #journal || Your_skill_in_Roz in #journal || Your_skill_in_Spi in #journal
+return
+
+sub UzyjSkillaZTargetem
+UzyjSkilla:
+gosub SprawdzCel
+if %RezultatS = Blad_Cel || #menubutton <> N/A
+  return
+event macro 1 0 .um %SkroconaNazwa
+set %TimerSkilla #scnt2 + 4
+repeat
+if %TimerSkilla < #scnt2
+  goto UzyjSkilla
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+if #menubutton <> N/A
+  return
+until #targcurs = 1
+CelownikSkilla:
+set #ltargetid %CelSkilla
+set #ltargetkind 1
+gosub SprawdzCel
+if %RezultatS = Blad_Cel || #menubutton <> N/A
+  return
+event macro 22
+set %TimerSkilla #scnt2 + 2
+repeat
+if %TimerSkilla < #scnt2
+  goto CelownikSkilla
+if #menubutton <> N/A
+  return
+until #targcurs = 0
+return
+
+sub SprawdzCel
+finditem %CelSkilla
+if #findkind = -1 && %RezultatS <> Blad_Cel
+{
+  gosub StatusCelSkilla Blad
+  set %RezultatS Blad_Cel
+}
+if #findkind <> -1 && %RezultatS = Blad_Cel
+{
+  gosub StatusCelSkilla OK
+  set %RezultatS OK
+}
+return
+
+;============================================================
+sub ButtonStart
+menu font color black
+menu delete stop
+menu button start 4 %AnulujStopBtnY 70 25 START
+return
+
+sub ButtonStop
+menu font color black
+menu delete start
+menu button stop 4 %AnulujStopBtnY 70 25 STOP
+return
+
+sub OKMikstura
+menu font color green
+menu delete statusMikstura
+menu text statusMikstura %SAllStatusX %SMiksyTxtY OK
+return
+
+sub BladMikstura
+menu font color red
+menu delete statusMikstura
+menu text statusMikstura %SAllStatusX %SMiksyTxtY Blad
+return
+
+sub OKNarzedzie
+menu font color green
+menu delete statusNarzedzie
+menu text statusNarzedzie %SAllStatusX %SNarzedzieTxtY OK
+menu font style
+menu font size 7
+menu text statusNarzedzie %SNarzedzieNazwaOKX %SNarzedzieNazwaY %nazwaNarzedzia
+menu font size 8
+menu font style b
+return
+
+sub BladNarzedzie
+menu font color red
+menu delete statusNarzedzie
+menu text statusNarzedzie %SAllStatusX %SNarzedzieTxtY Blad
+menu font style
+menu font size 7
+menu text statusNarzedzie %SNarzedzieNazwaBladX %SNarzedzieNazwaY %nazwaNarzedzia
+menu font size 8
+menu font style b
+return
+
+sub StatusIlosc
+if %Ilosc = Blad
+  menu font color red
+else
+  menu font color green
+menu delete statusIlosc
+if %Ilosc = Nieskonczonosc
+{
+  menu font size 7
+  menu text statusIlosc %SAllStatusX %SIloscStatusNieskY %Ilosc
+  gosub StatusSetMiksCnt
+  ;menu font size 8
+}
+else
+  menu text statusIlosc %SAllStatusX %SIloscTxtY %Ilosc
+if %Ilosc <> Blad && %Ilosc <> Nieskonczonosc
+  menu set liczbamiksow %Ilosc
+return
+
+sub StatusSetMiksCnt
+menu font color green
+menu font size 7
+menu delete statusIloscMiksCnt
+menu text statusIloscMiksCnt %SIloscStatusMiksCntX %SIloscStatusNieskY ( , %MiksCnt , )
+menu font size 8
+return
+
+sub StatusLiczExpy
+menu get liczexpy
+set %LiczExpy #menures
+menu font color blue
+menu delete statusLiczExpy
+if #menures
+  menu text statusLiczExpy %SAllStatusX %SLiczExpyTxtY Tak
+else
+  menu text statusLiczExpy %SAllStatusX %SLiczExpyTxtY Nie
+return
+
+sub StatusSkill
+if %SkillName = Blad
+  menu font color red
+else
+{
+  menu font color green
+  menu font size 7
+}
+menu delete statusSkill
+menu text statusSkill %SAllStatusX %SSkillStatusY %SkillName
+if %SkillName <> Blad
+  menu font size 8
+return
+
+sub StatusCelSkilla
+menu font size 7
+menu delete statusCelSkilla
+if %1 = Wybierz
+{
+  menu font color blue
+  menu text statusCelSkilla %SCelSkillaX %SSkillStatusY (Wybierz Cel)
+}
+if %1 = Blad
+{
+  menu font color red
+  menu text statusCelSkilla %SCelSkillaX %SSkillStatusY (Blad)
+}
+if %1 = OK
+{
+  menu font color green
+  menu text statusCelSkilla %SCelSkillaX %SSkillStatusY (OK)
+}
+menu font size 8
+return
+
+sub StatusStan
+menu delete statusStan
+if %1 = ChooseMix
+{
+  menu font color $806000
+  menu text statusStan %SAllStatusX %SStanTxtY Wybieram miksture
+  return
+}
+if %1 = WaitingForMixEnd
+{
+  menu font size 7
+  menu font color $006000
+  menu text statusStan %SAllStatusX %SStanTxtY Czekam az zrobi miksture
+  menu font size 8
+  return
+}
+if %1 = UseSkill
+{
+  menu font color $00C000
+  menu text statusStan %SAllStatusX %SStanTxtY Skill ( , %SkillName , )
+  return
+}
+if %1 = Inicjalizacja
+{
+  menu font color $C000D0
+  menu text statusStan %SAllStatusX %SStanTxtY %1
+  return
+}
+if %1 = Oczekuje
+{
+  menu font color $F09000
+  menu text statusStan %SAllStatusX %SStanTxtY %1
+  return
+}
+if %1 = Skonczono
+{
+  menu font color $F00000
+  menu text statusStan %SAllStatusX %SStanTxtY %1
+  return
+}
+if _zenszen in %1 || _wilcze_jagody in %1 || _czosnek in %1 || _krwawy_mech in %1 || _mandragora in %1 || _siarka in %1 || _czarne_perly in %1 || _obsydian in %1 || _pajecze_sieci in %1 || _rubiny in %1 || _otoczak in %1 || _zyzna_gleba in %1
+{
+  menu font color red
+  menu text statusStan %SAllStatusX %SStanTxtY Brak skladnikow
+  return
+}
+if Nie_masz_pustych_butelek in %1
+{
+  menu font color red
+  menu text statusStan %SAllStatusX %SStanTxtY Brak butelek
+  return
+}
+if Masz_za_malo_butelek in %1
+{
+  menu font color red
+  menu text statusStan %SAllStatusX %SStanTxtY Za malo butelek
+  return
+}
+if %1 = BladChooseMix
+{
+  menu font size 7
+  menu font color red
+  menu text statusStan %SAllStatusX %SStanTxtY Nie moge wybrac mikstury
+  menu font size 8
+  return
+}
+if %1 = BladUseNarzedzie
+{
+  menu font size 7
+  menu font color red
+  menu text statusStan %SAllStatusX %SStan2lvlTxtY1 Nie moge uzyc narzedzia
+  menu text statusStan %SAllStatusX %SStan2lvlTxtY2 %nazwaNarzedzia
+  menu font size 8
+  return
+}
+if %1 = Alch_malo_kociol
+{
+  menu font size 7
+  menu font color red
+  menu text statusStan %SAllStatusX %SStanTxtY Za malo alchemii na kociol
+  menu font size 8
+}
+return
+
+;===============================================================
+sub NrMikstury
+menu get mikstury
+if #menures < 3 || #menures = 4 || #menures = 8 || #menures = 13 || #menures = 17 || #menures = 21 || #menures = 25 || #menures = 29 || #menures = 32 || #menures = 36 || #menures = 44 || #menures > 50
+  set %NrMikstury 0
+else
+{
+  if #menures = 3
+    set %NrMikstury last
+  if #menures > 4 && #menures < 8
+    set %NrMikstury #menures - 4
+  if #menures > 8 && #menures < 13
+    set %NrMikstury #menures - 5
+  if #menures > 13 && #menures < 17
+    set %NrMikstury #menures - 6
+  if #menures > 17 && #menures < 21
+    set %NrMikstury #menures - 7
+  if #menures > 21 && #menures < 25
+    set %NrMikstury #menures - 8
+  if #menures > 25 && #menures < 29
+    set %NrMikstury #menures - 9
+  if #menures > 29 && #menures < 32
+    set %NrMikstury #menures - 10
+  if #menures > 32 && #menures < 36
+    set %NrMikstury #menures - 11
+  if #menures > 36 && #menures < 44
+    set %NrMikstury #menures - 12
+  if #menures > 44 && #menures < 51
+    set %NrMikstury #menures - 13
+}
+return
+
+sub FindNarzedzie
+menu get kociol
+if #menures
+{
+  set %TypNarzedzia tmd_umd
+  finditem %TypNarzedzia G_1
+  set %nazwaNarzedzia (kociol)
+}
+else
+{
+  set %TypNarzedzia rqf
+  finditem %TypNarzedzia C
+  set %nazwaNarzedzia (mozdzierz)
+}
+return
+
+sub PobierzIlosc
+menu get liczbamiksow
+if #menures > 0
+  set %Ilosc #menures
+else
+{
+  if #menures = 0
+  {
+    set %Ilosc Nieskonczonosc
+    set %MiksCnt 0
+  }
+  else
+    set %Ilosc Blad
+}
+return
+
+sub PobierzSkill
+menu get cskill
+if #menures < 1 || #menures > 9
+  set %SkillName Blad
+else
+{
+  if #menures = 1
+    set %SkillName Zaden
+  if #menures = 2
+  {
+    set %SkillName Anatomia
+    set %SCelSkillaX %SAllStatusX + 53
+  }
+  if #menures = 3
+  {
+    set %SkillName AnimalLore
+    set %SCelSkillaX %SAllStatusX + 61
+  }
+  if #menures = 4
+  {
+    set %SkillName Ident
+    set %SCelSkillaX %SAllStatusX + 33
+  }
+  if #menures = 5
+  {
+    set %SkillName ArmsLore
+    set %SCelSkillaX %SAllStatusX + 52
+  }
+  if #menures = 6
+    set %SkillName Wykrywanie
+  if #menures = 7
+  {
+    set %SkillName Madrosc
+    set %SCelSkillaX %SAllStatusX + 44
+  }
+  if #menures = 8
+    set %SkillName Ukrywanie
+  if #menures = 9
+    set %SkillName SpiritSpeak
+}
+return
+
+sub UstawCelSkilla
+set #menubutton N/A
+set %CelSkilla 0
+if %SkillName in Zaden_Ident_Wykrywanie_Ukrywanie_SpiritSpeak
+{
+  if %SkillName = Ident
+  {
+    finditem %TypNarzedzia
+    if #findkind = -1
+    {
+      set %CelSkilla _Blad
+      gosub StatusCelSkilla Blad
+    }
+    else
+    {
+      set %CelSkilla #findid
+      gosub StatusCelSkilla OK
+    }
+  }
+  return
+}
+wait 10
+gosub StatusCelSkilla Wybierz
+if #targcurs = 1
+  key ESC
+set #targcurs 1
+set #sysmsgcol 1152
+event sysmessage Wskaz Cel skilla: %SkillName
+PetlaUstawCelSkilla:
+repeat
+onhotkey ESC
+  goto Wcisnieto_ESC
+if #menubutton <> N/A
+{
+  set #targcurs 0
+  set #sysmsgcol 1080
+  event sysmessage Anulowano.
+  if #menubutton = Stop
+    return
+  if #menubutton = CLOSED || #menubutton = Anuluj
+    goto #menubutton
+}
+until #targcurs = 0
+onhotkey ESC
+{
+  Wcisnieto_ESC:
+  if #targcurs = 1
+    goto PetlaUstawCelSkilla
+  set %CelSkilla _Blad
+  gosub StatusCelSkilla Blad
+  set #sysmsgcol 1080
+  event sysmessage Nie wskazales celu.
+  return
+}
+set %CelSkilla #ltargetid
+gosub StatusCelSkilla OK
+return
+
+sub ClearStatus
+menu delete statusMikstura
+menu delete statusNarzedzie
+menu delete statusIlosc
+menu delete statusIloscMiksCnt
+menu delete statusLiczExpy
+menu delete statusSkill
+menu delete statusCelSkilla
+return
+
+Anuluj:
+menu hide
+Closed:
+halt
+

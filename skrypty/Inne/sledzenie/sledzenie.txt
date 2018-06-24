@@ -1,0 +1,29 @@
+;Autor: [nGz]
+set %Timer_sledzenia 0
+repeat
+if %Timer_sledzenia < #scnt2
+  gosub Sledzenie
+until #false
+
+sub Sledzenie
+deletejournal
+skill_sledzenie:
+set %Timer #scnt2 + 3
+event macro 1 0 .um sle
+repeat
+if %Timer < #scnt2
+  goto skill_sledzenie
+scanjournal 1
+until ( Nie_znalazl in #journal && s_zadnych_zwierzat_w_poblizu. in #journal ) || ( #contname = generic_gump && #contsize = 500_490 )
+set %Timer_sledzenia #scnt2 + 87
+if s_zadnych_zwierzat_w_poblizu. in #journal
+  return
+Klik:
+click 250 289 r
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Klik
+until #contname <> generic_gump || #contsize <> 500_490
+return
+

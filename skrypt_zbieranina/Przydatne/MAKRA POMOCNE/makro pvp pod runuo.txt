@@ -1,0 +1,393 @@
+ ;=============================================================
+; Script Name: morphs_auto_pots.txt
+; Author: Lord Morpheuz
+; Version: 1.2
+; Client Tested with: 5.0.1j
+; EUO version tested with: EUO1.5 Build 0069
+; Shard OSI / FS: OSI
+; Revision Date: 03/05/2006
+; Public Release: 01/04/2006
+; Global Variables Used: None
+; Purpose: Applies potions automatically.
+;=============================================================
+;Version History
+;----------------
+; 1.0 Initial release
+; 1.1 Added button support for Agility potions
+; 1.2 Added support for auto-drinking Cure potions if you are poisoned
+;----------------
+initevents
+set %weapon 2
+;set to 0 for no weapon
+;set to 1 for disarm right-hand (2-handed wep)
+;set to 2 for disarm left-hand
+set %healpts 85 ;hit point number to drink heal potion at
+set %refreshpts 100 ;stamina number to drink refresh potion at
+set %strpts 0 ;strength number to drink strength potion at
+gosub start
+gosub display
+gosub countpots
+;----------------
+mainloop:
+  if H in #charstatus
+  {
+    goto mainloop
+  }
+  if C in #charstatus && %curenbr <> 0
+  {
+      if %weapon = 1
+      {
+		  	gosub disarm_rh
+        gosub cure
+      }
+		  if %weapon = 1
+		  {
+      	gosub rearm_rh
+		    goto mainloop
+      }
+      if %weapon = 2
+      {
+		   	gosub disarm_lh
+        gosub cure
+      }
+		  if %weapon = 2
+		  {
+      	gosub rearm_lh
+		    goto mainloop
+      }
+  }
+  if #menubutton = InvisibilityBtn
+  {
+    set #menubutton n/a
+    if %invisibilitynbr <> 0 && H notin #charstats
+    {
+      if %weapon = 1
+      {
+		  	gosub disarm_rh
+        gosub invisibility
+      }
+		  if %weapon = 1
+		  {
+      	gosub rearm_rh
+		    goto mainloop
+      }
+      if %weapon = 2
+      {
+		   	gosub disarm_lh
+        gosub invisibility
+      }
+		  if %weapon = 2
+		  {
+      	gosub rearm_lh
+		    goto mainloop
+      }
+    }
+  }
+  if #menubutton = AgilityBtn
+  {
+    set #menubutton n/a
+      if %weapon = 1
+      {
+		  	gosub disarm_rh
+        gosub agility
+      }
+		  if %weapon = 1
+		  {
+      	gosub rearm_rh
+		    goto mainloop
+      }
+      if %weapon = 2
+      {
+		   	gosub disarm_lh
+        gosub agility
+      }
+		  if %weapon = 2
+		  {
+      	gosub rearm_lh
+		    goto mainloop
+      }
+  }
+  if #menubutton = CureBtn
+  {
+    set #menubutton n/a
+      if %weapon = 1
+      {
+		  	gosub disarm_rh
+        gosub cure
+      }
+		  if %weapon = 1
+		  {
+      	gosub rearm_rh
+		    goto mainloop
+      }
+      if %weapon = 2
+      {
+		   	gosub disarm_lh
+        gosub cure
+      }
+		  if %weapon = 2
+		  {
+      	gosub rearm_lh
+		    goto mainloop
+      }
+  }
+  if #menubutton = StopBtn
+  {
+    terminate euo
+  }
+	set %loopcount %loopcount + 1
+gosub countpots
+	if %curenbr <> 0 && C in #charstatus
+	{
+		if %weapon = 1
+		{
+			gosub disarm_rh
+		  gosub cure
+		}
+		if %weapon = 1
+    {
+      gosub rearm_rh
+    }
+   	if %weapon = 2
+		{
+			gosub disarm_lh
+		  gosub cure
+		}
+		if %weapon = 2
+    {
+      gosub rearm_lh
+    }
+	}
+	if %healnbr <> 0 && #hits < %healpts && #scnt > 11
+	{
+		if %weapon = 1
+		{
+			gosub disarm_rh
+		  gosub heal
+		}
+    if %weapon = 1
+    {
+			gosub rearm_rh
+		}
+		if %weapon = 2
+		{
+			gosub disarm_lh
+		  gosub heal
+		}
+    if %weapon = 2
+    {
+			gosub rearm_lh
+		}
+	}
+  if %refreshnbr <> 0 && #stamina < %refreshpts
+	{
+		if %weapon = 1
+		{
+			gosub disarm_rh
+		  gosub refresh
+		}
+		if %weapon = 1
+		{
+    	gosub rearm_rh
+    }
+   	if %weapon = 2
+		{
+			gosub disarm_lh
+		  gosub refresh
+		}
+		if %weapon = 2
+		{
+    	gosub rearm_lh
+    }
+  }
+  if %strengthnbr <> 0 && #str < %strengthpts
+	{
+		if %weapon = 1
+		{
+			gosub disarm_rh
+		  gosub strength
+		}
+		if %weapon = 1
+		{
+			gosub rearm_rh
+		}
+		if %weapon = 2
+		{
+			gosub disarm_lh
+		  gosub strength
+		}
+		if %weapon = 2
+		{
+			gosub rearm_lh
+		}
+  }
+goto mainloop
+;----------------
+Sub cure
+	finditem NUF
+	set #lobjectid #findid
+	wait 10
+	event macro 17 0
+	wait 10
+return
+;----------------
+Sub heal
+	Finditem UUF
+	set #LOBJECTID #findid
+	wait 10
+	event macro 17 0
+	wait 10
+	set #scnt 0
+return
+;----------------
+Sub refresh
+	finditem ZUF
+	set #lobjectid #findid
+	wait 10
+	event macro 17 0
+	wait 10
+return
+;----------------
+Sub strength
+	finditem XUF
+	set #lobjectid #findid
+	wait 10
+	event macro 17 0
+	wait 10
+return
+;----------------
+Sub invisibility
+  finditem OUF
+  set #lobjectid #findid
+	wait 10
+	event macro 17 0
+	wait 3s
+  return
+;----------------
+Sub agility
+  finditem YUF
+  set #lobjectid #findid
+	wait 10
+	event macro 17 0
+	wait 10
+  return
+;----------------
+Sub disarm_rh
+	event macro 24 2
+	wait 20
+return
+;----------------
+Sub rearm_rh
+	wait 20
+	event macro 24 2
+return
+;----------------
+Sub disarm_lh
+	event macro 24 1
+	wait 20
+return
+;----------------
+Sub rearm_lh
+	wait 20
+	event macro 24 1
+return
+;----------------
+Sub countpots
+  if %loopcount => 50
+  {
+    finditem ZUF C_ , %backpackid
+	  set %refreshnbr #findcnt
+	  finditem UUF C_ , %backpackid
+	  set %healnbr #findcnt
+	  finditem NUF C_ , %backpackid
+	  set %curenbr #findcnt
+	  finditem XUF C_ , %backpackid
+	  set %strengthnbr #findcnt
+	  finditem YUF C_ , %backpackid
+	  set %agilitynbr #findcnt
+	  finditem OUF C_ , %backpackid
+	  set %invisibilitynbr #findcnt
+	  menu Font BGColor White
+  	menu Font Style Bold
+	  menu Font Color Red
+	  menu Text healnbr 64 28 %healnbr
+	  menu Text curenbr 64 48 %curenbr
+	  menu Text refreshnbr 64 68 %refreshnbr
+    menu Text strengthnbr 64 88 %strengthnbr
+ 	  menu Text agilitynbr 64 108 %agilitynbr
+	  menu Text invisibilitynbr 64 128 %invisibilitynbr
+	  set %loopcount 1
+    return
+  }
+return
+;----------------
+Sub start
+	event macro 9 7
+	  wait 20
+	event macro 8 7
+	  wait 20
+	set %backpackid #contid
+	set %loopcount 50
+	set #scnt 11
+return
+;----------------
+Sub display
+  menu hideeuo
+ 	menu Clear
+	menu Window Title AutoPots v1.2
+	menu Window Color BtnFace
+	menu Window Size 198 166
+	menu Font Transparent #true
+	menu Font Align Right
+	menu Font Name MS Sans Serif
+	menu Font Size 8
+	menu Font Style bu
+	menu Font Color WindowText
+	menu Font Transparent #false
+	menu Font Align Left
+	menu Text PotionCountLbl 8 8 Potion Count
+	menu Font Style
+	menu Text HealLbl 24 28 Heal:
+	menu Text CureLbl 24 48 Cure:
+	menu Text StrengthLbl 8 88 Strength:
+	menu Text RefreshLbl 12 68 Refresh:
+	menu Font Style b
+	menu Font Color Red
+	menu Font Align Center
+	menu Text healnbr 64 28 0
+	menu Text curenbr 64 48 0
+	menu Text refreshnbr 64 68 0
+	menu Text strengthnbr 64 88 0
+	menu Font Style
+	menu Font Color WindowText
+	menu Font Align Left
+	menu Text InvisibilityLbl 4 128 Invisibility:
+	menu Font Style b
+	menu Font Color Red
+	menu Font Align Center
+	menu Text invisibilitynbr 64 128 0
+	menu Font Style
+	menu Font Color WindowText
+	menu Text CopyrightLbl 4 148 (c) 2006 Lord Morpheuz
+	menu Font Style bu
+	menu Font Align Left
+	menu Text NowProtectingLbl 104 8 Now Protecting
+	menu Font Style b
+	menu Font Align Center
+	menu Text charname 104 24 #charname
+	menu Font Style
+	menu Font Align Left
+	menu Text AgilityLbl 20 108 Agility:
+	menu Font Style b
+	menu Font Color Red
+	menu Font Align Center
+	menu Text agilitynbr 64 108 0
+	menu Font Style
+	menu Font Color WindowText
+	menu Button InvisibilityBtn 108 84 80 21 Drink Invisibility
+	menu Button AgilityBtn 108 52 80 21 Drink Agility
+	menu Button StopBtn 108 116 80 21 Stop
+	menu Show
+return
+;----------------
+

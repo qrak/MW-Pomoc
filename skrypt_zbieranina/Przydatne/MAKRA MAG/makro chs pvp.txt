@@ -1,0 +1,1096 @@
+;Autor: [nGz]
+initevents
+;========================= Wielkosc Ekranu ======================
+set %dlugoscX 900  ;DLUGOSC ekranu uo wzgledem osi X   |
+set %dlugoscY 700  ;DLUGOSC ekranu uo wzgledem osi y   |
+set %Null                                             ;|
+;======================= Targety Info ======================================>
+;%EnemyKey - tutaj ustawiamy klawisz, pod ktorym bedziemy mieli wrogow na LastTarget (tzn ludzi, ktorych nie ma na %ListOfFriends).
+;%FriendsKey - tutaj ustawiamy klawisz, pod ktorym bedziemy mieli przyjaciol na LastTarget (czyli osoby z %ListOfFriends).
+;%EnemySecKey i %FriendsSecKey - to drugi klawisz odpowiednio dla przycisku na wrogow i przyjaciol, ich wartosci to ALT, CTRL, SHIFT lub pusty.
+;%HumanTypes - TYPY grafik ludzi (IS - facet, HS - babka, XU - elf facet, AV - elf babka), oddzielamy stosujac _ dodatkowo dodajemy jedno na poczatku i jedno na koncu (np: _IS_HS_XU_AV_)!
+;%ListOfFriends - tutaj wpisujemy ID osob, ktorych nie chcemy zeby lapal %EnemyKey, a ktore bedzie lapal %FriendsKey (oddzielamy podkreslnikiem "_", dodatkowo obowiazkowo dodac jeden na poczatku i jeden na koncu np: _GPYZRB_VOYZRB_CLYZRB_KLYZRB_GIZZRB_).
+;                                   LISTA CBS
+;==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>
+;LISTA cHs = azmaer-IAFTDB, flanaes-WFPWS,durthan-NOVJC, saori-FSACPB, adelin-LCTBB, solinari-QXMLDB, sinafaye-ESDZT, keveren-EBBDIB, rakaesh-RVRHFB, thievia-BDEWGB, NXEFW-halszka, WBYII-asiralle, ANHGHB-mjenkimag, MEJHU-gambia. KCVVE-shenos, EAZLEB-exerxus, RBQCC-elorand, JAFTV-patrolus. EAZLEB-exerxus  , PBOLRB-etheanad  NVKOIB-laios
+;==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>
+set %ListOfFriends _IQSHEB_ZPKPX_DYFFT_PBOLRB_IAFTDB_WFPWS_FSACPB_LCTBB_QXMLDB_ESDZT_NOVJC_BDEWGB_NXEFW_WBYII_ANHGHB_MEJHU_KCVVE_JAFTV_EAZLEB_NVKOIB_UFAMEB_
+                  ;ethanad|azmaer |flan |saori |adelin|sol |sin|durth|thiev|halszka|asiralle|mjenki|gambia|shenos|gardziol|
+;==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>
+;================= Hot Keye do Comba ======================================|
+set %Corp 3      ;bind do comba corp                                       ||
+set %CorpMod alt      ;jesli bind ma byc alt + f9 to tu wpisz alt lub literke   |
+set %Flam 4     ;dla flama                                                |
+set %FlamMod alt     ;tu tak jak wyzej                                         |
+;==<>==<>==<>==<>== Twoje Hot Keye do Targetow ==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>==<>====<>==<>==<>==<>==<>==<>==<>==<>==<>
+set %EnemyKey F1
+set %EnemySecKey alt
+set %FriendsKey F2
+set %FriendsSecKey alt
+set %HumanTypes _IS_HS_XU_AV_FH_
+set *STOP 0
+gosub CheckStartVars
+;================= TU USTAW SWOJE HOT KEYE ===========
+repeat
+onhotkey f4 alt        ;powiekszenie ekranu
+  gosub powiekszenie
+onhotkey f4 alt     ; ZARCIE !!    Je tylko staff od kucharza + kilka tam dodatkowych rodzajow miesa [noga wroga, gotowany ptak, pieczona szynka, pieczony karp]
+  gosub Zarcie
+onhotkey 2 alt           ;drzwi
+  gosub Drzwi
+onhotkey delete            ;czerwona
+   gosub czerwona
+onhotkey insert            ;leczenia
+   gosub leczenia
+onhotkey end            ;odtrutka
+   gosub odtrutka
+onhotkey f11            ;wybuch duzy
+   gosub dw
+onhotkey HOME           ;maly fiolet w siebie
+   gosub mfs
+onhotkey PGUP            ;miks many
+   gosub many
+onHotKey PGDN           ;maly fiolet + an ex
+   gosub mfp
+onhotkey f10 alt   ;Zebranie skarbu
+   gosub skarb
+onHotKey 5 alt       ;telep do domu
+   gosub telep
+;============= Nie Edytowac =====================
+  onhotkey %EnemyKey %EnemySecKey
+  {
+    ignoreitem reset
+    gosub TargetNextEnemy
+    ReleaseEnemyHKwait:
+    onhotkey %EnemyKey %EnemySecKey
+      goto ReleaseEnemyHKwait
+  }
+  onhotkey %FriendsKey %EnemySecKey
+  {
+    ignoreitem reset
+    gosub TargetNextFriend
+    ReleaseFriendsHKwait:
+    onhotkey %EnemyKey %FriendsSecKey
+      goto ReleaseFriendsHKwait
+  }
+onhotkey %Corp %CorpMod
+{
+  set %Czar 41
+  set %Czas 40
+  gosub Combo
+  UnPressCorp:
+  onhotkey %Corp %CorpMod
+    goto UnPressCorp
+}
+onhotkey %Flam %FlamMod
+{
+  set %Czar 50
+  set %Czas 59
+  gosub Combo
+  UnPressFlam:
+  onhotkey %Flam %FlamMod
+    goto UnPressFlam
+}
+until #false
+
+;=====================
+;====================================
+
+sub powiekszenie
+set #CLIXRES %dlugoscX
+set #CLIYRES %dlugoscy
+return
+
+;=====================
+sub mfs
+ignoreitem reset
+ szukaj2:
+ finditem TUF C
+ if #findkind = 0
+ {
+  ignoreitem #findid
+  event property #findid
+  if mala in #property
+  {
+   set #lobjectid #findid
+   event macro 17
+   target
+   event macro 23
+  }
+  else
+   goto szukaj2
+ }
+ return
+
+;===================================
+
+ sub mfp
+ignoreitem reset
+ szukj:
+ finditem TUF C, #BACKPACKID ;maly fiolet
+ if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa wybuchowego
+   return
+ }
+  ignoreitem #findid
+  event property #findid
+  if mala in #property
+  {
+   set #lobjectid #findid
+   event macro 17
+   target
+   event macro 23
+   wait 6
+   event macro 15 37 ;paraliz
+  }
+  else
+   goto szukj
+ return
+
+;===================================
+
+sub many
+finditem puf C
+set %mix #findstack - 1
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa many
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa many zostalo ( , %mix , )
+return
+
+;=============================================
+
+sub dw
+ ignoreitem reset
+laza:
+ finditem TUF C
+ if #findkind = 0
+ {
+  ignoreitem #findid
+  event property #findid
+  if duza in #property
+  {
+   set #lobjectid #findid
+   event macro 17
+  }
+  else
+   goto laza
+ }
+ return
+
+;===================================
+
+sub czerwona
+finditem zuf C
+set %mix #findstack - 1
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa czerwonego
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa czerwonego ( , %mix , )
+return
+
+;===================================
+
+sub leczenia
+finditem uuf C
+set %mix #findstack - 1
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa leczenia
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa leczenia ( , %mix , )
+return
+
+;===================================
+
+sub odtrutka
+finditem nuf C
+set %mix #findstack - 1
+if #findkind = -1
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie masz miksa odtrutki
+   return
+ }
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa odtrutki ( , %mix , )
+return
+
+;===================================
+
+sub Drzwi
+set #sysmsgcol 1264
+set %Timer_Drzwi #scnt2 + 27
+ignoreitem reset
+drzwi_petla:
+finditem BUU_XG_ZG_TG_VG_FH_HH_BH_DH_AY_ZX_CY_BY_XGB_ZGB_JHB_LHB_FHB_HHB_RHB_THB_NHB_PHB_ZHB_BIB_VHB_XHB_HIB_JIB_DIB_FIB_PIB_RIB_LIB_NIB_ZDB_BEB_VDB_XDB_HEB_JEB_DEB_FEB_PEB_REB_LEB_NEB_XEB_ZEB_TEB_VEB_FFB_HFB_FJC_IJC_HJC_SJC_RJC_UJC_TJC_OJC_NJC_QJC_PJC_YOC_XOC_APC_ZOC_UOC_TOC_WOC_VOC_GPC_FPC_IPC_HPC_CPC_BPC_EPC_DPC_OPC_NPC_QPC_PPC_KPC_JPC_MPC_LPC_WPC_VPC_YPC_XPC_SPC_RPC_UPC_TPC_EQC_DQC_GQC_FQC_AQC_ZPC_CQC_BQC_MQC_LQC_OQC_NQC_IQC_HQC_KQC_JQC_UQC_TQC_WQC_VQC_QQC_PQC_SQC_RQC_CRC_BRC_ERC_DRC_YQC_XQC_ARC_ZQC_MMC_LMC_OMC_NMC_IMC_HMC_KMC_JMC_UMC_TMC_WMC_VMC_QMC_PMC_SMC_RMC_CNC_BNC_ENC_DNC_YMC_XMC_ANC_ZMC_KNC_JNC_MNC_LNC_GNC_FNC_INC_HNC_SNC_RNC_UNC_TNC_ONC_NNC_QNC_PNC_AOC_ZNC_COC_BOC_WNC_VNC_
++YNC_XNC_IOC_HOC_KOC_JOC_EOC_IPJ_HPJ_RPL_UPL_TPL_OPL_NPL_QPL_PPL_AQL_ZPL_CQL_BQL_WPL_VPL_YPL_XPL_IQL_HQL_KQL_JQL_EQL_DQL_GQL_FQL_QQL_PQL_SQL_RQL_MQL_LQL_OQL_NQL_YQL_XQL_ARL_ZQL_UQL_ZZL_CAM_BAM_MAM_LAM_OAM_NAM_IAM_HAM_KAM_JAM_UAM_TAM_WAM_VAM_QAM_FUN_QUN_PUN_SUN_RUN_MUN_GRO_IRO_EWP_DWP_KWP_JWP_HAQ_KAQ_JAQ_UAQ_TAQ_WAQ_VAQ_QAQ_DUU_TTU_XTU_RTU_PAQ_SAQ_RAQ_CBQ_BBQ_EBQ_DBQ_YAQ_XAQ_ABQ_ZAQ_KBQ_JBQ_MBQ_LBQ_GBQ_UED_TED_WED_VED_GFD_FFD_IFD_HFD_CFD_BFD_EFD_DFD_OFD_NFD_QFD_PFD_VFD_YFD_XFD_SFD_RFD_UFD_TFD_GBD_FBD_IBD_HBD_CBD_BBD_EBD_DBD_OBD_KBD_JBD_MBD_LBD_WBD_VBD_YBD_XBD_SBD_RBD_UBD_TBD_ECD_DCD_GCD_FCD_KCD_JCD_UCD_TCD_WCD_VCD_QCD_PCD_SCD_RCD_CDD_BDD_EDD_DDD_YCD_XCD_RZN_UZN_TZN_EAO_DAO_GAO_FAO_AAO_ZZN_CAO_BAO_MAO_LAO_OAO_ZHO G_2 ;
+if #findkind = 1 && ( ( #findz - #charposz ) > 15 || ( #findz - #charposz ) < -15 )
+{
+  ignoreitem #findid
+  event sysmessage Znalazlem drzwi na innym poziomie
+  wait 2
+  goto drzwi_petla
+}
+if #findkind = 1 && ( ( #findz - #charposz ) < 16 && ( #findz - #charposz ) > -16 )
+{
+  event sysmessage Znalazlem drzwi !
+  set #lobjectid #findid
+  event macro 17
+  return
+}
+if %Timer_Drzwi < #scnt2
+{
+  event sysmessage Nie znalazlem drzwi do otworzenia
+  return
+}
+goto drzwi_petla
+return
+
+;===================================
+
+sub skarb
+ignoreitem reset
+set %skarb #contid
+lecimy2:
+finditem pof_szf_wlf_szf_rzf_mzf_kzf_wzf_juf_jzf_ozf_vzf_yzf_tzf_qzf_duf_pzf_fuf_euf_nzf_huf_eag_guf_iuf_kuf_uzf_dag_eth_lzf_rvf_mwf_evf_bvf_gvf_ovf_fvf_hvf_vuf_wuf C_ , %skarb ;
+if #findkind = -1
+   {
+   wstep:
+   finditem * C_ , #backpackid
+   if #findkind = -1
+      goto magiki
+   ignoreitem #findid
+   goto wstep
+   magiki:
+   finditem AUO_KPH_TVI_RPF_BPH_DCI_YSF_JSF_FWL_ZVI_SPO_KTF_VOH_GFF_RPO_VAP_ATF_EBP_VRH_SRH_CQF_PMH_LMH_GBP_UJG_HJG_POH_OMH_AUH_FJG_SJG_RJG_AQH_TSF_IJG C_ , %skarb
+   if #findkind = -1
+      {
+      set #sysmsgcol 1080
+      event sysmessage Skarb zabrany
+      ignoreitem reset
+      return
+      }
+   event property #findid
+   if magiczn in #property
+      goto zabierz
+   ignoreitem #findid
+   goto lecimy2
+   }
+goto zabierz
+zabierz:
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exdrag4:
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag4
+finditem %id_przen C_ , %skarb ;
+until #findkind = -1
+finditem %typ_przen C_ , #backpackid
+set %tmp #findstack
+set %czas2 #scnt2 + 60
+exdrop4:
+exevent dropc #backpackid ;odloz
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop4
+finditem %typ_przen C_ , #backpackid
+until #findstack <> %tmp || #findid = %id_przen || %czas2 < #scnt2
+ignoreitem %id_przen
+goto lecimy2
+
+
+
+;;--------------------------------------- ;
+;;---------------------------------------;;
+
+
+sub Combo
+SzukajMiksa:
+finditem tuf C
+if #findkind
+{
+  set #sysmsgcol 1162
+  event sysmessage Brak fioletowych miksow.
+  return
+}
+repeat
+event property #findid
+until #property <> %Null
+if Duza , #spc , Fioletowa notin #property
+{
+  ignoreitem #findid
+  goto SzukajMiksa
+}
+UzyjMiksa:
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+onhotkey ESC
+  goto AnulujCombo
+if %Timer < #scnt2
+  goto UzyjMiksa
+until #targcurs = 1
+set #sysmsgcol 1161
+event sysmessage Teraz wskaz cel dla Combo.
+repeat
+onhotkey ESC
+  goto AnulujCombo
+until #targcurs = 0
+onhotkey ESC
+  goto AnulujCombo
+if #ltargetkind <> 1
+{
+  set #sysmsgcol 1080
+  event sysmessage Wskazales ziemie, przerywam Combo.
+  return
+}
+set %CelId #ltargetid
+CastujCzar:
+event macro 15 %Czar
+set %Timer #scnt2 + %Czas
+repeat
+onhotkey ESC
+  goto AnulujCombo
+scanjournal 1
+if s_koncentracje. in #journal || Czar_sie_nie_udal. in #journal || Brakuje_Ci_many. in #journal
+{
+  set #sysmsgcol 1080
+  event sysmessage Przerywam.
+  return
+}
+if %Timer < #scnt2
+  goto CastujCzar
+until #targcurs = 1
+RzucajCzar:
+set #ltargetkind 1
+set #ltargetid %CelId
+finditem %CelId
+if #findkind <> -1
+;  key z ctrl
+set %Timer #scnt2 + 5
+repeat
+onhotkey ESC
+  goto AnulujCombo
+if %Timer < #scnt2
+  goto RzucajCzar
+until #targcurs = 0
+onhotkey ESC
+{
+  AnulujCombo:
+  set #sysmsgcol 1080
+  event sysmessage Wcisnieto ESC.
+  return
+}
+return
+
+;----------------TARGETY------------------------------------------
+
+sub TargetNextEnemy
+  ignoreitem #charid
+  ignoreitem %ListOfFriends
+  gosub IgnoreNpcs
+
+  TargetNextEnemy:
+  repeat
+    finditem %HumanTypes
+    if #findkind = -1
+      return
+    event macro 26
+    if #ltargetid = #charid
+    {
+      event macro 26
+      if #ltargetid = #charid
+        return
+    }
+    finditem #ltargetid
+  until #findkind <> -1 && _ , #findtype , _ in %HumanTypes && _ , #ltargetid , _ notin %ListOfFriends
+
+  gosub DisplayLastTargetName Enemy
+  if ! #result
+    goto TargetNextEnemy
+return
+
+;----------------------------------------------------------
+
+sub TargetNextFriend
+  ignoreitem #charid
+
+  TargetNextFriend:
+  repeat
+    finditem %ListOfFriends
+    if #findkind = -1
+      return
+    event macro 26
+    if #ltargetid = #charid
+    {
+      event macro 26
+      if #ltargetid = #charid
+        return
+    }
+  until _ , #ltargetid , _ in %ListOfFriends
+
+  gosub DisplayLastTargetName Friend
+  if ! #result
+    goto TargetNextFriend
+return
+
+;----------------------------------------------------------
+
+sub DisplayLastTargetName
+{
+  set #lpc 1000
+;Fajne kolory: 1153, 1260, 1272, 1673, 1675, 2049
+
+  if %1 = Enemy
+  {
+    set %NameColor       1673
+    set %LastTargetColor 2049
+    set %SysMsgColor     2049
+
+    set %LTText Enemy , #spc
+  }
+  if %1 = Friend
+  {
+    set %NameColor       1260
+    set %LastTargetColor 2049
+    set %SysMsgColor     1272
+
+    set %LTText Friend , #spc
+  }
+  if %1 <> Enemy && %1 <> Friend
+  {
+    set %NameColor       1260
+    set %LastTargetColor 2049
+    set %SysMsgColor     2049
+
+    set %LTText
+  }
+
+  ;repeat
+    event property #ltargetid
+  ;until #property <> %Null     ;Jesli bedzie sie walic cos z wyciaganiem imion, to odkomentowac te dwa, repeat i until.
+  if #property <> $
+  {
+    set %Name #property
+    gosub CheckForNpc #ltargetid
+    if ! #result
+      return #false
+    gosub RemoveSurname
+ ;   event exmsg #ltargetid 0 %NameColor %Name
+  ;  event exmsg #ltargetid 3 %LastTargetColor [ , %LTText , LastTarget]
+    set #sysmsgcol %SysMsgColor
+    event sysmessage [ , %LTText , LastTarget]: %Name
+  }
+  else
+  {
+    set #sysmsgcol 1173
+    event sysmessage Blad imienia.
+  }
+  set #lpc 10
+
+  return #true
+}
+
+;----------------------------------------------------------
+
+sub CheckForNpc
+{
+  str Pos %Name $
+  str Del %Name #strres 1
+  set %NpcName #strres
+  str Left %NpcName 5
+  if ( #spc , - , #spc in %NpcName && #spc , - , #spc , Oszust notin %NpcName ) || Uzdrowiciel in %NpcName || #strres = drow , #spc || #spc , pustyni in %NpcName || %NpcName = amazonka || %NpcName = Oni || %NpcName = wilkolak_szaman || %NpcName = wilkolak_przywodca || %NpcName = znachor
+  {
+    ignoreitem %1
+    return #false
+  }
+
+  return #true
+}
+
+;----------------------------------------------------------
+
+sub IgnoreNpcs
+  set #lpc 1000
+
+  finditem %HumanTypes
+  if #findkind = -1
+    return
+  for #findindex 1 #findcnt
+  {
+    ;repeat
+      event property #findid
+    ;until #property <> %Null    ;Jesli bedzie sie walic cos z wyciaganiem imion, to odkomentowac te dwa, repeat i until.
+    if #property <> $
+    {
+      set %Name #property
+      gosub CheckForNpc #findid
+    }
+  }
+
+  set #lpc 10
+return
+
+;----------------------------------------------------------
+
+sub CheckStartVars
+  if %ListOfFriends <> %Null
+  {
+    str Left %ListOfFriends 1
+    set %Left #strres
+    str Right %ListOfFriends 1
+    if #strres <> _ || %Left <> _
+    {
+      set #sysmsgcol 1281
+      event sysmessage Przeczytaj Info o ListOfFriends...
+      halt
+    }
+  }
+  str Left %HumanTypes 1
+  set %Left #strres
+  str Right %HumanTypes 1
+  if #strres <> _ || %Left <> _
+  {
+    set #sysmsgcol 1281
+    event sysmessage Przeczytaj Info o HumanTypes...
+    halt
+  }
+return
+
+;----------------------------------------------------------
+
+sub RemoveSurname
+  str Count %Name #spc , #spc
+  if #strres > 0
+  {
+    set %DspcCnt #strres
+    str Pos %Name #spc , #spc %DspcCnt
+    set %x #strres
+    str Len %Name
+    set %dl #strres - %x + 1
+    str Del %Name %x %dl
+    set %Name #strres
+  }
+  str Pos %Name (
+  if #strres = 0
+  {
+    str Pos %Name $
+    if #strres > 0
+    {
+      str Del %Name #strres 1
+      set %Name #strres
+    }
+  }
+  else
+  {
+    set %x #strres - 1
+    str Len %Name
+    set %dl #strres - %x + 1
+    str Del %Name %x %dl
+    set %Name #strres
+  }
+  str Count %Name #spc
+  if #strres = 0
+    return
+  for %i 1 #strres
+  {
+    str Pos %Name #spc 1
+    set %dlugosc #strres - 1
+    str Mid %Name 1 %dlugosc
+    if %i = 1
+    {
+      set %str #strres
+      str Len %str
+      str Del %str #strres 1
+    }
+    set %str _ , #strres , _
+    if %str in _Wyjet_spod_Prawa_Lotrowsk_Lajdack_Nieprzyjemn_Porywcz_Porzadn_Uprzejm_Dobr_Uczciw_Godn_Zaufania_Odrazajac_Podl_Wredn_Niehonorow_Niecn_Wyrozniajac_sie_Przyzwoit_Honorow_Powazan_Zacn_Niegodziw_Okrutn_Haniebn_Pogardy_Glosn_Szanowan_Szacunku_Podziwu_Znan_Wielk_Przerazajac_Zl_Nikczemn_Zlowrog_Nieslawn_Znamienit_Oslawion_Szlachetn_Wybitn_Wspanial_Mroczn_Pozbawion_Honoru_Sir_Dama_Lord_Lady_
+    {
+      set %dlugosc %dlugosc + 1
+      str Del %Name 1 %dlugosc
+      set %Name #strres
+    }
+    else
+      break
+  }
+  str Left %Name 1
+  if #strres = #spc
+  {
+    str Del %Name 1 1
+    set %Name #strres
+  }
+  str Pos %Name #spc , - , #spc , Oszust
+  if #strres > 0
+  {
+    set %x #strres
+    str Len %Name
+    set %dl #strres - %x + 1
+    str Del %Name %x %dl
+    set %Name #strres
+  }
+return
+
+;----------------- - recall do domku - --------------------------------
+sub telep
+event macro 2 0 panikuje
+finditem UFJJOKE C ;TU WPISZ id RUNEBOOKA
+set #lobjectid #findid
+event macro 17 0 ;last object
+set %czas #scnt2 + 20
+czeka:
+if #CONTSIZE = 436_259
+{
+;event macro 2 0 zawija
+click 247 206  ;TU WPISZ POZYCJE GDZIE MA KLIKNAC NA RUNKE
+return
+}
+if %czas < #scnt2
+return
+goto czeka
+;----------------- - ZARCIE - --------------------------------
+
+sub Zarcie
+set #lpc 10
+repeat
+until *STOP <> 1
+set *STOP 1
+if %Timer_click < #scnt2
+{
+  click 810 610 n mc
+  set %Timer_click #scnt2 + 45
+}
+set %Cnt_klik 0
+wait 2
+Zarcie_Start:
+event macro 8 4
+set %Timer #scnt2 + 30
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+if %Timer < #scnt2
+{
+  event macro 8 4
+  click 36 41
+  set %Timer #scnt2 + 30
+  repeat
+  if #clilogged <> 1
+    gosub WaitForLogIn
+  if %Timer < #scnt2
+  {
+    set %Cnt_klik %Cnt_klik + 1
+    if %Cnt_klik > 3
+      goto Koniec
+    goto Zarcie_Start
+  }
+  until #contname = generic_gump
+  if #contsize = 400_420
+    break
+  if #contsize = 400_380
+    goto Info
+  if #contsize = 400_220
+  {
+    click 50 50 r
+    goto Zarcie_Start
+  }
+  else
+    goto Koniec
+}
+if #contname = generic_gump && #contsize = 400_380
+  goto Info
+if #contname = generic_gump && #contsize = 400_220
+{
+  click 50 50 r
+  goto Zarcie_Start
+}
+until #contname = generic_gump && #contsize = 400_420
+wait 1
+click 256 41
+set %Timer #scnt2 + 50
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+if %Timer < #scnt2
+  goto Zarcie_Start
+until #contsize = 400_380
+Info:
+gosub Skaner
+if %Glod3 <> Najoptymalniejsze && %Glod3 <> Przejedzenie
+{
+  repeat
+  gosub Surowka
+  if #findkind = -1
+    goto Koniec
+  gosub Skaner
+  until %Glod3 = Najoptymalniejsze || %Glod3 = Przejedzenie
+}
+if %Glod4 <> Najoptymalniejsze && %Glod4 <> Przejedzenie
+{
+  set %MaxEat 3
+  if *Sok_bialko >= 2
+  {
+    set %MaxEat 1
+    if *Sok_bialko = 2
+      set %MaxEat 2
+    set *Sok_bialko 0
+  }
+  if *Ptak_glod >= 2
+  {
+    set %MaxEat 5
+    if *Ptak_glod = 2
+      set %MaxEat 4
+    set *Ptak_glod 0
+  }
+  set %CiastkaCnt 0
+  repeat
+  gosub Ciasteczka
+  if #findkind = -1
+    goto Koniec
+  set %CiastkaCnt %CiastkaCnt + 1
+  gosub Skaner
+  until %Glod4 = Najoptymalniejsze || %Glod4 = Przejedzenie || %CiastkaCnt >= %MaxEat
+  if %Glod4 <> Najoptymalniejsze && %Glod4 <> Przejedzenie
+  {
+    repeat
+    gosub Sok
+    if #findkind = -1
+      goto Koniec
+    gosub Skaner
+    until %Glod4 = Najoptymalniejsze || %Glod4 = Przejedzenie
+  }
+}
+if %Glod2 <> Najoptymalniejsze && %Glod2 <> Przejedzenie
+{
+  repeat
+  gosub Ptak
+  if #findkind = -1
+    goto Koniec
+  gosub Skaner
+  until %Glod2 = Najoptymalniejsze || %Glod2 = Przejedzenie || %Glod1 = Najoptymalniejsze || %Glod1 = Przejedzenie
+  if %Glod2 <> Najoptymalniejsze && %Glod2 <> Przejedzenie
+  {
+    set *Sok_bialko 0
+    repeat
+    gosub Sok
+    if #findkind = -1
+      goto Koniec
+    set *Sok_bialko *Sok_bialko + 1
+    gosub Skaner
+    until %Glod2 = Najoptymalniejsze || %Glod2 = Przejedzenie
+  }
+}
+if %Glod1 <> Najoptymalniejsze && %Glod1 <> Przejedzenie
+{
+  set *Ptak_glod 0
+  repeat
+  gosub Ptak
+  if #findkind = -1
+    goto Koniec
+  set *Ptak_glod *Ptak_glod + 1
+  gosub Skaner
+  until %Glod1 = Najoptymalniejsze || %Glod1 = Przejedzenie || %Glod2 = Przejedzenie || *Ptak_glod > 2
+  if %Glod1 <> Najoptymalniejsze && %Glod1 <> Przejedzenie
+  {
+    set %SurowkaCnt 0
+    repeat
+    gosub Surowka
+    if #findkind = -1
+      goto Koniec
+    set %SurowkaCnt %SurowkaCnt + 1
+    gosub Skaner
+    until %Glod1 = Najoptymalniejsze || %Glod1 = Przejedzenie || %Glod3 = Przejedzenie || %Glod4 = Przejedzenie || %SurowkaCnt > 2
+  }
+}
+Koniec:
+click 50 50 r
+gosub Wyrzuc_smieci
+set *STOP 0
+set #lpc 100
+return
+
+sub Surowka
+Salata:
+deletejournal
+finditem jgi C
+if #findkind = -1
+{
+  if #clilogged <> 1
+  {
+    gosub WaitForLogIn
+    goto Salata
+  }
+  event sysmessage Brak surowki.
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 30
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+scanjournal 1
+if I_am_already_doing_something_else in #journal || %Timer < #scnt2
+  goto Salata
+until Smaczne in #journal || Calkiem_niezle in #journal || Nie_masz_nic_do_zarzucenia in #journal || Nic_nadzwyczajnego in #journal || Dobre in #journal || Czujesz_sie_dobrze in #journal || Czujesz_sie_w_pelni_sil in #journal
+event sysmessage Surowka
+return
+
+sub Ciasteczka
+Ciastka:
+deletejournal
+finditem sli C
+if #findkind = -1
+{
+  if #clilogged <> 1
+  {
+    gosub WaitForLogIn
+    goto Ciastka
+  }
+  event sysmessage Brak ciastek.
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 30
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+scanjournal 1
+if I_am_already_doing_something_else in #journal || %Timer < #scnt2
+  goto Ciastka
+until Smaczne in #journal || Calkiem_niezle in #journal || Nie_masz_nic_do_zarzucenia in #journal || Nic_nadzwyczajnego in #journal || Dobre in #journal || Czujesz_sie_dobrze in #journal || Czujesz_sie_w_pelni_sil in #journal
+event sysmessage Ciasteczka
+return
+
+sub Sok
+Kokosowy:
+deletejournal
+finditem zbm C
+if #findkind = -1
+{
+  if #clilogged <> 1
+  {
+    gosub WaitForLogIn
+    goto Kokosowy
+  }
+  event sysmessage Brak soku kokosowego.
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 30
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+scanjournal 1
+if I_am_already_doing_something_else in #journal || %Timer < #scnt2
+  goto Kokosowy
+until Smaczne in #journal || Calkiem_niezle in #journal || Nie_masz_nic_do_zarzucenia in #journal || Nic_nadzwyczajnego in #journal || Dobre in #journal || Czujesz_sie_dobrze in #journal || Czujesz_sie_w_pelni_sil in #journal
+event sysmessage Sok Kokosowy
+return
+
+sub Ptak
+Gotowany:
+deletejournal
+finditem qud_mgg_YLI_HQD_TML C
+if #findkind = -1
+{
+  if #clilogged <> 1
+  {
+    gosub WaitForLogIn
+    goto Gotowany
+  }
+  event sysmessage Brak gotowanego ptaka.
+  return
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 30
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+scanjournal 1
+if I_am_already_doing_something_else in #journal || %Timer < #scnt2
+  goto Gotowany
+until Smaczne in #journal || Calkiem_niezle in #journal || Nie_masz_nic_do_zarzucenia in #journal || Nic_nadzwyczajnego in #journal || Dobre in #journal || Czujesz_sie_dobrze in #journal || Czujesz_sie_w_pelni_sil in #journal
+event sysmessage Gotowany Ptak
+return
+
+sub Skaner
+Odswiez_start:
+set %Cnt 0
+Odswiez:
+if %Cnt > 2
+  goto SkanerStart
+click 36 41
+set %Timer #scnt2 + 50
+set %Cnt %Cnt + 1
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+if %Timer < #scnt2
+{
+  event macro 8 4
+  set %Timer_skills #scnt2 + 15
+  repeat
+  if #clilogged <> 1
+    gosub WaitForLogIn
+  until #contname = generic_gump || %Timer_skills < #scnt2
+  click 256 41
+  goto Odswiez
+}
+until #contsize = 400_380
+wait 1
+SkanerStart:
+set #lpc 2000
+set %nr 1
+set %x 155
+set %ystart 251
+set %yend 264
+PetlaSkaner:
+set %Czarne 0
+set %Biale 0
+for %y %ystart %yend
+{
+  savepix %x %y 1
+  if #pixcol = 4294967295
+  {
+    display ok UO na wierzch !
+    repeat
+     savepix %x %y 1
+    until #pixcol <> 4294967295
+    goto PetlaSkaner
+  }
+  if #pixcol = 524288
+    set %Czarne %Czarne + 1
+  if #pixcol = 11392710
+    set %Biale %Biale + 1
+}
+set %Glod . %nr 0
+if %Czarne = 3 && %Biale = 2
+  set %Glod . %nr Najoptymalniejsze
+if %Czarne = 2 && %Biale = 6
+  set %Glod . %nr Norma
+if %Czarne = 3 && %Biale = 5
+  set %Glod . %nr NiewieleP
+if %Czarne = 2 && %Biale = 9
+  set %Glod . %nr LekkiN
+if %Czarne = 5 && %Biale = 3
+  set %Glod . %nr Przejedzenie
+if #clilogged <> 1
+  gosub WaitForLogIn
+if %nr > 3
+{
+  set #lpc 10
+  if %Glod1 = 0 || %Glod2 = 0 || %Glod3 = 0 || %Glod4 = 0
+    goto Odswiez_start
+  return
+}
+set %nr %nr + 1
+set %ystart %ystart + 20
+set %yend %yend + 20
+goto PetlaSkaner
+
+sub Wyrzuc_smieci
+finditem bkf G_2
+if #findkind = -1
+  return
+set %ID_smietnika #findid
+finditem nqd_igi_wyf C
+if #findkind = -1
+  return
+Otworz_smietnik:
+set #lobjectid %ID_smietnika
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Otworz_smietnik
+until #contid = %ID_smietnika
+set %x #contposx + 84
+set %y #contposy + 96
+Smieci_loop:
+if #clilogged <> 1
+  gosub WaitForLogIn
+finditem nqd_igi_wyf C
+if #findkind = -1
+  goto Wyjdz_smieci
+if #findbagid = %ID_smietnika
+{
+  ignoreitem #findid
+  goto Smieci_loop
+}
+set %Id_smiecia #findid
+set %Cnt_exevent 0
+Drag_smiecia:
+set %Cnt_exevent %Cnt_exevent + 1
+if %Cnt_exevent >= 3
+  goto Wyjdz_smieci
+exevent drag %Id_smiecia
+set %Timer #scnt2 + 40
+repeat
+if %Timer < #scnt2
+  goto Drag_smiecia
+finditem %Id_smiecia
+until #findkind = -1
+set %Cnt_exevent 0
+Drop_smiecia:
+set %Cnt_exevent %Cnt_exevent + 1
+if %Cnt_exevent > 5
+  goto Wyjdz_smieci
+exevent dropc %ID_smietnika
+set %Timer #scnt2 + 25
+repeat
+if #clilogged <> 1
+  gosub WaitForLogIn
+if %Timer < #scnt2
+  goto Drop_smiecia
+finditem %Id_smiecia
+until #findkind = 0
+goto Smieci_loop
+Wyjdz_smieci:
+click %x %y r
+return
+
+sub WaitForLogIn
+event sysmessage zarcie off
+set %TimerWFLI #scnt + 20
+repeat
+until #clilogged = 1 || %TimerWFLI < #scnt
+set %TimerWFLI #scnt + 6
+repeat
+until #contid = CANKSUD || #contid = #backpackid || %TimerWFLI < #scnt
+wait 40
+event sysmessage zarcie on
+return
+
+
+
+

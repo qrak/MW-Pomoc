@@ -1,0 +1,24 @@
+;Skrypt na kensai
+ 
+initevent
+set %butla_kensai NQZICLE     ;tutaj wpisz ID butli na ktorej trenujesz
+ 
+event sysmessage Skrypt na butle kensaia + czerwona
+ 
+start:
+if #stamina < 40 ;ponizej jakiego poziomu staminy mam pic czerwona butelke
+{
+finditem ZUF
+set #lobjectid #findid
+event macro 17
+event macro 2 0 Pije Krew
+wait 1s
+}
+ 
+finditem %butla_kensai
+set #lobjectid #findid
+event macro 17
+event macro 2 0 Zaczyna walic glowa w sciane
+wait 5s ; czas oczekiwania do nastepnego wypicia butelki
+ 
+goto start

@@ -1,0 +1,47 @@
+;Skrypt by Chudy   v 1.2
+;Ostrzega przed kazdym zniewiescialym lamusem
+;ktory sie pokaze w okolicy :) jesli brakuje jakiegos cwela to prv me
+;w miejsce xxx podaj sciezke dzwieku ktory bedzie cie
+;informowac - jesli nie ma osoby na liscie - dzwiek bedzie w momencie zaatakowania
+;Beepuje gdy pokaze sie makroczek i imiona gm!
+;Beepuje gdy glodniejemy, beepuje gdy wymawiane sa czary zdejmujace lustro !!
+
+;Tu wpisz sciezke i odstep czasowy miedzy dzwiekami
+set %sciezka D:\scream.wav
+set %liczba 2s
+;-----------------------------------------------------------------------------------------------------------------
+
+set #sysmsgcol 1088
+event sysmessage Skrypt ochronny uruchomiony - have fun ;)
+start:
+scanjournal 1
+if [Chaos] in #journal || Telnise in #journal || Rheriza in #journal || Srebrny in #journal || Arubin in #journal || Nerib in #journal || Mandille in #journal || Vat in #journal || Avaith in #journal || Sedon in #journal || Caliv in #journal || Soul in #journal || Adellas in #journal || Azifaral in #journal || Kenyu in #journal || Araghar in #journal || Tsavo in #journal || Vaincre in #journal  || Thao in #journal || Gwear in #journal || Alfa in #journal || Valgrave in #journal || Chaos in #journal || Gets in #journal || Moar in #journal || Ajantis in #journal || Magonus in #journal || attacking in #journal || Adelin in #journal || Marcus in #journal || uus_jux in #journal || rel_wis in #journal || des_mani in #journal || gwaodric in #journal || zywiolak in #journal || szlam in #journal || wir in #journal || Amerie in #journal || an_ex_por in #journal || corp_por in #journal || Brakuje_Ci_skladnikow in #journal || Nie_masz_pustych_butelek. in #journal || 10_siarka in #journal
+{
+sound %sciezka
+wait %liczba
+sound %sciezka
+}
+
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage ZGLODNIALES, PORA COS ZJESC
+sound %sciezka
+wait 2s
+goto start
+}
+
+if #contsize = 218_142
+{
+sound %sciezka
+wait 2s
+}
+
+if Mephisto in #journal || Radhost in #journal || Yavzan in #journal || Daruntu in #journal || Hagsevern in #journal || Shaundakul in #journal || Lothilir in #journal || Valorowie in #journal
+{
+sound %sciezka
+wait %liczba
+sound %sciezka
+}
+
+goto start

@@ -1,0 +1,17 @@
+initevents
+
+start:
+
+finditem DWJ C;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC RUDY
+halt
+}
+else
+set #lobjectid #findid
+event macro 17 0
+wait 12
+goto start
+

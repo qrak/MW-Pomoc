@@ -1,0 +1,20 @@
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_ in #journal
+         {
+         if You_see:_[Zly_ in #journal || You_see:_Sacul in #journal || You_see:_Thorg in #journal || You_see:_[Zabojca in #journal
+         goto start
+         set #sysmsgcol 1080
+         event sysmessage KTOS IDZIE!!
+         sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+         wait 4s
+         }
+      }
+   }
+

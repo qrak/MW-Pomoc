@@ -1,0 +1,5 @@
+initevents
+start:
+event macro 13 32
+wait 10s
+goto start

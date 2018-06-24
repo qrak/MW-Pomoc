@@ -1,0 +1,48 @@
+initevents
+start:
+if #contsize = 203_121
+{
+   set #sysmsgcol 1080
+   event sysmessage Zerwano polaczenie (cl)! Loguje ponownie...
+   wait 20
+   click 400 333
+   wait 20
+}
+if #contsize = 640_480
+{
+   set %licz #scnt2 + 70
+   cl1:
+   if %licz < #scnt2
+      goto start
+   if #contname = normal_gump
+      goto cl2
+   if #contname = Login_gump
+      goto cl3
+   if #contname = MainMenu_gump
+   {
+      msg %pass , $
+      set %licz #scnt2 + 70
+      cl2:
+      if %licz < #scnt2
+         goto start
+      if #contname = normal_gump
+      {
+         click 620 445
+         wait 5
+         set %licz #scnt2 + 70
+         cl3:
+         if %licz < #scnt2
+            goto start
+         if #contname = Login_gump
+         {
+            click 620 445
+            wait 50
+            click 311 260 r
+         }
+         goto cl3
+      }
+      goto cl2
+   }
+   goto cl1
+}
+goto start

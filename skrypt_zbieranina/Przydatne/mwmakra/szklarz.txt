@@ -1,0 +1,51 @@
+initevents
+set %profile 540_420
+
+
+start:
+finditem NXO C  ; szuka narzedzi szklarza
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage BRAK NARZEDZI
+sound c:\missile.wav
+halt
+}
+set %mlotek #findid
+set #lobjectid %mlotek  ; ustawia je jako lastobject
+finditem XMK C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC SZKLA
+sound c:\missile.wav
+halt
+}
+set #ltargetid #findid
+event macro 17 0
+target 5s
+event macro 22 0
+set %timer #scnt2 + 20
+
+kuciegump:
+if #CONTSIZE = %profile
+{
+click 505 60   ; rob ostatnie ostatnie
+set %timer #scnt2 + 80
+wait 20
+goto pat
+}
+if %timer < #scnt2
+goto start
+else
+goto kuciegump
+
+
+pat:
+scanJournal 1
+if Stworzylas in #journal
+goto start
+if %timer < #scnt2
+goto start
+goto pat
+

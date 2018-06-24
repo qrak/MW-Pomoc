@@ -1,0 +1,122 @@
+initevents
+set %Yes 0
+set %No 0
+set %Timeout 0
+set %ATimeout 0
+set %GTimeout 0
+set %CMiks 0
+start:
+if %Exit = 1
+{
+event sysmessage Makro wylaczone...
+halt
+}
+if %GTimeout < #scnt
+{
+finditem AQD_YRD_HND
+if #findkind = 0
+{
+set #lobjectid #findid
+event macro 17
+set %GTimeout #scnt + 120
+wait 20
+}
+else
+set %GTimeout #scnt + 10
+}
+if %Timeout < #scnt && %Ukrywanie = 1
+{
+event macro 13 21
+set %Timeout #scnt + 9
+wait 5
+}
+if %LockTime > #scnt
+goto start
+if %ATimeout > #scnt
+goto start
+finditem UMD G_1
+if #findkind <> 1
+goto start
+set #lobjectid #findid
+event macro 17
+event sysmessage Rozcierasz skladniki...
+set %WStart #scnt
+window:
+set %WTime #scnt - %WStart
+if ( #contkind = IOIB && #contsize = 540_420 ) || %WTime = 3
+{
+wait 5
+click 500 60 f
+}
+else
+goto window
+set %TStart #scnt
+set %LockTime #scnt + 1
+text:
+scanjournal 1
+set %TTime #scnt - %TStart
+if W_pojemniku in #journal
+halt
+if Roztarles in #journal || Nie_udalo in #journal || Your_skill_in_Alchemia in #journal || Nie_masz in #journal || Anulowano in #journal || %TTime > 22
+{
+if Roztarles in #journal
+{
+set %Yes %Yes + 1
+if %Yes = %CMiks
+set %Exit 1
+}
+if Nie_udalo in #journal
+set %No %No + 1
+if Your_skill_in_Alchemia in #journal
+{
+set %Yes %Yes + 1
+goto stat
+}
+if Nie_masz in #journal
+{
+display ok Skonczyly Ci sie puste butelki...
+set %Exit 1
+goto stat
+}
+set %Journal #jIndex - 1
+scanjournal %Journal
+if Potrzebujesz_: in #journal || W_pojemniku in #journal
+{
+if Potrzebujesz_: in #journal
+display ok Skonczyly Ci sie skladniki...
+if W_pojemniku in #journal
+display ok Skonczylo Ci sie miejsce w pojemniku...
+set %Exit 1
+goto stat
+}
+goto start
+}
+goto text
+stat:
+if %Yes = 1
+set %Yesend miksture
+else
+{
+str Right %Yes 1
+if #strRes > 1 && #strRes < 5
+set %Yesend mikstury
+else
+set %Yesend mikstur
+}
+str Lower %Yesend
+event sysmessage Zrobiles %Yes #strRes
+if %No = 1
+set %Noend miksture
+else
+{
+str Right %No 1
+if #strRes > 1 && #strRes < 5
+set %Noend mikstury
+else
+set %Noend mikstur
+}
+str Lower %Noend
+event sysmessage Zniszczyles %No #strRes
+goto start
+
+

@@ -1,0 +1,71 @@
+;%Klawisz - defaultowo F4
+;============
+set %Klawisz F4
+;============
+repeat
+onhotkey %Klawisz
+  gosub Nozyczki
+until #false
+sub Nozyczki
+Uzyj_nozyczek:
+finditem kag C
+if #findkind = -1
+  return
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Uzyj_nozyczek
+until #targcurs = 1
+repeat
+onhotkey ESC
+  return
+until #targcurs = 0
+onhotkey ESC
+  return
+set %Id_pojemnika #ltargetid
+set #lobjectid %Id_pojemnika
+event macro 17
+set %Timer #scnt2 + 25
+Nastepne_piora:
+repeat
+if %Timer < #scnt2
+  return
+finditem VLK C_ , %Id_pojemnika
+until #findkind = 0
+set %Id_pior #findid
+set %Stack_pior #findstack
+ExDrag_pior:
+exevent drag %Id_pior %Stack_pior
+set %Timer #scnt2 + 25
+repeat
+if %Timer < #scnt2
+  goto ExDrag_pior
+finditem %Id_pior C_ , %Id_pojemnika
+until #findkind = -1
+set %Id_pior_w_plecaku 0
+finditem vlk C_ , #backpackid
+if #findkind = 0
+{
+  set %Id_pior_w_plecaku #findid
+  set %Stack_pior_w_plecaku #findstack
+}
+set %Cnt_dropow 0
+ExDrop_pior:
+set %Cnt_dropow %Cnt_dropow + 1
+if %Cnt_dropow > 3
+  return
+exevent dropc #backpackid
+set %Timer #scnt2 + 12
+repeat
+if %Timer < #scnt2
+  goto ExDrop_pior
+if %Id_pior_w_plecaku = 0
+  finditem %Id_pior C_ , #backpackid
+else
+  finditem %Id_pior_w_plecaku C_ , #backpackid
+until ( #findkind = 0 && %Id_pior_w_plecaku = 0 ) || ( #findstack = %Stack_pior_w_plecaku + %Stack_pior && %Id_pior_w_plecaku <> 0 )
+set %Timer #scnt2 + 3
+goto Nastepne_piora
+

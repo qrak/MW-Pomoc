@@ -1,0 +1,66 @@
+initevents
+set %cel #ltargetid
+
+
+start:
+
+finditem KAG C;
+set #lobjectid #findid
+finditem CUI
+set #ltargetid #findid
+
+event macro 17 0
+target 50s
+event macro 22 0 
+goto ciecie
+
+ciecie:
+if Pociales in #sysmsg
+{
+goto dalej
+}
+else
+{
+goto ciecie
+}
+
+dalej:
+event macro 17 0
+target 50s
+event macro 22 0
+goto ciecie2
+
+ciecie2:
+if Pociales in #sysmsg
+{
+goto dalej2
+}
+else
+{
+goto ciecie2
+}
+
+dalej2:
+wait 20
+set #ltargetid %cel
+event macro 13 1
+target 100s
+event macro 22
+goto eval
+
+eval:
+scanJournal 1
+if Cel_wyglada in #journal
+{
+wait 10
+goto start
+}
+if Nie_jestes in #journal
+{
+wait 10
+goto start
+}
+else
+{
+goto eval
+}

@@ -1,0 +1,13 @@
+initevents
+
+start:
+onhotkey F6 alt
+goto stoper
+else
+event macro 1 0 .um wykrywanie
+wait 3s
+goto start
+
+stoper:
+sound C:\missile.wav
+halt

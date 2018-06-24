@@ -1,0 +1,321 @@
+;Autor: [nGz]
+;%Roslina moze miec wartosc jedna z nastepujacych: dynia, arbuz, marchewka, cebula, rzepa, salata, kapusta, kukurydza, len, chmiel, pszenica, bawelna.
+;%Skill 0-nic, 1-Anatomia, 2-Madrosc, 3-Wiedza o zwierzetach, 4-Ukrywanie, 5-Wiedza o broni, 6-Wykrywanie.
+;%SkillPowtorzenia - okresla co ktora probe scinania ma robic skilla umyslowego (domyslnie 1 - co kazde scinanie).
+
+;======================
+set %Roslina dynia
+set %Skill 0
+set %SkillPowtorzenia 1
+;======================
+
+set #sysmsgcol 0
+event sysmessage Stan na ktoryms rogu prostokata w ktorym ma szukac rosliny i wcisnij play w euo.
+pause
+set %Xe #charposx
+set %Ye #charposy
+event sysmessage Teraz stan na przeciwleglym rogu tego prostokata i wcisnij play.
+pause
+set %Xs #charposx
+set %Ys #charposy
+set #lpc 200
+if %Skill <> 0
+{
+  set %LicznikPowtorzen %SkillPowtorzenia
+  set %CelSkilla 0
+  if %Skill = 1
+    set %SkillName Anatomia
+  if %Skill = 2
+    set %SkillName Madrosc
+  if %Skill = 3
+    set %SkillName AnimalLore
+  if %Skill = 4
+    set %SkillName Ukrywanie
+  if %Skill = 5
+    set %SkillName ArmsLore
+  if %Skill = 6
+    set %SkillName Wykrywanie
+}
+set %null
+set %bok1 %Xs - %Xe abs
+set %bok2 %Ys - %Ye abs
+if %bok1 > %bok2
+{
+  set %n_start %Ys
+  set %n_end %Ye
+  set %m_start %Xs
+  set %m_end %Xe
+}
+else
+{
+  set %n_start %Xs
+  set %n_end %Xe
+  set %m_start %Ys
+  set %m_end %Ye
+}
+tile Init
+for %n %n_start %n_end
+{
+  set %Row 0
+  for %m %m_start %m_end
+  {
+    gosub ZapiszXY
+    tile Cnt %x %y
+    for %i 1 #tilecnt
+    {
+      tile Get %x %y %i
+      if %Roslina in #tilename && ( Background in #tileflags || #tileflags = %null )
+      {
+        set #lpc 10
+        gosub Podejdz
+        if #result
+          gosub Scinaj
+        else
+        {
+          set #sysmsgcol 1080
+          event sysmessage Nie udalo mi sie dostac do rosliny.
+          set #sysmsgcol 0
+          event sysmessage Szukam nastepnej.
+        }
+        set #lpc 200
+        if %Row = 0
+          set %Row 1
+        break
+      }
+    }
+  }
+  if %Row = 1
+  {
+    set %temp %m_start
+    set %m_start %m_end
+    set %m_end %temp
+  }
+}
+set #sysmsgcol 0
+event sysmessage Koniec.
+halt
+
+sub ZapiszXY
+if %bok1 > %bok2
+{
+  set %x %m
+  set %y %n
+}
+else
+{
+  set %x %n
+  set %y %m
+}
+return
+
+sub Podejdz
+Idz:
+set %JIndex #jindex
+event pathfind %x %y #tilez
+set %Timer #scnt2 + 15
+repeat
+if %Timer < #scnt2
+  goto Idz
+scanjournal 1
+until ( #journal = Pathfinding! || #journal = Can't_get_there ) && #jindex <> %JIndex
+if #journal = Can't_get_there
+  return #false
+set %Timer 0
+set %Char_x_old -1
+set %Char_y_old -1
+repeat
+if %Timer < #scnt2
+{
+  if %Char_x_old = #charposx && %Char_y_old = #charposy
+    goto Idz
+  set %Char_x_old #charposx
+  set %Char_y_old #charposy
+  set %Timer #scnt2 + 40
+}
+until #charposx = %x && #charposy = %y
+return #true
+
+sub Scinaj
+PetlaScinania:
+if %LicznikPowtorzen = %SkillPowtorzenia && %Skill <> 0
+  gosub %SkillName
+if %Skill <> 0
+  set %LicznikPowtorzen %LicznikPowtorzen - 1
+if %LicznikPowtorzen <= 0 && %Skill <> 0
+  set %LicznikPowtorzen %SkillPowtorzenia
+Sierp:
+finditem fuo C_ , #charid
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Brak sierpa w lapie.
+  halt
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Sierp
+until #targcurs = 1
+Celownik:
+gosub UstawXYrosliny
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Celownik
+until #targcurs = 0
+set %TimerScinania #scnt2 + 110
+repeat
+scanjournal 1
+if Stoisz_za_daleko in #journal
+{
+  gosub Podejdz
+  if #result
+    goto Sierp
+  else
+    return
+}
+if Z_tej_rosliny_juz_nic_wiecej_nie_wytniesz in #journal || Tego_nie_mozesz_obciac in #journal || Musisz_wskazac_miejsce in #journal
+  return
+until %TimerScinania < #scnt2 || Udalo_Ci_sie_obciac_roslin in #journal || Your_skill_in_Rolnictwo_ in #journal || Oddaliles_sie. in #journal || Oddalilas_sie. in #journal
+goto PetlaScinania
+
+sub UstawXYrosliny
+set #ltargetx %x
+set #ltargety %y
+set #ltargetz #tilez
+set #ltargetkind 3
+set #ltargettile #tiletype
+return
+
+sub Anatomia
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa ana
+gosub ObsluzCelownikSkilla
+return
+
+sub Madrosc
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa mad
+gosub ObsluzCelownikSkilla
+return
+
+sub AnimalLore
+if %CelSkilla = 0
+  gosub WskazCel
+set %SkroconaNazwa wie
+gosub ObsluzCelownikSkilla
+set %TimerAL #scnt2 + 30
+repeat
+scanjournal 1
+until _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal || To_stworzenie_ in #journal || Nie_udalo_Ci_sie_ocenic_tego_zwierzecia in #journal || Nie_wiesz_jak_to_ocenic in #journal || Stoisz_za_daleko in #journal || %TimerAL < #scnt2
+if _na_oswojenie_tego_zwierza in #journal || Nie_masz_szans_by_je_oswoic in #journal
+{
+  set %TimerAL #scnt2 + 9
+  repeat
+  scanjournal 1
+  until To_stworzenie_ in #journal || %TimerAL < #scnt2
+}
+if To_stworzenie_ in #journal
+{
+  set %TimerAL #scnt2 + 8
+  repeat
+  until %TimerAL < #scnt2
+}
+return
+
+sub Ukrywanie
+SkillUkrywanie:
+event macro 1 0 .um ukr
+set %Timer #scnt2 + 3
+repeat
+if %Timer < #scnt2
+  goto SkillUkrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until ukryl in #journal || nie_udalo_Ci_sie_ukryc in #journal || Wrog_Cie_juz in #journal || Nie_uda_Ci_sie_schowac_wierzchowca in #journal || Your_skill_in_Ukr in #journal || Your_skill_in_Hid in #journal
+return
+
+sub ArmsLore
+if %CelSkilla = 0
+{
+  finditem fuo C_ , #charid
+  if #findkind = -1
+  {
+    set #sysmsgcol 1080
+    event sysmessage Brak sierpa w lapie.
+    halt
+  }
+  set %CelSkilla #findid
+}
+set %SkroconaNazwa bro
+gosub ObsluzCelownikSkilla
+return
+
+sub Wykrywanie
+SkillWykrywanie:
+event macro 1 0 .um wyk
+set %Timer_2 #scnt2 + 3
+repeat
+if %Timer_2 < #scnt2
+  goto SkillWykrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until Nie_znalazl in #journal || :_Znalazl in #journal || Your_skill_in_Wyk in #journal || Your_skill_in_Det in #journal
+return
+
+sub ObsluzCelownikSkilla
+UzyjSkilla:
+event macro 1 0 .um %SkroconaNazwa
+set %TimerSK #scnt2 + 3
+repeat
+if %TimerSK < #scnt2
+  goto UzyjSkilla
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until #targcurs = 1
+CelownikSkilla:
+set #ltargetkind 1
+set #ltargetid %CelSkilla
+event macro 22
+set %TimerSK #scnt2 + 2
+repeat
+if %TimerSK < #scnt2
+  goto CelownikSkilla
+until #targcurs = 0
+return
+
+sub WskazCel
+set #targcurs 1
+set #sysmsgcol 1152
+WskazCelSkilla:
+event sysmessage Wskaz cel dla skilla: %SkillName , #dot
+set %TimerWC #scnt2 + 100
+repeat
+if %TimerWC < #scnt2
+  goto WskazCelSkilla
+onhotkey ESC
+  goto WcisnietoESC
+until #targcurs = 0
+onhotkey ESC
+{
+  WcisnietoESC:
+  set #sysmsgcol 1080
+  event sysmessage Nie wskazales celu.
+  halt
+}
+set %CelSkilla #ltargetid
+if #ltargetkind = 0
+{
+  set #sysmsgcol 1080
+  event sysmessage Zle wskazany cel.
+  halt
+}
+return

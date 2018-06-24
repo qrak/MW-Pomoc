@@ -1,0 +1,21 @@
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_ in #journal
+         {
+         if You_see:_Zywiolak_ziemi in #journal || You_see:_szlam in #journal
+         {
+         set #sysmsgcol 1080
+         event sysmessage KTOS IDZIE!!
+         sound C:\missile.wav
+         wait 4s
+         }
+         goto start
+         }
+      }
+   }

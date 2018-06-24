@@ -1,0 +1,39 @@
+initevents
+ignoreitem reset
+set %plecak #backpackid
+
+start:
+finditem KAG ; szuka nozyczek
+set #lobjectid #findid  ; ustawia je jako lastobject
+finditem CDP_SBP_ALH_YKH_MLH_OSK_ZZR_XKH_DCP_PCP_NWO_TBP_MWO_SSK_QSK_YSK_ATK_JKH_KCP_NJL_NVI_KKH_PKH_VKH_QKH_TES_EWI_TCP_LLH_HCM_FWL_DCI_FCI_PAM_LDI_VDI_BDP_YBP_UCP C_ , %plecak
+;finditem XKH ; szuka tuniki
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC
+sound C:\missile.wav
+halt
+}
+event property #findid
+if Wyjatkowej , #spc , Jakosci in #property
+{
+ignoreitem #findid
+goto start
+}
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0
+pat:
+if Pocielas in #sysmsg
+{
+goto start
+}
+if Nie_udalo in #sysmsg
+{
+goto start
+}
+else
+{
+goto pat
+}

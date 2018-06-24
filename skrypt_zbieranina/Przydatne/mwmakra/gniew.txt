@@ -1,0 +1,46 @@
+initevents
+
+start:
+goto mana
+
+mana:
+if #mana < 10 ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+event macro 13 46
+goto sprawdzmedit
+}
+else
+{
+goto dalej
+}
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+wait 5
+goto dalej
+}
+if Nie_mozesz in #journal
+{
+wait 6s
+goto mana
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+dalej:
+event macro 1 0 .rzuc pgniew
+target 100s
+event macro 23 0
+wait 5
+goto start
+
+

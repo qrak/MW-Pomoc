@@ -1,0 +1,20 @@
+repeat
+ignoreitem reset
+onHotKey F2 ;royal
+gosub royal
+until #false
+sub royal
+ignoreitem reset
+szukaj:
+finditem DWJ C
+if #findkind = -1
+return
+if ( #findcol = 1209 ) && ( #FINDBAGID <> #BACKPACKID )
+{
+event drag #findid
+wait 10
+key enter
+return
+}
+ignoreitem #findid
+goto szukaj

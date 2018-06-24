@@ -1,0 +1,19 @@
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_ in #journal
+         {
+         if You_see:_cloth_frame in #journal || You_see:_cave_wall in #journal || You_see:_marble_wall in #journal || You_see:_stone_pavers in #journal || You_see:_dungeon_wall in #journal || You_see:_[Zly_ in #journal || You_see:_Sacul in #journal || You_see:_Thorg in #journal || You_see:_[Zabojca in #journal
+         goto start
+         set #sysmsgcol 1080
+         event sysmessage KTOS IDZIE!!
+         sound C:\missile.wav
+         wait 4s
+         }
+      }
+   }

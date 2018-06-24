@@ -1,0 +1,82 @@
+initevents
+loop:
+onhotkey q alt
+  gosub miecz
+onhotkey w alt
+  gosub hala
+goto loop
+sub miecz
+miecz:
+finditem bph C
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie masz Wielkiego Miecza!
+  wait 1
+  goto pawez
+}
+if #findbagid = #charid
+  goto pawez
+set #lobjectid #findid
+set %licz 0
+event macro 17
+petla:
+scanjournal 1
+set %licz %licz + 1
+if Przedmiot_musi_byc_w_twoim_plecaku in #journal
+  goto pawez
+finditem bph C
+if #findbagid = #charid
+  goto pawez
+if %licz > 6
+  goto miecz
+goto petla
+pawez:
+finditem cik C
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie masz Paweza!
+  return
+}
+if #findbagid = #charid
+  return
+set #lobjectid #findid
+set %licz 0
+event macro 17
+petla2:
+scanjournal 1
+set %licz %licz + 1
+if Przedmiot_musi_byc_w_twoim_plecaku in #journal
+  return
+finditem cik C
+if #findbagid = #charid
+  return
+if %licz > 6
+  goto pawez
+goto petla2
+sub hala
+hala:
+finditem guo C
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie masz Halabardy!
+  return
+}
+if #findbagid = #charid
+  return
+set #lobjectid #findid
+set %licz 0
+event macro 17
+petla3:
+scanjournal 1
+set %licz %licz + 1
+if Przedmiot_musi_byc_w_twoim_plecaku in #journal
+  return
+finditem guo C
+if #findbagid = #charid
+  return
+if %licz > 6
+  goto hala
+goto petla3

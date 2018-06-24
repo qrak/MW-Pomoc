@@ -1,0 +1,5 @@
+initevents
+dru:
+event macro 1 0 .um druidyzm
+wait 7s
+goto dru

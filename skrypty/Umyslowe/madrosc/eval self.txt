@@ -1,0 +1,4 @@
+event macro 13 16
+target
+event macro 23
+wait 10s

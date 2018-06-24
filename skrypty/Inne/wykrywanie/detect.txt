@@ -1,0 +1,29 @@
+;Skrypt bY SabiK
+;detect.txt
+;Wersja 1.3
+;Skrypt caly czas wykrywa ('.um wykrywanie')
+;Po nacisnieciu klawisza '%key' skrypt sie wylacza
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %key insert      ;Tu ustaw klawisz pod ktorym bedziesz mogl wylaczyc skrypt
+;-------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [detect] odpalony (by SabiK)
+wait 1
+
+start:
+event macro 1 0 .um wykrywanie
+set %licz #scnt2 + 19
+repeat
+onhotkey %key
+{
+   set #sysmsgcol 1080
+   event sysmessage Wylaczono skrypt [detect]
+   halt
+}
+until %licz <= #scnt2
+goto start
+
+

@@ -1,0 +1,30 @@
+set %okienko SHT
+initevents
+loop:
+
+if ( #contkind = %okienko )
+{
+set #scnt 0
+hoko:
+if ( #contkind = %okienko ) && ( #scnt > 7 )
+{
+
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 10
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+}
+if ( #contkind = %okienko ) && ( #scnt < 20 )
+goto hoko
+
+}
+goto loop

@@ -1,0 +1,140 @@
+initevents
+set %profile 560_460
+set %topi 0
+
+start:
+if #str = 55
+{
+finditem XUF C
+set #lobjectid #findid
+event macro 17 0
+wait 10
+}
+finditem TLH_GBG C_ , #charid  ; szuka mlotka
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage BRAK MLOTKA
+sound c:\missile.wav
+halt
+}
+set %mlotek #findid
+set #lobjectid %mlotek  ; ustawia je jako lastobject
+finditem ENK C_ , #backpackid
+if #findkind = -1
+{
+if %topi = 1
+{
+goto doloz
+}
+set %topi 1
+goto przetapiaj
+}
+set #ltargetid #findid
+event macro 17 0
+set %czas #scnt2 + 20
+wait 1
+wait 1
+
+kuciegump:
+if #CONTSIZE = %profile
+{
+click 137 392   ; rob ostatnie ostatnie
+target 3s
+event macro 22 0
+set %czas #scnt2 + 80
+goto pat
+}
+if %czas < #scnt2
+goto pat
+else
+goto kuciegump
+
+
+pat:
+scanJournal 1
+if Wykulas in #journal || Wykules in #journal
+goto hid
+if Zniszczyles_troche || Zniszczylas_troche in #journal
+goto hid
+if Your_skill in #journal
+goto hid
+if Masz_za in #journal
+{
+if %topi = 1
+{
+set #sysmsgcol 1080
+event sysmessage BRAK RUDY
+sound C:\missile.wav
+halt
+}
+set %topi 1
+goto przetapiaj
+}
+if %czas < #scnt2
+goto hid
+else
+{
+goto pat
+}
+
+hid:
+goto start
+
+przetapiaj:
+ignoreitem reset
+wait 10
+tnij2:
+finditem JVJ_OUJ G_1
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage STOISZ ZA DALEKO OD PIECA
+   halt
+}
+set #lobjectid #findid  ; ustawia je jako lastobject
+finditem AUO_BSF_LSF_JOH_DFR_NFR_GUO_FIK_HFR_AIK_AUH_VAP_CIK_ZOH_DPH_APH_CUO_SRH_CBP_YTH_tsf_kmh_VRH_OMH_DPH_NSH_ISH_HSH_OPO_AUH C_ , #backpackid  ;
+if #findkind = -1
+{
+   if %topi = 1
+   {
+      set #sysmsgcol 1080
+      event sysmessage KONIEC RUDY
+      sound C:\missile.wav
+      halt
+   }
+   goto start
+}
+event property #findid
+if Wyjatkowej , #spc , Jakosci in #property
+{
+   ignoreitem #findid
+   goto tnij2
+}
+set %topi 0
+set #ltargetid #findid
+event macro 17 0
+set %czas #scnt + 30
+wait 10
+
+lamimy:
+event macro 22 0
+set %czas #scnt2 + 30
+pat2:
+if Udalo_Ci in #sysmsg
+goto tnij2
+if Nie_udalo in #sysmsg
+goto tnij2
+if #contsize = 560_460
+{
+wait 1
+wait 1
+click 125 95
+wait 1
+wait 1
+goto tnij2
+}
+if %czas < #scnt2
+goto tnij2
+goto pat2
+

@@ -1,0 +1,67 @@
+;Skrypt bY SabiK
+;likantropia-woj_wampiryzm-woj.txt
+;Wersja 1.0
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %runa ZZYTQIE 		;Tu ustaw id runy(kliknij 2x na runo i wpisz z EasyUO #lobjectid)
+set %stam 20 		;Tu ustaw ponizej jakiej ilosci staminy skrypt ma pic miksa odswiezenia
+;------------------------------------------------------------------------------------------------------------
+
+set #sysmsgcol 63
+event sysmessage Skrypt [likantropia-woj_wampiryzm-woj] odpalony (bY SabiK)
+wait 1
+
+start:
+if #stamina < %stam
+   gosub czerwona
+finditem %runa C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz runa! Skrypt wylaczono!
+   halt
+}
+if #findkind = 1
+{
+   ignoreitem #findid
+   goto start
+}
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+}
+wait 20
+if #stamina < %stam
+   gosub czerwona
+wait 20
+goto start
+
+sub czerwona
+finditem zuf C
+if #findkind = 0
+{
+   set #lobjectid #findid
+   event macro 17
+   if #sex = 0
+   {
+      set #sysmsgcol 88
+      set %ile #findstack - 1
+      event sysmessage Wypiles miksa odswiezenia, zostalo %ile
+   }
+   if #sex = 1
+   {
+      set #sysmsgcol 88
+      set %ile #findstack - 1
+      event sysmessage Wypilas miksa odswiezenia, zostalo %ile
+   }
+}
+if #findkind <> 0
+{
+   set #sysmsgcol 1080
+
+   event sysmessage Nie masz miksa odswiezenia!
+   return
+}
+return
+

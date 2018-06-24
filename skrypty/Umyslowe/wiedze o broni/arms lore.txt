@@ -1,0 +1,101 @@
+;Autor: [nGz]
+;Wersja: 2.1
+;Ten skrypt szuka tylko kilka wybranych przedmiotow do oceny,
+;jesli nie znajdzie zadnego to poprosi Cie o wskazanie celu.
+initevents
+set %wjt 0
+start:
+ignoreitem reset
+set %ltn 0
+arms:
+finditem npf
+if #findkind = -1
+ {
+   finditem omh
+   if #findkind = -1
+    {
+      finditem tvi
+      if #findkind = -1
+       {
+         finditem fci
+         if #findkind = -1
+          {
+            finditem pvi
+            if #findkind = -1
+             {
+               finditem fwl
+               if #findkind = -1
+                  set %ltn 1
+             }
+          }
+       }
+    }
+ }
+if #findkind = 1
+ {
+   ignoreitem #findid
+   goto arms
+ }
+if %ltn = 0
+   goto wiecej
+if %wjt = 1
+   goto wiecej
+ltarm:
+set %licz 0
+event macro 13 4
+petl:
+set %licz %licz + 1
+if #targcurs = 1
+ {
+   wait 2
+   wskter:
+   set #sysmsgcol 1152
+   event sysmessage Wskaz teraz na czym ma byc robione Armslore
+   set %licz 0
+   goto petl2
+ }
+if %licz > 50
+   goto ltarm
+goto petl
+petl2:
+set %licz %licz + 1
+set %wjt 1
+if #targcurs = 0
+   goto wskaz
+if %licz > 300
+   goto wskter
+goto petl2
+wskaz:
+wait 10
+set %lt #ltargetid
+if Anulowano in #sysmsg
+ {
+   set #sysmsgcol 1080
+   event sysmessage Nie wskazano celu!
+   set %wjt 0
+ }
+goto srund
+wiecej:
+set %licz 0
+event macro 13 4
+loop:
+set #ltargetkind 1
+if %ltn = 0
+   set #ltargetid #findid
+if %ltn = 1
+   set #ltargetid %lt
+set %licz %licz + 1
+wait 1
+wait 1
+if #targcurs = 1
+   goto dalej
+if %licz > 5
+   goto wiecej
+goto loop
+dalej:
+event macro 22
+event macro 22
+event macro 22
+srund:
+wait 162 5
+goto start

@@ -1,0 +1,98 @@
+;Autor: [nGz]
+;==============
+
+;==============
+set #targcurs 1
+set #sysmsgcol 1152
+event sysmessage Wybierz skrzynie.
+repeat
+ onhotkey ESC
+   goto Wcisnieto_ESC_skrzynia
+until #targcurs = 0
+onhotkey ESC
+{
+  Wcisnieto_ESC_skrzynia:
+  event sysmessage Nie wybrales skrzyni.
+  halt
+}
+set %Id_skrzyni #ltargetid
+set #targcurs 1
+event sysmessage Wybierz klucz do tej skrzyni.
+repeat
+ onhotkey ESC
+   goto Wcisnieto_ESC_klucz
+until #targcurs = 0
+onhotkey ESC
+{
+  Wcisnieto_ESC_klucz:
+  event sysmessage Nie wybrales klucza.
+  halt
+}
+set %Id_klucza #ltargetid
+set %Timer_wlamywania 0
+
+repeat
+if %Timer_wlamywania < #scnt2
+  gosub Wlamywanie
+until #false
+
+sub Wlamywanie
+Uzyj_wytrychow:
+finditem nwh C
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Brak wytrychow.
+  halt
+}
+set #lobjectid #findid
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Uzyj_wytrychow
+until #targcurs = 1
+Celuj_skrzynie:
+set #ltargetid %Id_skrzyni
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Celuj_skrzynie
+until #targcurs = 0
+set %Timer #scnt2 + 50
+set %Timer_wlamywania #scnt2 + 80
+repeat
+scanjournal 1
+if To_nie_jest_zamkniete in #journal
+{
+  gosub Zamknij_skrzynie
+  set %Timer_wlamywania 0
+  goto Uzyj_wytrychow
+}
+until %Timer < #scnt2 || Nie_udalo_Ci_sie_otworzyc_tego_zamka in #journal || Wytrychy_sie_polamaly in #journal || :_*otwarte* in #journal
+if :_*otwarte* in #journal
+  gosub Zamknij_skrzynie
+return
+
+sub Zamknij_skrzynie
+Uzyj_klucza:
+finditem %Id_klucza
+if #findkind = -1
+  return
+set #lobjectid %Id_klucza
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Uzyj_klucza
+until #targcurs = 1
+Zamykaj_skrzynie:
+set #ltargetid %Id_skrzyni
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Zamykaj_skrzynie
+until #targcurs = 0
+return

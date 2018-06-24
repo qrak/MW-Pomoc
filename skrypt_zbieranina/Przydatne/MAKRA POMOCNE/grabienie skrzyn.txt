@@ -1,0 +1,46 @@
+set %Zbieraj MWF_BVF_OVF_GVF_HVF_RVF_EVF_FVF_VUF_RZF_KUF_SZF_KZF_MZF_JUF_JZF_WZF_NZF_WWS_OZF_GXS_PZF_GUF_UZF_AXS_DUF_DUF_VLK_QZF_FUF_YZF_TZF_DAG_EUF_QZF_LZF_QZF_VRD_EAG_VZF_HUF_IUF
+start:
+onhotkey a shift
+gosub skrzynia
+goto start
+
+sub skrzynia
+event sysmessage Otworz skrzynie...
+set %time #scnt + 2
+skrzynia:
+if #scnt > %time
+{
+event sysmessage Koniec
+return
+}
+if #contkind <> EUS || #contsize <> 180_240
+goto skrzynia
+set %Where #contid
+event sysmessage Zapisywanie ID skrzyni...
+ignoreitem reset
+set %i 0
+wait 10
+event sysmessage Zaczynasz szukac...
+szukaj:
+finditem * C_ , %Where
+if #findkind <> 0
+{
+if %i > 0
+  event sysmessage Skonczyles wybierac przedmioty
+else
+  event sysmessage Nic nie znalazles!
+return
+}
+event property #findid
+if monety in #property || magiczn in #property || #findtype in %zbieraj
+{
+exevent drag #findid #findstack
+if magiczn in #property
+  exevent dropc #backpackid 0 200
+else
+  exevent dropc #backpackid
+set %i %i + 1
+}
+ignoreitem #findid
+goto szukaj
+

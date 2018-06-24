@@ -1,0 +1,85 @@
+;Autor: [nGz]
+;Gra na bebenku lub gitarze.
+;Nie przejmuj sie tymi message'ami co bedziesz mial nad glowa - to tak musi byc, zeby szybciej robilo to co ma robic ;)
+initevents
+set %ukryc 0
+set %zegar 0
+start:
+if %zegar > #scnt  ;wylaczone jedzenie
+{
+  event macro 1 0 .glod
+  set %timer #scnt2 + 12
+  repeat
+   if %timer < #scnt2
+     goto start
+   scanjournal 1
+  until #journal in Masz_ochote_zwymiotowac.Czujesz_sie_ciezki_i_zmeczony.Czujesz_sie_w_pelni_sil.Czujesz_sie_dobrze.
+  if #journal in Masz_ochote_zwymiotowac.Czujesz_sie_ciezki_i_zmeczony.Czujesz_sie_w_pelni_sil.
+    goto idzdalej
+  finditem hnd_qqd_uwi_aqd_twi_fwi_ysd_yli_wli_yrd_uqe_nwi_bnd_end        ;steki_jablka_brzoskwinie_kielbasa_gruszkas_banan_gruszka_udo jagniecia_udo kurczaka_zebra_marchewka_daktyl_ser_ser
+  if #findkind = -1
+    goto idzdalej
+  set #lobjectid #findid
+  event macro 17
+  idzdalej:
+  set %zegar #scnt + 300
+}
+set %licz 0
+event macro 13 21
+loop:
+scanjournal 1
+set %licz %licz + 1
+wait 1
+wait 1
+if H in #charstatus
+   goto czekaj0
+if ukryl in #journal
+   goto czekaj0
+if nie_udalo_Ci_sie_ukryc in #journal
+   goto czekaj
+if Your_skill_in_Ukrywanie in #sysmsg
+   goto czekaj0
+if Wrog_Cie_juz in #journal
+   goto czekaj
+if %licz > 3
+   goto start
+goto loop
+czekaj0:
+wait 5
+if Your_skill_in_Ukrywanie in #sysmsg
+ {
+   set %ukryc %ukryc + 1
+   set %kop %ukryc
+   event sysmessage Ukryles sie %ukryc razy
+   wait 3
+   set %ukryc 0
+   goto czekaj
+ }
+set %ukryc %ukryc + 1
+czekaj:
+set %cosik 0
+graj:
+finditem mqf_prf_nrf_oqf_qrf C
+if #findkind = -1
+  goto graj
+set #lobjectid #findid
+event macro 17
+wait 4
+if I_am_already_doing_some in #sysmsg || Musisz_chwile_odczekac. in #sysmsg
+   goto graj2
+goto graj
+graj2:
+wait 20
+if %cosik = 1
+   goto start
+petla:
+event macro 13 21
+wait 2
+scanjournal 1
+if You_must_wait in #journal
+ {
+   set %cosik 1
+   goto graj
+ }
+wait 9
+goto petla

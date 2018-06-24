@@ -1,0 +1,117 @@
+initevents
+set %profile 560_460
+
+start:
+finditem TLH C  ; szuka mlotka
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage BRAK MLOTKA
+sound c:\misile.wav
+halt
+}
+set %mlotek #findid
+set #lobjectid %mlotek  ; ustawia je jako lastobject
+finditem ENK C_ , #backpackid
+if #findkind = -1
+{
+if %topi = 1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC RUDY
+sound C:\missile.wav
+halt
+}
+set %topi 1
+goto przetapiaj
+}
+set #ltargetid #findid
+event macro 17 0
+set %czas #scnt2 + 20
+wait 1
+wait 1
+
+kuciegump:
+if #CONTSIZE = %profile
+{
+click 137 392   ; rob ostatnie ostatnie
+target 3s
+event macro 22 0
+set %czas #scnt2 + 80
+goto pat
+}
+if %czas < #scnt2
+goto pat
+else
+goto kuciegump
+
+
+pat:
+scanJournal 1
+if Wykulas_przedmiot in #journal
+goto hid
+if Zniszczyles_troche || Zniszczylas_troche in #journal
+goto hid
+if Uszyles_Wyjatkowej || Uszylas_Wyjatkowej in #journal
+{
+set #sysmsgcol 1080
+event sysmessage USZYLES EXP
+sound C:\missile.wav
+halt
+}
+if Your_skill in #journal
+goto hid
+if Masz_za in #journal
+{
+if %topi = 1
+{
+set #sysmsgcol 1080
+event sysmessage KONIEC RUDY
+sound C:\missile.wav
+halt
+}
+set %topi 1
+goto przetapiaj
+}
+if %czas < #scnt2
+goto hid
+else
+{
+goto pat
+}
+
+hid:
+event macro 1 0 .um wiedza o broni
+target 10
+set #ltargetid %mlotek
+event macro 22 0
+wait 5
+goto start
+
+przetapiaj:
+finditem JVJ G_1
+set #lobjectid #findid
+finditem tsf_kmh_VRH_OMH_DPH C_ , #backpackid
+if #findkind = -1
+goto start
+set #ltargetid #findid
+event macro 17 0
+target 2s
+event macro 22 0
+set %czas #scnt2 + 40
+
+czekaj:
+scanjournal 1
+if Nie_udalo in #journal
+{
+goto przetapiaj
+}
+if Udalo_Ci in #journal
+{
+set %topi 0
+goto przetapiaj
+}
+if %czas < #scnt2
+goto przetapiaj
+else
+goto czekaj

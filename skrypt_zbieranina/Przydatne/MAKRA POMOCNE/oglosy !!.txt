@@ -1,0 +1,241 @@
+set %name Stinky ; set this to your characters name
+set %hits #hits
+set *20 #time + 8
+top:
+scanjournal %cnt 3
+ if %name in #journal
+ {
+ gosub randomize
+ gosub name
+ scanjournal %cnt 4
+ DELETEJOURNAL
+ wait 2s
+ }
+if %hits > #hits
+   {
+   gosub randomize
+   gosub hurt
+   scanjournal %cnt 4
+   DELETEJOURNAL
+   wait 5s
+   }
+if C in #CHARSTATUS
+   {
+   gosub randomize
+   gosub poisioned
+   scanjournal %cnt 4
+   DELETEJOURNAL
+   wait 4s
+   }
+if ort_por in #journal
+ goto magic
+if lor_xen in #journal
+ goto magic
+if vas_mani in #journal
+goto magic
+
+if #time > *20
+goto time
+
+goto top
+
+
+magic:
+gosub randomize
+gosub magic
+scanjournal %cnt 4
+DELETEJOURNAL
+wait 2s
+goto top
+
+time:
+gosub randomize
+gosub time
+scanjournal %cnt 4
+DELETEJOURNAL
+wait 2s
+goto top
+
+;================subs============
+;---------timed----------
+sub time
+if %random = 1
+msg   %name hungry. $
+if %random = 2
+msg   : scratches self $
+if %random = 3
+msg   : licks shoe $
+if %random = 4
+msg   %name need sleep $
+if %random = 5
+msg   %name ready to eat $
+if %random = 6
+msg   %name like to eat $
+if %random = 7
+msg   %name bash! $
+if %random = 8
+msg   : sniff's armpit $
+if %random = 9
+msg   %name likes mud! $
+if %random = 10
+msg   %name itchy! $
+set *20 #time + 40
+DELETEJOURNAL
+wait 1s
+return
+;-----magic------
+sub magic
+if %random < 2
+{
+msg   AHHH! SAVE %name !!!! $
+goto end
+}
+if %random < 4
+{
+msg   he put curse on %name  !!!! $
+goto end
+}
+if %random < 6
+{
+msg   magic! do again for %name !!!! $
+goto end
+}
+if %random < 8
+{
+msg   %name confused !!!! $
+goto end
+}
+if %random < 10
+{
+goto end
+}
+end:
+DELETEJOURNAL
+wait 1s
+return
+
+;----------poisioned--------
+sub poisioned
+if %random = 1
+msg   %name feels woozy $
+if %random = 2
+msg  %name head spinning! $
+if %random = 3
+msg   why %name no see? $
+if %random = 4
+msg  %name no feel legs! %name no feel legs! $
+if %random = 5
+msg  whats %name 's name?$
+if %random = 6
+msg  : stumbles $
+if %random = 7
+msg  : feels sick $
+if %random > 7
+msg  %name sleepy... $
+DELETEJOURNAL
+wait 1s
+return
+;-------hurt----------
+sub hurt
+if %random = 1
+msg   %name has OWIE! $
+if %random = 2
+msg  %name got booboo! $
+if %random = 3
+msg  %name hurt bad! $
+if %random = 4
+msg  why he hurt %name so? $
+if %random = 5
+msg  why he be mean to %name?$
+if %random = 6
+msg  %name getting mad $
+if %random = 7
+msg  u no want see %name mad! $
+if %random = 8
+msg  Mad Mad Mad $
+if %random = 9
+msg  u no hurt %name ! $
+if %random = 10
+msg  %name no happy is. $
+DELETEJOURNAL
+wait 1s
+return
+;--------name-------
+sub name
+if %random = 1
+msg  Me %name who you? $
+if %random = 2
+msg me no %name you dumb$
+if %random = 3
+msg %name %name ..... %name %name %name $
+if %random = 4
+msg Me have name. it is %name $
+if %random = 5
+msg %name is happy to see you!$
+if %random = 6
+msg %name in bad mood. u leave. now$
+if %random = 7
+msg %name is itching$
+if %random = 8
+msg %name be mean orc. u should run$
+if %random = 9
+msg who is %name ?$
+if %random = 10
+msg : burp $
+DELETEJOURNAL
+wait 1s
+return
+
+;-----------random----------
+sub randomize
+set %random #random
+if %random < 100
+ {
+ set %random 1
+ return
+ }
+if %random < 200
+ {
+ set %random 2
+ return
+ }
+if %random < 300
+ {
+ set %random 3
+ return
+ }
+if %random < 400
+ {
+ set %random 4
+ return
+ }
+if %random < 500
+ {
+ set %random 5
+ return
+ }
+if %random < 600
+ {
+ set %random 6
+ return
+ }
+if %random < 700
+ {
+ set %random 7
+ return
+ }
+if %random < 800
+ {
+ set %random 8
+ return
+ }
+if %random < 900
+ {
+ set %random 9
+ ret
+urn
+ }
+if %random < 1000
+ set %random 10
+return
+

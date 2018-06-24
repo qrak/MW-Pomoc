@@ -1,0 +1,1370 @@
+:)
+; ===================================================================
+; Nazwa skryptu: UO Death Hand
+; Autor: Moe
+; Wersja: 2.0
+; Data powstania: 16.09.2007
+; Data ostatniej modyfikacji: 19.08.2007
+; Przetestowane na kliencie: 4.0.2a
+; Przetestowane na serwerze: Mysterious World (MW_GATE 1.2)
+; Dzialanie: celem programu jest wykorzystanie i zoptymalizowanie pustego
+; miejsca pod oknem gry. Poza przyciskami, pod ktore przypisane sa czary,
+; wyswietla ilosc ziol w plecaku oraz stan kondycji postaci.
+; HISTORIA
+; przerobka skryptu tak,aby byl przydatny dla woja
+; wersja 2.1: okno z uo na wierzch po czarze, alt numlock
+; wersja 2.0: mnostwo usprawnien, lepsza obsluga przyciskow
+; wersja 1.2: dodano algorytm sprawdzania obecnosci statusu postaci
+; wersja 1.1: zmiana kolorow wyswietlanego tekstu, algorytmu odswiezania
+; wersja 1.0: pierwsze publiczne udostepnienie skryptu
+;  ===================================================================
+
+set #LPC 100
+
+set %butla_bial_typ XUF
+set %butla_nieb_typ YUF
+set %butla_stam_typ ZUF
+set %butla_odt_typ NUF
+set %butla_lecz_typ UUF
+
+set %ziola_czosn_typ HGNFAAE
+set %ziola_pajecz_typ KPHPYFE
+set %ziola_zensz_typ BCZTOGE
+set %ziola_jagody_typ KGNFAAE
+set %ziola_siarka_typ NZMKQGE
+set %ziola_perla_typ JGNFAAE
+set %ziola_mandr_typ BENALFE
+
+set %lastDist 0
+set %lastHits 0
+set %wypisano_odl_ziel 0
+
+
+gosub status
+gosub menu_glowne
+gosub zliczanie
+halt
+
+sub menu_glowne
+
+	menu Window Size 655 121
+	menu Window Color Black
+	menu Clear
+	menu Window Title UO Death Hand by Moe [Remake loleQ] (2007)
+	menu Font Name Arial
+	menu Font Size 8
+	menu Font Style b
+	menu Font Color White
+	menu Font Align Center
+	menu Font BGColor Black
+
+	menu Font BGColor Navy
+	menu Button przycisk_1_1 1 1 65 20 PAWEZ ; pawez
+	menu Button przycisk_1_2 1 21 65 20 KRIS ; kris
+	menu Button przycisk_1_3 1 41 65 20 WIDLY ; widly
+	menu Button przycisk_1_4 1 61 65 20 PIKA ; pika
+	menu Button przycisk_1_5 1 81 65 20 KATANA ; katana
+	menu Button przycisk_1_6 1 101 65 20 W.MIECZ ; wielki miecz
+
+	menu Button przycisk_2_1 66 1 65 20 HALKA ; halka
+	menu Button przycisk_2_2 66 21 65 20 LASKA ; laska z ostrzem
+	menu Button przycisk_2_3 66 41 65 20 BERLO ; berlo
+	menu Button przycisk_2_4 66 61 65 20 W.MLOT ; w mlot
+	menu Button przycisk_2_5 66 81 65 20 -
+	menu Button przycisk_2_6 66 101 65 20 -
+
+	menu Font BGColor Maroon
+	menu Button przycisk_4_1 139 1 65 20 B.BIALA
+	menu Button przycisk_4_2 139 21 65 20 B.NIEB
+	menu Button przycisk_4_3 139 41 65 20 B.CZERW
+	menu Button przycisk_4_4 139 61 65 20 B.ODTR
+	menu Button przycisk_4_5 139 81 65 20 B.LECZ
+	menu Button przycisk_4_6 139 101 65 20 B.WYB
+
+	menu Button przycisk_5_1 205 1 65 20 LECZ
+	menu Button przycisk_5_2 205 21 65 20 M.BAND
+
+	menu Font BGColor Green
+	menu Button przycisk_5_3 205 41 65 20 STATUS
+	menu Button przycisk_5_4 205 61 65 20 WIEDZA
+	menu Button przycisk_5_5 205 81 65 20 OSWAJ
+	menu Button przycisk_5_6 205 101 65 20 UWOLN
+
+	menu Font Color Black
+	menu Font BGColor Yellow
+	menu Button przycisk_7_1 588 18 65 20 BANK
+	menu Button przycisk_7_2 588 38 65 20 JEDZENIE
+	menu Button przycisk_7_3 588 58 65 20 SORT.KLE.
+	menu Button przycisk_7_4 588 78 65 20 SORT.ZIO.
+	menu Button przycisk_7_5 588 98 65 20 ANATOMIA
+
+	menu Shape kreska_1 273 4 1 114 3 7 1 White 7 White
+	menu Shape kreska_2 134 4 1 114 3 7 1 White 7 White
+	menu Shape kreska_3 360 4 1 114 3 7 1 White 7 White
+	menu Shape kreska_4 447 4 1 114 3 7 1 White 7 White
+	menu Shape kreska_5 584 4 1 114 3 7 1 White 7 White
+
+	menu Font Color White
+	menu Font BGColor Black
+	menu Text napis_kondycja 280 4 .: KONDYCJA :.
+	menu Text napis_mixy 382 4 .: MIXY :.
+	menu Text napis_regi 459 4 .: REGI PAL/MR :.
+	menu Text napis_makra 590 4 .: MAKRA :.
+	menu Text napis_hp 280 20 hp:
+	menu Text napis_stam 280 36 stam:
+	menu Text napis_mana 280 52 mana:
+	menu Text napis_ar 280 68 ar:
+	menu Text napis_odl 280 84 odlegl:
+	menu Text napis_hits 280 100 hits:
+
+	menu Font Align Left
+	menu Text napis_b_lecz 370 20 b.bial:
+	menu Text napis_b_stam 370 36 b.nieb:
+	menu Text napis_b_odt 370 52 b.czer:
+	menu Text napis_b_wyb 370 68 b.odt:
+	menu Text napis_zloto 370 84 b.lecz:
+	menu Text napis_waga 370 100 waga:
+	menu Text napis_mandr 452 20 w.swiec:
+	menu Text napis_zensz 452 36 jas.diam:
+	menu Text napis_czosn 452 52 bial.perl:
+	menu Text napis_pajecz 452 68 trufle:
+	menu Text napis_siarka 452 84 krew:
+	menu Text napis_perly 452 100 ogn.rub:
+	menu Text napis_jagody 530 20 c.szaf:
+
+	set #menubutton N/A
+	menu Show 1 831
+ 	wait 1
+
+return
+
+sub status
+
+if ( ( #charname = N/A ) && ( #clilogged <> 0 ) )
+{
+	set #SYSMSGCOL 38
+	Event SysMessage Status postaci musi byc wlaczony, zeby makro dzialalo
+poprawnie!
+	wait 5
+	Event Macro 8 2
+	wait 5
+}
+
+if ( #CLILOGGED = 0 )
+{
+ halt
+}
+
+if #MENUBUTTON <> N/A
+{
+
+  if #MENUBUTTON = przycisk_1_1 ; kris VRH
+  {
+   finditem CIK C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+
+  }
+
+  if #MENUBUTTON = przycisk_1_2 l ; widly SRH
+  {
+   finditem VRH C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_1_3 ; pika CUO
+  {
+   finditem SRH C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_1_4 ; katana OMH
+  {
+   finditem CUO C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_1_5 ; wielki miecz BPH
+  {
+   finditem OMH C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_1_6 ; halka YTH
+  {
+   finditem BPH C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_2_1 ; berlo AUO
+  {
+   finditem YTH C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_2_2 ; wojenny mlot AUH
+  {
+   finditem ZTO C
+   set #lobjectid #findid
+   key 0 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_2_3 ; pawez CIK
+  {
+   finditem AUO C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_2_4
+  {
+   finditem AUH C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+  
+  ;if #MENUBUTTON = przycisk_2_5
+  ;{
+   ;event macro 15 40
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 41
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_2_6
+  ;{
+   ;event macro 15 53
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 54
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_3_1
+  ;{
+   ;event macro 15 43
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 44
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_3_2
+  ;{
+   ;event macro 15 30
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 31
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_3_3
+  ;{
+   ;event macro 15 52
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 53
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_3_4
+  ;{
+   ;event macro 15 55
+   ;wait 1
+   ;key 0 CTRL
+   ;set #lspell 56
+   ;set #menubutton N/A
+  ;}
+
+  if #MENUBUTTON = przycisk_4_1 ; biala
+  {
+   finditem XUF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_4_2 ; niebieska
+  {
+   finditem YUF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_4_3 ; czerwona
+  {
+   finditem ZUF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_4_4 ; odtrutka
+  {
+   finditem NUF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_4_5 ; zolta
+  {
+   finditem UUF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_4_6 ; wybuch
+  {
+   finditem AVF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_5_1 ; lecz bandazem
+  {
+   finditem ZLF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+  }
+
+  if #MENUBUTTON = przycisk_5_2 ; myj bandaz
+  {
+   finditem AMF C
+   set #lobjectid #findid
+   key 1 CTRL
+   event macro 17 0
+   set #MENUBUTTON N/A
+  }
+
+  if #MENUBUTTON = przycisk_5_3
+  {
+   event macro 1 0 .status
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_5_4
+  {
+   event macro 1 0 .um Wiedza o zwierzetach
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_5_5
+  {
+   event macro 1 0 .um Oswajanie
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_5_6
+  {
+   event macro 1 0 Uwalniam was, moje bestie!
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  ;if #MENUBUTTON = przycisk_6_1
+  ;{
+   ;event macro 3 0 Ionnsaich Sabaid Ealadh
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_6_2
+  ;{
+   ;event macro 3 0 Jarrood Sabaid Ealadh
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_6_3
+  ;{
+   ;event macro 3 0 Sdhbhal Roiseal
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_6_4
+  ;{
+   ;event macro 3 0 Shiva Sov
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_6_5
+  ;{
+   ;event macro 3 0 Artan Braile
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  ;if #MENUBUTTON = przycisk_6_6
+  ;{
+   ;event macro 3 0 Ceau Sniaghtee
+   ;wait 1
+   ;key 0 CTRL
+   ;set #menubutton N/A
+  ;}
+
+  if #MENUBUTTON = przycisk_7_1
+  {
+   event macro 1 0 Bankierze magazynierze co moge tutaj kupic!
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_7_2
+  {
+    set %jedz 0
+    event macro 8 4
+    set %licz #scnt2 + 50
+    czekaj_skills:
+    if #contname = generic_gump
+       goto info
+    if %licz < #scnt2
+       goto start
+    goto czekaj_skills
+    info:
+    click 259 41
+    set %licz #scnt2 + 40
+    czekaj_info:
+    if #contname = generic_gump
+       goto jedzenie
+    if %licz < #scnt2
+    {
+       if #contname = generic_gump
+       goto info
+       else
+       goto start
+    }
+    goto czekaj_info
+
+    jedzenie:
+    set %glod 0
+    set %bialka 0
+    set %witaminy 0
+    set %weglowodany 0
+    if %jedz = 1
+    {
+       jedz1:
+       set %jedz 0
+       click 38 41
+       wait 10
+       set %licz #scnt2 + 40
+       czekaj_odswiez:
+       if #contname = generic_gump
+          goto jedz
+       if %licz < #scnt2
+       {
+          if #contname = generic_gump
+          goto jedz1
+          else
+          goto start
+       }
+       goto czekaj_odswiez
+    }
+    jedz:
+    savepix 311 260 1
+    if #pixcol = 4294967295
+    {
+       set %licz #scnt2 + 200
+       sound %sciezka
+       display ok UO na wierzch!
+    }
+    if #pixcol = 11392710
+       set %glod 1
+    savepix 311 280 1
+    if #pixcol = 11392710
+       set %bialka 1
+    savepix 311 300 1
+    if #pixcol = 11392710
+       set %witaminy 1
+    savepix 311 320 1
+    if #pixcol = 11392710
+       set %weglowodany 1
+
+    if %glod = 0 && %bialka = 0 && %witaminy = 0 && %weglowodany = 0
+    {
+       finditem MGG
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz
+plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       if #sysmsg = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       scanjournal 1
+       if #journal = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       scanjournal 2
+       if #journal = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       finditem JGI
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem salatki! Uzupelnil zapasy lub
+otworz plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       if #sysmsg = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       scanjournal 1
+       if #journal = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       scanjournal 2
+       if #journal = Czujesz_sie_w_pelni_sil.
+       {
+          set %jedz 1
+          goto jedzenie
+       }
+       finditem SLI
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem ciasteczek! Uzupelnil zapasy lub
+otworz plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       set %jedz 1
+       goto jedzenie
+    }
+    if %glod = 1 && %bialka = 0 && %witaminy = 0 && %weglowodany = 0
+    {
+       finditem ZBM
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem soku kokosowego! Uzupelnil zapasy
+lub otworz plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       set %jedz 1
+       goto jedzenie
+    }
+    if %bialka = 0
+    {
+       if %glod = 1
+       {
+          finditem END
+          if #findkind = -1
+          {
+             set #sysmsgcol 1080
+          event sysmessage Nie znalazlem sera! Uzupelnil zapasy lub otworz
+plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+          }
+          set #lobjectid #findid
+          event macro 17
+          wait 22
+          set %jedz 1
+          goto jedzenie
+       }
+       else
+       {
+          finditem MGG
+          if #findkind = -1
+          {
+             set #sysmsgcol 1080
+          event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz
+plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+          }
+          set #lobjectid #findid
+          event macro 17
+          wait 22
+          set %jedz 1
+          goto jedzenie
+       }
+    }
+    if %witaminy = 0
+    {
+       finditem JGI
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem salatki! Uzupelnil zapasy lub
+otworz plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       set %jedz 1
+       goto jedzenie
+    }
+    if %weglowodany = 0
+    {
+       finditem SLI
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem ciasteczek! Uzupelnil zapasy lub
+otworz plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       set %jedz 1
+       goto jedzenie
+    }
+    if %glod = 0 && %bialka = 1 && %witaminy = 1 && %weglowodany = 1
+    {
+       finditem MGG
+       if #findkind = -1
+       {
+          set #sysmsgcol 1080
+          event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz
+plecak z jedzeniem!
+          sound %sciezka
+          goto start1
+       }
+       set #lobjectid #findid
+       event macro 17
+       wait 22
+       set %jedz 1
+       goto jedzenie
+    }
+    click 311 260 r
+    set #sysmsgcol 1082
+    event sysmessage Zakonczono jedzenie!
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_7_3
+  {
+   event macro 1 0 .sortuj klejnoty
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_7_4
+  {
+   event macro 1 0 .sortuj skladniki
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+  if #MENUBUTTON = przycisk_7_5
+  {
+   event macro 1 0 .um anatomia
+   wait 1
+   key 0 CTRL
+   set #menubutton N/A
+  }
+
+}
+
+return
+
+set %hp_last #hits , / , #maxhits
+set %stam_last #stamina , / , #maxstam
+set %mana_last #mana , / , #maxmana                       %butle_wyb_last%butle_wyb_last
+set %ar_last #AR
+set %hits_last 0
+set %butle_lecz_last 0
+set %butle_stam_last 0
+set %butle_odt_last 0
+set %butle_wyb_last 0
+set %zloto_last 0
+set %waga_last #WEIGHT , / , #MAXWEIGHT
+
+set %ziola_mandr_last 0
+set %ziola_zensz_last 0
+set %ziola_czosn_last 0
+set %ziola_pajecz_last 0
+set %ziola_siarka_last 0
+set %ziola_perla_last 0
+set %ziola_jagody_last 0
+set %ziola_mech_last 0
+set %ziola_szafir_last 0
+set %ziola_koscdem_last 0
+set %ziola_burszt_last 0
+set %ziola_ziemia_last 0
+set %ziola_luski_last 0
+set %ziola_kosci_last 0
+set %ziola_rubiny_last 0
+set %ziola_grzybki_last 0
+set %ziola_drzewo_last 0
+set %ziola_wosk_last 0
+
+sub zliczanie
+menu Font Align Right
+
+HP:
+if #hits > 0
+{
+	if #hits > 60
+	{
+		menu Font Color Green
+	}
+	if ( #hits > 30 && #hits <= 60 )
+	{
+		menu Font Color Yellow
+	}
+	if #hits < 30
+	{
+		menu Font Color Red
+	}
+
+  set %hp_curr #hits , / , #maxhits
+  set %new_hp #hits
+  if ( %hp_curr <> %hp_last )
+  {
+	 menu delete l_hp
+	 menu text l_hp 353 20 %hp_curr
+	 if ( %new_hp < %old_hp )
+	 {
+	  set %dmg %old_hp - %new_hp
+	  event sysmessage Dostalem za %dmg
+   }
+	 set %hp_last #hits , / , #maxhits
+	 set %old_hp #hits
+  }
+}
+if #hits = N/A
+{
+	menu delete l_hp
+	menu Font Color Red
+	menu text l_hp 353 20 -
+}
+
+STAM:
+if #stamina > 0
+{
+	if #stamina > 40
+	{
+		menu Font Color Green
+	}
+	if ( #stamina > 10 && #stamina <= 40 )
+	{
+		menu Font Color Yellow
+	}
+	if #stamina < 10
+	{
+		menu Font Color Red
+	}
+
+  set %stam_curr #stamina , / , #maxstam
+  if ( %stam_curr <> %stam_last )
+  {
+	 menu delete l_stam
+	 menu text l_stam 353 36 %stam_curr
+	 set %stam_last #stamina , / , #maxstam
+  }
+}
+if #stamina = N/A
+{
+	menu delete l_stam
+	menu Font Color Red
+	menu text l_stam 353 36 -
+}
+
+MANA:
+if #mana > 0
+{
+	if #mana > 60
+	{
+		menu Font Color Green
+	}
+	if ( #mana > 20 && #mana <= 60 )
+	{
+		menu Font Color Yellow
+	}
+	if #mana < 20
+	{
+		menu Font Color Red
+	}
+
+  set %mana_curr #mana , / , #maxmana
+  if ( %mana_curr <> %mana_last )
+  {
+	 menu delete l_mana
+	 menu text l_mana 353 52 %mana_curr
+	 set %mana_last #mana , / , #maxmana
+  }
+
+}
+if #mana = N/A
+{
+	menu delete l_mana
+	menu Font Color Red
+	menu text l_mana 353 52 -
+}
+
+AR:
+if N/A notin #AR
+{
+	if #AR > 40
+	{
+		menu Font Color Green
+	}
+	if ( #AR > 10 && #AR < 40 )
+	{
+		menu Font Color Yellow
+	}
+	if #AR < 10
+	{
+		menu Font Color Red
+	}
+
+  set %AR_curr #AR
+  if ( %ar_curr <> %ar_last )
+  {
+	 menu delete l_ar
+	 menu text l_ar 353 68 %ar_curr
+	 set %ar_last #AR
+  }
+}
+if #AR = N/A
+{
+	menu delete l_ar
+	menu Font Color Red
+	menu text l_ar 353 68 -
+}
+
+ODLEGLOSC:
+if ( ( #ENEMYID <> N/A ) && ( #ENEMYHITS <> N/A ) )
+{
+  finditem #ENEMYID
+  set %ogleglosc_curr #FINDDIST
+if ( %lastDist <> %odleglosc_curr )
+{
+  menu delete l_odleglosc
+  menu Font Color Red
+  menu text l_odleglosc 353 84 #FINDDIST
+  set %lastDist #FINDDIST
+}
+ set %wypisano_odl_ziel 0
+}
+
+if ( ( #ENEMYID = N/A ) || ( #ENEMYHITS = N/A ) )
+{
+  if ( %wypisano_odl_ziel <> 1 )
+  {
+  	menu delete l_odleglosc
+  	menu Font Color Green
+	  menu text l_odleglosc 353 84 N/A
+    set %wypisano_odl_ziel 1
+  }
+  set %lastDist 0
+}
+
+HITS:
+if ( ( #ENEMYID <> N/A ) && ( #ENEMYHITS <> N/A ) )
+{
+  if ( #enemyhits > 600 )
+  {
+	 set %ile ( #enemyHits / 40 )
+	 if ( %ile <> %lasthits )
+	 {
+	  menu delete l_hits
+	  menu Font Color Red
+    menu text l_hits 353 100 %ile , %
+    set %lastHits %ile
+   }
+	}
+	else
+	{
+  	 set %ile ( #enemyHits / 40 )
+  	 if ( %ile <> %lasthits )
+  	 {
+  	  menu delete l_hits
+  	  menu Font Color Red
+      menu text l_hits 353 100 %ile , %
+      set %lastHits %ile
+     }
+	}
+}
+
+if ( ( #ENEMYID = N/A ) || ( #ENEMYHITS = N/A ) )
+{
+  set %ile N/A
+  if ( %ile <> %lastHits )
+  {
+    menu delete l_hits
+    menu Font Color Green
+    menu text l_hits 353 100 N/A
+    set %lastHits %ile
+  }
+}
+
+
+BUTLE:
+
+BIALA:
+findItem %butla_bial_typ C
+	if #findkind <> -1
+	{
+		set %butle_bial_curr #FindStack
+	}
+	if #findkind = -1
+		set %butle_bial_curr 0
+
+	if %butle_bial_curr > 5
+	{
+		menu Font Color Green
+	}
+	if %butle_bial_curr <= 5
+	{
+		menu Font Color Yellow
+	}
+	if %butle_bial_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %butle_bial_curr <> %butle_bial_last )
+  {
+   menu delete l_butla_bial
+   menu text l_butla_bial 442 20 %butle_bial_curr
+   set %butle_lecz_last #FindStack
+  }
+
+NIEBIESKA:
+findItem %butla_nieb_typ C
+	if #findkind <> -1
+	{
+		set %butle_nieb_curr #FindStack
+	}
+	if #findkind = -1
+		set %butle_nieb_curr 0
+
+	if %butle_nieb_curr > 5
+	{
+		menu Font Color Green
+	}
+	if %butle_nieb_curr <= 5
+	{
+		menu Font Color Yellow
+	}
+	if %butle_nieb_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %butle_nieb_curr <> %butle_nieb_last )
+  {
+   menu delete l_butla_nieb
+   menu text l_butla_nieb 442 36 %butle_nieb_curr
+   set %butle_nieb_last #FindStack
+  }
+
+CZERWONE:
+findItem %butla_stam_typ C
+	if #findkind <> -1
+	{
+		set %butle_stam_curr #FindStack
+	}
+	if #findkind = -1
+		set %butle_stam_curr 0
+
+	if %butle_stam_curr > 5
+	{
+		menu Font Color Green
+	}
+	if %butle_ostam_curr <= 5
+	{
+		menu Font Color Yellow
+	}
+	if %butle_stam_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %butle_stam_curr <> %butle_stam_last )
+  {
+   menu delete l_butla_stam
+   menu text l_butla_stam 442 52 %butle_stam_curr
+   set %butle_stam_last #FindStack
+  }
+
+POMARANCZOWE:
+findItem %butla_odt_typ C
+	if #findkind <> -1
+	{
+		set %butle_odt_curr #FindStack
+	}
+	if #findkind = -1
+		set %butle_odt_curr 0
+
+	if %butle_odt_curr_curr > 5
+	{
+		menu Font Color Green
+	}
+	if %butle_odt_curr <= 5
+	{
+		menu Font Color Yellow
+	}
+	if %butle_odt_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %butle_odt_curr <> %butle_odt_last )
+  {
+   menu delete l_butla_odt
+   menu text l_butla_odt 442 68 %butle_odt_curr
+   set %butle_odt_last #FindStack
+  }
+
+ZOLTE:
+findItem %butla_lecz_typ C
+	if #findkind <> -1
+	{
+		set %butle_lecz_curr #FindStack
+	}
+	if #findkind = -1
+		set %butle_lecz_curr 0
+
+	if %butle_lecz_curr_curr > 5
+	{
+		menu Font Color Green
+	}
+	if %butle_lecz_curr <= 5
+	{
+		menu Font Color Yellow
+	}
+	if %butle_lecz_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %butle_lecz_curr <> %butle_lecz_last )
+  {
+   menu delete l_butla_lecz
+   menu text l_butla_lecz 442 68 %butle_lecz_curr
+   set %butle_lecz_last #FindStack
+  }
+
+WAGA:
+if N/A notin #WEIGHT
+{
+  set %waga_curr #WEIGHT , / , #MAXWEIGHT
+	if #WEIGHT < 100
+	{
+		menu Font Color Green
+	}
+	if ( #WEIGHT > 100 && #WEIGHT < 140 )
+	{
+		menu Font Color Yellow
+	}
+	if #WEIGHT > 140
+	{
+		menu Font Color Red
+	}
+
+  if ( %waga_curr <> %waga_last )
+  {
+   menu delete l_waga
+	 menu text l_waga 442 100 #WEIGHT , / , #MAXWEIGHT
+   set %waga_last #WEIGHT , / , #MAXWEIGHT
+  }
+}
+if #WEIGHT = N/A
+{
+	menu delete l_waga
+	menu Font Color Red
+	menu text l_waga 442 100 -
+}
+
+MANDRAGORA:
+findItem %ziola_mandr_typ C
+	if #findkind <> -1
+	{
+		set %ziola_mandr_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_mandr_curr 0
+
+	if %ziola_mandr_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_mandr_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_mandr_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_mandr_curr <> %ziola_mandr_last )
+  {
+   menu delete l_ziolo_mandr
+   menu text l_ziolo_mandr 520 20 %ziola_mandr_curr
+   set %ziola_mandr_last %ziola_mandr_curr
+  }
+
+ZENSZEN:
+findItem %ziola_zensz_typ C
+	if #findkind <> -1
+	{
+		set %ziola_zensz_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_zensz_curr 0
+
+	if %ziola_zensz_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_zensz_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_zensz_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_zensz_curr <> %ziola_zensz_last )
+  {
+   menu delete l_ziolo_zensz
+   menu text l_ziolo_zensz 520 36 %ziola_zensz_curr
+   set %ziola_zensz_last %ziola_zensz_curr
+  }
+
+
+
+CZOSNEK:
+findItem %ziola_czosn_typ C
+	if #findkind <> -1
+	{
+		set %ziola_czosn_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_czosn_curr 0
+
+	if %ziola_czosn_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_czosn_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_czosn_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_czosn_curr <> %ziola_czosn_last )
+  {
+   menu delete l_ziolo_czosn
+   menu text l_ziolo_czosn 520 52 %ziola_czosn_curr
+   set %ziola_czosn_last %ziola_czosn_curr
+  }
+
+
+
+PAJECZYNA:
+findItem %ziola_pajecz_typ C
+	if #findkind <> -1
+	{
+		set %ziola_pajecz_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_pajecz_curr 0
+
+	if %ziola_pajecz_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_pajecz_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_pajecz_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_pajecz_curr <> %ziola_pajecz_last )
+  {
+   menu delete l_ziolo_pajecz
+   menu text l_ziolo_pajecz 520 68 %ziola_pajecz_curr
+   set %ziola_pajecz_last %ziola_pajecz_curr
+  }
+
+SIARKA:
+findItem %ziola_siarka_typ C
+	if #findkind <> -1
+	{
+		set %ziola_siarka_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_siarka_curr 0
+
+	if %ziola_siarka_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_siarka_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_siarka_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_siarka_curr <> %ziola_siarka_last )
+  {
+   menu delete l_ziolo_siarka
+   menu text l_ziolo_siarka 520 84 %ziola_siarka_curr
+   set %ziola_siarka_last %ziola_siarka_curr
+  }
+
+PERLA:
+findItem %ziola_perla_typ C
+	if #findkind <> -1
+	{
+		set %ziola_perla_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_perla_curr 0
+
+	if %ziola_perla_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_perla_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_perla_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_perla_curr <> %ziola_perla_last )
+  {
+   menu delete l_ziolo_perla
+   menu text l_ziolo_perla 520 100 %ziola_perla_curr
+   set %ziola_perla_last %ziola_perla_curr
+  }
+
+JAGODY:
+findItem %ziola_jagody_typ C
+	if #findkind <> -1
+	{
+		set %ziola_jagody_curr #findstack
+	}
+	if #findkind = -1
+		set %ziola_jagody_curr 0
+
+	if %ziola_jagody_curr > 20
+	{
+		menu Font Color Green
+	}
+	if %ziola_jagody_curr <= 20
+	{
+		menu Font Color Yellow
+	}
+	if %ziola_jagody_curr = 0
+	{
+		menu Font Color Red
+	}
+
+  if ( %ziola_jagody_curr <> %ziola_jagody_last )
+  {
+   menu delete l_ziolo_jagoda
+   menu text l_ziolo_jagoda 580 20 %ziola_jagody_curr
+   set %ziola_jagody_last %ziola_jagody_curr
+  }
+  
+gosub status
+gosub zliczanie

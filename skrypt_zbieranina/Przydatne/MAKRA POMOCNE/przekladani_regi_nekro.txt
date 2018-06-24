@@ -1,0 +1,192 @@
+;UZUPELNIANIE REGOW I BUTLI by Raist ver 1.10
+;Makro dobiera i odklada regi i butle do ustalonej
+;wartosci zdefiniowanej w skrypcie. Oba plecaki pomiedzy
+;ktorymi odbywa sie przenoszenie MUSZA byc otwarte.
+;W plecaku z zapasami regow MUSZA znajdowac sie tez zapasy butli.
+;Capslock w komentarzach oznacza koniecznosc podania wartosci.
+;domyslnie ustawilem 40 - ilosc ziol pro pk orderu :/
+
+initevents
+ignoreitem XNJNRYD    ;WPISZ ID WORKA WAMP DRU WILK
+                      ;JESLI TAKOWY POSIADASZ
+
+set %ziolo 40         ;ILOSC STANDARDOWYCH ZIOL DO PRZENIESIENIA
+set %szafir 15        ;ILOSC SZAFIROW
+set %demo 10          ;ILOSC KOSCI DEMONA
+set %fiolet 15        ;ILOSC FIOLETOW
+set %zolta 25         ;ILOSC ZOLTYCH
+set %czerwona 25      ;ILOSC CZERWONYCH
+set %pomarancz 5      ;ILOSC POMARANCZY
+set %mana 3           ;ILOSC MIKSTUR MANY
+set %kosci 5          ;ILOSC KOSCI
+set %luski 5          ;ILOSC LUSEK WEZA
+set %krewsm 5         ;ILOSC KRWI SMOKA
+set %skrzydla 5       ;ILOSC SKRZYDEL NIETOPERZA
+set %krwawe 5         ;ILOSC KRWAWEGO NASIENIA
+set %pyl 5            ;ILOSC WULKANICZNEGO PYLU
+set %oko 5            ;ILOSC OCZY BEHOLDERA
+set %obsydian 5       ;ILOSC OBSYDIANU
+set %gdzie 0   ;start od rega 0
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z ktorego chcesz przelozyc ziolo
+repeat ;petla czeka az wskazesz pojemnik z regami
+wait 1
+until #targcurs = 0
+set %ple1 #ltargetid  ;ustawia plecak z zapasem regow
+
+finditem CKF_ZJF C_ , #BACKPACKID ;znajduje worek lub plecakw plecaku glownym
+if #findkind = -1
+   {
+   set %ple2 #backpackid
+   goto start
+   }
+set %ple2 #findid ;ustawia plecak ktory ma uzupelniac
+
+
+start:
+set %gdzie %gdzie + 1  ;inkrementacja - skacze po kolejnych regach
+if %gdzie = 1      ;standardowe 8 regow maga
+   set %reg MZF
+if %gdzie = 2
+   set %reg SZF
+if %gdzie = 3
+   set %reg KZF
+if %gdzie = 4
+   set %reg JZF
+if %gdzie = 5
+   set %reg RZF
+if %gdzie = 6
+   set %reg WZF
+if %gdzie = 7
+   set %reg KUF
+if %gdzie = 8
+   set %reg JUF
+if %gdzie = 9
+   {
+   set %reg FVF        ;szafiry
+   set %ziolo %szafir
+   }
+if %gdzie = 10
+   {
+   set %reg OZF         ;kosci demona
+   set %ziolo %demo
+   }
+if %gdzie = 11
+   {
+   set %reg TUF         ;wybuch
+   set %ziolo %fiolet
+   }
+if %gdzie = 12
+   {
+   set %reg UUF          ;zolta
+   set %ziolo %zolta
+   }
+if %gdzie = 13
+   {
+   set %reg ZUF           ;czerwona
+   set %ziolo %czerwona
+   }
+if %gdzie = 14
+   {
+   set %reg NUF             ;pomaranczowa
+   set %ziolo %pomarancz
+   }
+if %gdzie = 15
+   {
+   set %reg PUF        ;potek many
+   set %ziolo %mana
+   }
+if %gdzie = 16
+   {
+   set %reg GUF        ;kosci
+   set %ziolo %kosci
+   }
+if %gdzie = 17
+   {
+   set %reg UZF        ;luski weza
+   set %ziolo %luski
+   }
+if %gdzie = 18
+   {
+   set %reg QZF        ;krew smoka
+   set %ziolo %krewsm
+   }
+if %gdzie = 19
+   {
+   set %reg IUF        ;skrzydla nietoperza
+   set %ziolo %skrzydla
+   }
+if %gdzie = 20
+   {
+   set %reg EUF        ;krwawe nasienie
+   set %ziolo %krwawe
+   }
+if %gdzie = 21
+   {
+   set %reg TZF        ;wulkaniczny pyl
+   set %ziolo %pyl
+   }
+if %gdzie = 22
+   {
+   set %reg LZF        ;oczy beholdera
+   set %ziolo %oko
+   }
+if %gdzie = 23
+   {
+   set %reg VZF        ;obsydian
+   set %ziolo %obsydian
+   }
+if %gdzie = 24
+   goto koniec
+   
+przenoszenie:
+finditem %reg C_ , %ple2 ;znajduje ziolo w plecaku
+set %nies %ziolo - #findstack ;wylicza ile brakuje
+if %nies = 0 ;kiedy ma nie przenosic
+   goto start
+if %nies < 0 ;kiedy ma odlozyc
+   {
+   set %nies #findstack - %ziolo
+   exevent drag #findid %nies ;podnies
+   repeat ;petla czeka az wskazesz pojemnik z regami
+   finditem %reg C_ , %ple2 ;znajduje ziola w twoim plecaku
+   until #findstack = %ziolo
+   finditem %reg C_ , %ple1
+   set %temp %nies + #findstack
+   exevent dropc %ple1 ;odloz
+   repeat
+   finditem %reg C_ , %ple1 ;znajduje ziola w plecaku z zapasami
+   until #findstack = %temp
+   goto start
+   }
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+if #findkind = -1 ;kiedy nie masz zapasow ziol
+   {
+   set #sysmsgcol 1080
+   event sysmessage Nie znalazlem ziola, pomijam
+   goto start
+   }
+set %tmp #findstack - %nies
+if %tmp < 0
+   {
+   set %tmp 0
+   set %nies #findstack
+   }
+exevent drag #findid %nies ;podnies
+repeat
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+until #findstack = %tmp
+finditem %reg C_ , %ple2
+set %tmp #findstack + %nies
+exevent dropc %ple2 ;odloz
+repeat
+finditem %reg C_ , %ple2
+until #findstack = %tmp
+goto start
+
+koniec:
+set #sysmsgcol 1063
+event sysmessage Skonczylem przekladac
+halt
+

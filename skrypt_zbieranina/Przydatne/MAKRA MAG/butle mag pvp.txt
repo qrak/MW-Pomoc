@@ -1,0 +1,84 @@
+initEvents
+set %klawisz1 delete ; czerwony mix
+set %klawisz2 f11 ; fioletowy mix
+set %klawisz3 insert ; zolty mix
+set %klawisz4 end ; pomaranczowy mix
+set %klawisz5 home ; dobycie kija
+set %klawisz6 PGDN ; mix many
+linesPerCycle 50
+//REFRESH
+onHotKey %klawisz1
+set %miksID GCOCUXF
+onHotKey %klawisz1
+gosub miks
+//WYBUCH
+onHotKey %klawisz2
+set %miksID YZNCUXF
+onHotKey %klawisz2
+gosub miks
+//ZOLTA
+onHotKey %klawisz3
+set %miksID RCOCUXF
+onHotKey %klawisz3
+gosub miks
+//POMARANCZOWA
+onHotKey %klawisz4
+set %miksID WCOCUXF
+onHotKey %klawisz4
+gosub miks
+//DOBYCIE KIJA
+onHotKey %klawisz5
+set %miksID PMH_CQF_RPF_GFF_BFR
+onHotKey %klawisz5
+gosub miks2
+//MIX MANY
+onHotKey %klawisz6
+set %miksID ZIEAUXF
+onHotKey %klawisz6
+gosub miks
+goto klawiszPetla
+sub miks2
+miksPetla2:
+finditem %miksID
+if #findkind = -1
+{
+event macro 2 0 hmmm..
+goto klawiszPetla
+}
+if #findkind = 1
+{
+ignoreitem #findid
+goto miksPetla2
+}
+if #findkind = 0
+{
+ignoreitem reset
+set #lobjectid #findid
+wait 1
+event macro 17
+target 2s
+event macro 23
+}
+return
+sub miks
+miksPetla:
+finditem %miksID
+if #findkind = -1
+{
+event macro 2 0 Przeszukuje nerwowo plecak...
+goto klawiszPetla
+}
+if #findkind = 1
+{
+ignoreitem #findid
+goto miksPetla
+}
+if #findkind = 0
+{
+ignoreitem reset
+set #lobjectid #findid
+wait 1
+event macro 17
+wait 10
+}
+return

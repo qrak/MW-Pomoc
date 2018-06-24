@@ -1,0 +1,84 @@
+;Tworzenie Runebookow by Raist
+
+initevents
+
+start:
+finditem PBG C;
+set #lobjectid #findid
+
+if #str = 62 ; TU WPISZ WARTOSC SWOJEGO STR BEZ BLESSA
+{
+event macro 15 16
+target 10s
+event macro 23
+wait 5
+}
+finditem QWL C;    ;runka
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM RUNEK
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+event macro 17 0
+target 10s
+event macro 22 0
+finditem MMF C;    ;zwoje
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM JUZ ZWOJKOW
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 10s
+event macro 22 0
+finditem WTL C;      ;recall
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM RECALLI
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 10s
+event macro 22 0
+finditem YUL C;        ;gate
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM GATEOW
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+target 10s
+event macro 22 0
+
+czekaj:
+if Nie_udalo in #sysmsg || Stworzyles in #sysmsg || Stworzylas in #sysmsg || Nauczasz in #sysmsg || Your in #sysmsg
+   goto sprawdzglod
+goto czekaj
+   
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+else
+goto petla

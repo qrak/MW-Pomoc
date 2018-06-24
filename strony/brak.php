@@ -1,0 +1,1 @@
+Wiesz coś na temat tego artykułu? Skontaktuj się z nami w dziale <a href="index.php?strona=kontakt">kontakt</a> .

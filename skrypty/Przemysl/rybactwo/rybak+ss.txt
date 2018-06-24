@@ -1,0 +1,44 @@
+ initevents
+ set #sysmsgcol 1080
+ sub makroczek
+ {
+ if #contkind = WLQB
+ {
+ sound ringin.wav
+ pause
+ }
+ return
+ }
+ start:
+ set #ltargetx #charPosX - 2 - #random % 4
+ set #ltargetY #charPosY + #random % 6 - #random % 6
+ set %a #ltargetx - #charPosX
+ set %b #ltargety - #charPosY
+ event sysmessage X: %a Y: %b
+ goto loop
+ loop:
+ deletejournal
+ wait 10
+ scanjournal 1
+ gosub makroczek
+ event macro 13 32
+ gosub makroczek
+ event macro 17
+ target 1s
+ gosub makroczek
+ event macro 22
+ wait 1s 1s
+ gosub makroczek
+ wait 1s
+ gosub makroczek
+ wait 1s
+ gosub makroczek
+ deletejournal
+ wait 10
+ scanjournal 1
+ if Wyglada_jakby_juz_tu_nie_bylo in #journal
+ {
+ event sysmessage Zmieniam miejsce lowienia
+ goto start
+> }
+ goto loop

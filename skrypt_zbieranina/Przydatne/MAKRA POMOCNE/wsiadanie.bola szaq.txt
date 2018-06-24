@@ -1,0 +1,37 @@
+start:
+event sysmessage -=Bola w pyszczek  He He =-
+keyloop:
+onHotKey F4 ; <-- TU WPISZ KLAWISZ ODPOWIADAJACY ZA COMBO ZWIERZAK+FLAM
+gosub combo
+onHotKey F8 ; <-- TU WPISZ KLAWISZ ODPOWIADAJACY ZA WSIADANIE NA ZWIERZAKA
+gosub wsiadanie
+goto keyloop
+sub combo
+finditem HRGJEB ; <-- TU WPISZ ID SWOJEJ POSTACI
+set #lobjectid #findid
+event macro 17 0 ;last object
+wait 1
+finditem KTO C
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage Nie masz boli
+return
+}
+set #lobjectid #findid
+event macro 17 0 ;last object
+set #sysmsgcol 1063
+set %butl ( #findstack - 1 )
+event sysmessage Zostalo %butl boli
+wait 1
+key w alt
+event macro 3 0 Za mna!!
+return
+sub wsiadanie
+event macro 1 0 stop
+event macro 1 0 za mna!
+finditem REXVKB ; <-- TU WPISZ id ZwIERZAKA (ka¿da zmiana zwierzaka = koniecznoœæ zmiany tego wpisu)
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+

@@ -1,0 +1,265 @@
+;Skrypt bY SabiK
+;jedzenie.txt
+;Wersja 1.2
+;Skrypt skanuje poziom glodu, bialka, witamin i weglowodanow (TYLKO norma lub optymalny) i zaspokaja go do poziomu optymalnego
+;Gdy nie masz jedzenia skrypt odtwarza dzwiek %sciezka
+;!!!UWAGA!!!
+;Musisz miec na widoku chleb, salatke, ciasteczka, ser i sok kokosowy
+;W tym czasie musi byc aktywne okno ultimy
+;Najlepiej miec wylaczone inne skrypty wykonujace czynnosci dlugoterminowe (przeszkadzajace w jedzeniu, np. magia, krawiec, alchemia itd.)
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %sciezka C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav         ;Tutaj ustaw sciezke do dzwieku
+;------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [jedzenie] odpalony (by SabiK)
+wait 1
+
+start1:
+if #sysmsg = Czujesz_sie_dobrze.
+   goto start
+goto start1
+
+start:
+set %jedz 0
+event macro 8 4
+set %licz #scnt2 + 50
+repeat
+if %licz < #scnt2
+   goto start
+until #contname = generic_gump
+info:
+click 259 41
+set %licz #scnt2 + 40
+repeat
+if %licz < #scnt2
+{
+   if #contname = generic_gump
+   goto info
+   else
+   goto start
+}
+until #contname = generic_gump
+
+jedzenie:
+set %glod 0
+set %bialka 0
+set %witaminy 0
+set %weglowodany 0
+if %jedz = 1
+{
+   jedz1:
+   set %jedz 0
+   click 38 41
+   wait 10
+   set %licz #scnt2 + 40
+   czekaj_odswiez:
+   if #contname = generic_gump
+      goto jedz
+   if %licz < #scnt2
+   {
+      if #contname = generic_gump
+      goto jedz1
+      else
+      goto start
+   }
+   goto czekaj_odswiez
+}
+jedz:
+savepix 311 260 1
+if #pixcol = 4294967295
+{
+   set %licz #scnt2 + 100
+   sound %sciezka
+   display ok UO na wierzch!
+}
+if #pixcol = 11392710
+   set %glod 1
+savepix 311 280 1
+if #pixcol = 11392710
+   set %bialka 1
+savepix 311 300 1
+if #pixcol = 11392710
+   set %witaminy 1
+savepix 311 320 1
+if #pixcol = 11392710
+   set %weglowodany 1
+
+if %glod = 0 && %bialka = 0 && %witaminy = 0 && %weglowodany = 0
+{
+   finditem MGG
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   if #sysmsg = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   scanjournal 1
+   if #journal = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   scanjournal 2
+   if #journal = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   finditem JGI
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem salatki! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   if #sysmsg = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   scanjournal 1
+   if #journal = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   scanjournal 2
+   if #journal = Czujesz_sie_w_pelni_sil.
+   {
+      set %jedz 1
+      goto jedzenie
+   }
+   finditem SLI
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem ciasteczek! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   set %jedz 1
+   goto jedzenie
+}
+if %glod = 1 && %bialka = 0 && %witaminy = 0 && %weglowodany = 0
+{
+   finditem ZBM
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem soku kokosowego! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   set %jedz 1
+   goto jedzenie
+}
+if %bialka = 0
+{
+   if %glod = 1
+   {
+      finditem END
+      if #findkind = -1
+      {
+         set #sysmsgcol 1080
+      event sysmessage Nie znalazlem sera! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+      }
+      set #lobjectid #findid
+      event macro 17
+      wait 22
+      set %jedz 1
+      goto jedzenie
+   }
+   else
+   {
+      finditem MGG
+      if #findkind = -1
+      {
+         set #sysmsgcol 1080
+      event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+      }
+      set #lobjectid #findid
+      event macro 17
+      wait 22
+      set %jedz 1
+      goto jedzenie
+   }
+}
+if %witaminy = 0
+{
+   finditem JGI
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem salatki! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   set %jedz 1
+   goto jedzenie
+}
+if %weglowodany = 0
+{
+   finditem SLI
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem ciasteczek! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   set %jedz 1
+   goto jedzenie
+}
+if %glod = 0 && %bialka = 1 && %witaminy = 1 && %weglowodany = 1
+{
+   finditem MGG
+   if #findkind = -1
+   {
+      set #sysmsgcol 1080
+      event sysmessage Nie znalazlem chleba! Uzupelnil zapasy lub otworz plecak z jedzeniem!
+      sound %sciezka
+      goto start1
+   }
+   set #lobjectid #findid
+   event macro 17
+   wait 22
+   set %jedz 1
+   goto jedzenie
+}
+click 311 260 r
+set #sysmsgcol 1082
+event sysmessage Zakonczono jedzenie!
+goto start1
+

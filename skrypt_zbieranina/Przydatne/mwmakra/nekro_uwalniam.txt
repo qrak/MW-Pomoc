@@ -1,0 +1,87 @@
+initevents
+start:
+wait 1
+wait 1
+mana:
+if #mana < 50 ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+wait 1s
+event macro 13 46
+goto sprawdzmedit
+}
+if #str = 6
+  goto bless
+if #HITS < 1
+  goto heal
+goto czaruj
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+goto sprawdzglod
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+czaruj:
+event macro 1 0 Nutu Magistri Supplicare  ;mana vamp
+wait 2s
+goto czekaj
+czekaj:
+scanjournal 1
+if #TARGCURS = 1
+  {
+  event macro 22 0 ;last target
+  wait 10
+  event macro 1 0 uwalniam was
+  wait 10
+  goto start
+  }
+if Czar_sie in #JOURNAL
+  goto start
+if Brakuje_Ci in #JOURNAL
+  {
+  set #sysmsgcol 1080
+  event sysmessage SKLADNIKI
+  sound C:\missile.wav
+  halt
+  }
+if You_skill in #JOURNAL
+  goto start
+if Czujesz_swoja in #JOURNAL
+  goto start
+else
+   goto czekaj
+bless:
+event macro 15 16
+target 100s
+event macro 23
+goto start
+heal:
+event macro 15 28 ;in vas mani
+target 50s
+event macro 23 ;target self
+goto start
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+if Your_skill in #sysmsg
+goto start
+else
+goto petla

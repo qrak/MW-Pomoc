@@ -1,0 +1,28 @@
+set %jrnl #jindex
+start:
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if You_see:_ in #journal
+         {
+         if You_see:_cave_wall in #journal || You_see:_marble_wall in #journal || You_see:_stone_pavers in #journal || You_see:_dungeon_wall in #journal || You_see:_Saori_Tenalis in #journal || You_see:_Elorand in #journal || You_see:_klacz in #journal || You_see:_kon in #journal  || You_see:_Sinafaye_Evi'nre in #journal || You_see:_[Chaos] in #journal || You_see:_Gibbin_Plumberg in #journal || You_see:_Callendula in #journal || You_see:_Ulug in #journal || You_see:_czarnulka in #journal
+         goto start
+         set #sysmsgcol 1080
+         event sysmessage KTOS IDZIE!!
+         sound D:\torpeda.wav
+         wait 4s
+         }
+      }
+      if Czujesz_sie_dobrze in #journal
+{
+   sound c:\1.wav
+   set #sysmsgcol 1082
+   event sysmessage ZJEDZ COS!!
+}
+}
+
+
+

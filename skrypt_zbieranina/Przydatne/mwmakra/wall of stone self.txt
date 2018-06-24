@@ -1,0 +1,9 @@
+initevents
+x
+event macro 15 23
+wait 1s
+event macro 23 0
+if #MANA < 65
+event macro 13 46
+if Zakonczyles in #journal
+goto x

@@ -1,0 +1,22 @@
+initevents
+set %profile 436_259
+
+keyloop:
+onHotKey F9
+gosub F9
+goto keyloop
+
+sub F9
+finditem MZRMPVD C ;TU WPISZ id RUNEBOOKA
+set #lobjectid #findid
+event macro 17 0 ;last object
+czeka:
+if #CONTSIZE = %profile
+{
+click 249 209  ;TU WPISZ POZYCJE GDZIE MA KLIKNAC NA RUNKE
+return
+}
+else
+{
+goto czeka
+}

@@ -1,0 +1,133 @@
+;autor: ReDrack
+;Skrypt sluzy do przekladania jedzenia (chleb, surowka z salaty, sok kokosowy, ciasteczka) do pojemnika
+;Jako pojemnik mozna wskazac plecak lub worek (moze byc zamkniety), a samo jedzenie bedzie przekladane z glownego plecaka
+;Na poczatku wpisujemy imie swojej postaci, kilka linijek ponizej (objasnienia przy poni¿szym poleceniu)
+;Aby skrypt zaczal przekladac jedzenie nalezy uzyc emotki *uklada jedzenie*
+;UWAGA! Skrypt jest przeznaczony do desktopa shardu MW, nie odpowiadam za dzialanie skryptu na innych desktopach
+;W razie problemow lub ewentualnych brakow prosze o kontakt ze mna na ircu (nick: Redrack lub Redrack|AW)
+
+initevents
+set %charname Dormor        ;imie Twojej postaci (UWAGA! zamiast spacji [ ] wpisujemy podloge [_], np. Redrack_Valgrave)
+set #sysmsgcol 1100
+set %rdz 0
+
+start:
+scanjournal 1
+if %charname , :_*uklada* in #journal
+{
+   plecak:
+   set #targcurs 1
+   event sysmessage Wskaz plecak/worek na jedzenie:
+   wait 5
+   wybieranie:
+   if #targcurs = 1
+      goto wybieranie
+   if #targcurs = 0
+   {
+      set %pojemnik #ltargetid
+      if #lobjecttype = ZJF
+      {
+         event sysmessage Wybrales plecak!
+         set %rdz 1
+      }
+      if #lobjecttype = CKF
+      {
+         event sysmessage Wybrales worek!
+         set %rdz 2
+      }
+      if %rdz = 0
+      {
+         event sysmessage Wskazales bledny pojemnik! Przekladanie jedzenia anulowane!
+         goto start
+      }
+      goto ukladanie
+   }
+   goto plecak
+   ukladanie:
+   set #lobjectid %pojemnik
+   event macro 17 0
+   wait 5
+   if #contid <> #lobjectid
+      goto ukladanie
+   set %poziomx #contposx
+   set %poziomy #contposy
+   chleb:
+   if %rdz = 1
+   {
+      set %chlebx %poziomx + 60
+      set %chleby %poziomy + 70
+   }
+   if %rdz = 2
+   {
+      set %chlebx %poziomx + 35
+      set %chleby %poziomy + 40
+   }
+   przekchleb:
+   finditem MGG C_ , #backpackid
+   if #findkind <> 0
+      goto surowka
+   event drag #findid
+   click %chlebx %chleby p
+   goto przekchleb
+   surowka:
+   if %rdz = 1
+   {
+      set %surowkax %poziomx + 170
+      set %surowkay %poziomy + 70
+   }
+   if %rdz = 2
+   {
+      set %surowkax %poziomx + 120
+      set %surowkay %poziomy + 40
+   }
+   przeksurowka:
+   finditem JGI C_ , #backpackid
+   if #findkind <> 0
+      goto sok
+   event drag #findid
+   click %surowkax %surowkay p
+   goto przeksurowka
+   sok:
+   if %rdz = 1
+   {
+      set %sokx %poziomx + 60
+      set %soky %poziomy + 140
+   }
+   if %rdz = 2
+   {
+      set %sokx %poziomx + 50
+      set %soky %poziomy + 110
+   }
+   przeksok:
+   finditem ZBM C_ , #backpackid
+   if #findkind <> 0
+      goto ciasteczka
+   event drag #findid
+   click %sokx %soky p
+   goto przeksok
+   ciasteczka:
+   if %rdz = 1
+   {
+      set %ciasteczkax %poziomx + 170
+      set %ciasteczkay %poziomy + 140
+   }
+   if %rdz = 2
+   {
+      set %ciasteczkax %poziomx + 120
+      set %ciasteczkay %poziomy + 120
+   }
+   przekciasteczka:
+   finditem SLI C_ , #backpackid
+   if #findkind <> 0
+      goto finish
+   event drag #findid
+   click %ciasteczkax %ciasteczkay p
+   goto przekciasteczka
+   finish:
+   event sysmessage Hmm... wyglada na to, ze juz wszystko przelozone :)
+   goto start
+}
+goto start
+
+
+

@@ -1,0 +1,83 @@
+initevents
+set %profile 520_390
+
+starcik:
+finditem DYM G_2
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage STOISZ ZA DALEKO OD KSIEGI
+}
+set %ksiazka #findid
+start:
+onhotkey F6 alt
+halt
+set #lobjectid %ksiazka
+event macro 17 0 ;last object
+wait 1
+set %czas #scnt2 + 10
+
+inskr:
+if #CONTSIZE = %profile
+{
+klik:
+click 474 302  ; click
+wait 1
+if #contname = generic_gump
+{
+if #CONTSIZE = %profile
+goto start
+sound C:\missile.wav
+wait 4s
+goto start
+}
+goto start
+}
+if #CONTNAME = waiting_gump && #contsize = 203_121
+{
+wait 10
+if #clixres = 800
+click 404 330
+if #clixres = 640
+click 318 269
+goto loguj
+}
+if %czas > #scnt2
+goto klik
+else
+{
+goto inskr
+}
+
+loguj:
+if #contname = MainMenu_gump
+{
+msg si50e3pe   ;<--WPISZ SWOJE HASLO NA KONTO
+wait 10
+key enter
+wait 10
+goto serwer
+}
+else
+goto loguj
+
+serwer:
+if #contname = normal_gump
+{
+click 622 448
+wait 10
+goto postac
+}
+else
+goto serwer
+
+postac:
+if #contname = Login_gump
+{
+click 622 448
+wait 5s
+sound C:\missile.wav ;SCIEZKA DO DZWIEKU
+goto starcik
+}
+else
+goto postac

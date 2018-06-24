@@ -1,0 +1,50 @@
+:created by blackstyle
+set %targcurs 1
+set #sysmsgcol 1264
+event sysmessage Wskaz cel w jaki ma byc rzucany czar.
+czekaj_wskaz:
+if #targcurs = 1
+   goto czekaj_wskaz
+set %lt #ltargetid
+set #sysmsgcol 1264
+event sysmessage Zapisano.
+initevents:
+start:
+event macro 1 ^ .rzuc m groza
+czekaj:
+if #targcurs = 1
+goto cel
+if nie_udalo_sie in #sysmsg
+goto start
+if many in #sysmsg
+goto medyta
+if sklad in #sysmsg
+goto przerwij
+goto czekaj
+cel:
+set #ltargetid %lt
+event macro 25
+event macro 22
+event macro 22
+event macro 22
+if #targcurs = 1
+goto cel
+goto start
+medyta:
+wait 8
+event macro 13 46
+lecimedyta:
+if konczysz in #sysmsg
+goto start
+if nie_mozesz in #sysmsg
+goto czekaj2
+if straciles in #sysmsg
+goto start
+goto lecimedyta
+czekaj2:
+wait 190
+goto medyta
+przerwij:
+halt
+event sysmessage niemasz regow skrypt wylaczony
+

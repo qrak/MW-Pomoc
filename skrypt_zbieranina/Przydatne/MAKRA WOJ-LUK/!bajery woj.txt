@@ -1,0 +1,70 @@
+InitEvents
+set %hp #hits
+set %czas 0
+set %jrnl #jindex
+set %leczenie 0
+start:
+set #NEXTCPOSX 600
+set #NEXTCPOSY 400
+ if #hits <> %hp
+     {
+      set %lhp #hits - %hp
+         if %lhp < 0
+           {
+       Event exmsg #charid 3 2049 %lhp ( , #hits , )
+      set %hp #hits
+          }
+         if %lhp > 0
+           {
+      set #sysmsgcol 65
+       Event SysMessage Odzyskales: %lhp hp ( , #hits , )
+      set %hp #hits
+          }
+     }
+start2:
+if #jindex > %jrnl
+   {
+   set %jrnl %jrnl + 1
+   scanjournal %jrnl
+   if Zaczynasz_siebie_leczyc... in #journal
+      {
+      set %leczenie 1
+      set %czasb #scnt2
+      set %czasc #scnt2 + 10
+      }
+   if Wyleczyles in #journal || Wyleczylas in #journal || Nie_udalo_Ci in #journal || Przestales in #journal || Przestalas in #journal
+      {
+      if %leczenie = 1
+         {
+         set %leczenie 0
+         set %czasb ( ( #scnt2 - %czasb ) / 10 )
+         set #sysmsgcol 1260
+         event sysmessage Leczylo %czasb , s
+         }
+      }
+   }
+if %czasc <= #scnt2 && %leczenie = 1
+{
+   set %ilelecze ( ( #scnt2 - %czasb ) / 10 )
+   if %ilelecze > 12
+      {
+       if #CHARGHOST = yes || Zapis_stanu_ in #journal
+        {
+         set %leczenie = 0
+         goto start
+         }
+      set #sysmsgcol 1152
+      event sysmessage Lecze %ilelecze , s. BANDAZ ZBLOKOWANY
+      set %czasc #scnt2 + 10
+      }
+   if %ilelecze <= 12
+      {
+      set #sysmsgcol 1153
+      event sysmessage Lecze %ilelecze , s
+      set %czasc #scnt2 + 10
+      }
+}
+goto start
+
+
+

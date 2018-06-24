@@ -1,0 +1,88 @@
+initevents
+
+repeat
+onHotKey F9   ;KLAWISZ DO PRZENOSZENIA
+gosub przekladaj
+until #false
+
+sub przekladaj
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z ktorego chcesz odlozyc rzeczy
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc2
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc2:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple #ltargetid
+set #lobjectid #ltargetid
+set %czas #scnt2 + 10
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak do ktorego chcesz odlozyc rzeczy
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple2 #ltargetid
+set #lobjectid #ltargetid
+set %czas #scnt2 + 10
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+lecimy:
+finditem * C_ , %ple ;
+if #findkind = -1
+{
+set #sysmsgcol 1063
+event sysmessage Przelozone
+return
+}
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 10
+repeat
+finditem %id_przen C_ , %ple ;
+until ( #findkind = -1 ) || ( %czas < #scnt2 )
+finditem %typ_przen C_ , %ple2
+set %tmp #findstack
+exevent dropc %ple2 ;odloz
+set %czas #scnt2 + 10
+repeat
+finditem #findtype C_ , %ple2
+until ( #findstack <> %tmp ) || ( %czas < #scnt2 )
+goto lecimy

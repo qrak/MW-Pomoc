@@ -1,0 +1,11 @@
+initevents
+
+keyloop:
+onHotKey a ctrl
+gosub widmo
+goto keyloop
+
+sub widmo
+event macro 1 0 za mna!
+set #lobjectid PYQXZ    ;tu wpisz ID konia
+event macro 17 0 ;last object

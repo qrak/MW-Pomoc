@@ -1,0 +1,19 @@
+initevents
+set %cel #ltargetid
+
+keyloop:
+onHotKey F3
+gosub F3
+goto keyloop
+
+sub F3
+finditem DWJ C;
+set #ltargetid #findid
+event macro 1 0 .um identyfikacja
+target 3s
+event macro 22 0         ;set #ltargetid %cel
+                       ;event macro 22 0
+return
+
+
+

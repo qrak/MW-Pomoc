@@ -1,0 +1,503 @@
+;------------------------------------------------------------------------
+;skrypt na klimat by nilmer, przerobil desdemon z pomoca [ngz]
+;co iles s zapodaje losowy emot z listy
+;emotuje gdy nas ktos atakuje z graczy
+;jesli jestesmy zatruci daje emoty
+;gdy mamy ponizej 30hp robi emoty
+;gdy nie mozemy juz nic zjesc
+;gdy spadnie ponizej 10 stamy zapodaje emot
+;gdy mamy ponizej 10 many
+;gdy otwieramy pojemnik bezpieczny
+;jesli jestesmy ukryci lub zginiemy nie robi zadnych emotow
+;gdy otwieramy drzwi
+;jak beda jakies bledy w skrypcie lub macie jakies propozycje do zmiany czegos lub dodania
+;to piszcie na ircu
+; www.sn-dm.prv.pl <-zapraszam
+;pozdrowienia dla lambadamana :)
+;------------------------------------------------------
+;              ustawienia
+;
+;----------------------------------------------
+
+set %drzwi 1     ;czy ma emotowac podczas otwierania drzwi
+set %walka 1    ;czy ma dawac emoty podczas walki ustaw 1 jesli nie 0
+set %truta 1    ;czy ma rzucac emoty podczas truty 1 jesli nie 0
+set %atak 1     ;czy ma rzucac emoty podczas ataku 1 jesli nie 0
+set %pojemnik 1 ;czy ma rzucac emoty podczas otwarcia pojemnika 1 jesli nie 0
+set %stama 1    ;czy ma rzucac emoty podczas braku stamy 1 jesli nie 0
+set %czasowo 1      ;czy ma rzucac emoty co okreslony czas 1 jesli nie 0
+set %pojedzeniu 1   ;czy ma rzucac emoty po jedzeniu 1 jesli nie 0
+set %czas 10 ; czas po ktorym ma rzucac emot w s
+set %hp 30 ; ponizej ilu hp ma rzucac emot
+set %stama1 20 ;ponizej ilu stamy ma dawac emot
+set %mana2 30 ;ponizej ilu many ma dawac emot
+set %mana1 1 ; czy ma rzucac emoty podczas braku many 1 jesli nie 0
+;---------------------------------------------------
+set %mana #mana
+set %stamina #stamina
+set %hits #hits
+set *20 #time + 8
+wszystko:
+scanjournal %cnt 3
+ if #charghost <> yes
+ {
+ if #charstatus <> H
+ {
+  if %walka = 1
+   {
+    if %hp >= #hits
+      {
+      gosub random1
+      gosub walka
+      scanjournal %cnt 4
+      deletejournal
+      wait 5s
+      }
+     }
+    if %truta = 1
+    {
+    if C in #CHARSTATUS
+      {
+      gosub random2
+      gosub truta
+      scanjournal %cnt 4
+      DELETEJOURNAL
+      wait 4s
+      }
+    }
+    if %atak = 1
+    {
+    if is_attacking_you in #journal
+      {
+      gosub random3
+      gosub atak
+      scanjournal %cnt 4
+      deletejournal
+      wait 4s
+      }
+      }
+  if %pojemnik = 1
+  {
+   if bezpieczny_pojemnik in #journal
+   {
+   gosub random5
+   gosub pojemnik
+   scanjournal %cnt 4
+   deletejournal
+   wait 4s
+   }
+   }
+   if %pojedzeniu = 1
+   {
+   if mozesz_juz_zjesc in #journal
+   {
+   gosub random6
+   gosub pojedzeniu
+   scanjournal %cnt 4
+   deletejournal
+   wait 4s
+   }
+   }
+  if %stama = 1
+  {
+   if %stama1 >= #stamina ; od ilu staminy ma rzucac emotki
+   {
+   gosub random7
+   gosub stama
+   scanjournal %cnt 4
+   DELETEJOURNAL
+   wait 5s
+    }
+   }
+    if %mana1 = 1
+  {
+   if %mana2 >= #mana
+   {
+   gosub random8
+   gosub mana
+   scanjournal %cnt 4
+   DELETEJOURNAL
+   wait 5s
+    }
+   }
+  if %drzwi = 1
+  {
+       if #lobjecttype in zpc_bqc_lqc_tcp_rcp_fjc_pmc_rmc_hmc_jmc_ofd_ted_bam_zzl_fjc_yoc_jpc_rqc_zmc_hjc_jnc_lnc_jqc_hqc_xqc_ucd_kcd_jam_zpc_wcd_tnc_ham_vnc_xnc_ued_rnc_nnc_pqc_fnc_tnc_njc_pjc_ucd_kcd_nnc_pnc_hnc_vam_tam_xmc_qcd_zqc_ved_cfd && #lobjectid <> YC
+      {
+      set #lobjectid 0
+      scanjournal %cnt 4
+      if zamkniete in #journal
+      gosub emot
+      wait 10
+      else
+      {
+      gosub random9
+      gosub drzwi
+      scanjournal %cnt 4
+      deletejournal
+      wait 4s
+      goto dalej
+      }
+      }
+      }
+sub emot
+{
+event macro 2 0 jest za glupi zeby otworzyc drzwi
+}
+goto dalej
+dalej:
+   if %czasowo = 1
+   {
+   if #time > *20
+goto time
+goto wszystko
+
+time:
+gosub random4
+gosub time
+scanjournal %cnt 4
+deletejournal
+wait 2s
+goto wszystko
+}
+}
+}
+;-------------------------------------------------------------------------------------------
+; --------------tutaj emocje ktore beda pojawiac sie co okreslony czas------------------------------
+sub time
+    if %random = 1
+{
+event macro 2 0 spoglada w niebo ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 2
+{
+event macro 2 0 podziwia przyrode ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 3
+{
+event macro 2 0 wsluchuje sie w wiatr ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 4
+{
+event macro 2 0 lapie promienie sloneczne ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 5
+{
+event macro 2 0 wsluchuje sie w spiewanie ptakow ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 6
+{
+event macro 2 0 podziwia zwierzeta ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 7
+{
+event macro 2 0 tanczy z wiatrem ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 8
+{
+event macro 2 0 chrzaka ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 9
+{
+event macro 2 0 beka ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 10
+{
+event macro 2 0 pluje ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 11
+{
+event macro 2 0 gwizdze ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 12
+{
+event macro 2 0 glaszcze wierzchowca ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 13
+{
+event macro 2 0 poklepuje wierzchowca ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 14
+{
+event macro 2 0 zasypia z nudow ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 15
+{
+event macro 2 0 smieje sie ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 16
+{
+event macro 2 0 podziwia przyrode ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 17
+{
+event macro 2 0 stuka nogami wierzchowca ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 18
+{
+event macro 2 0 dotyka wierzchowca ;jesli nei chcesz tej linijki usun ja
+}
+     if %random = 19
+{
+event macro 2 0 skupia sie ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 20
+
+set *20 #time + %czas
+deletejournal
+wait 1s
+return
+
+; ----------- emoty podczas walki -------------------
+;
+;           postac cos mowi lub emotuje gdy spadnie hp ponizej okreslonej liczby
+;
+;-------------------------------------------------
+sub walka
+    if %random = 1
+{
+event macro 1 0 Hola hola smiertelniku, nie tak predko  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 uspokaja ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 2
+{
+event macro 1 0 smierc jest juz blisko!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 pociesza ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 3
+{
+event macro 1 0 niestety, jestes skazany na smierc!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 smieje sie okrutnie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 4
+{
+event macro 1 0 smierc nadchodzi wielkimi krokami, przygotuj sie!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 placze ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 5
+{
+event macro 1 0 moj luk zaprowadzi Cie do piachu!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 caluje luk ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 6
+{
+event macro 1 0 raz, dwa, trzy, giniesz Ty!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 placze ze wzruszenia ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 7
+{
+event macro 1 0 my tu sobie gadamy, a Ty musisz zginac   ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 zamurowanie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 8
+{
+event macro 1 0 niestety, smierc po Ciebie przyszla!   ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 zawiedzion ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 9
+{
+event macro 1 0 Zabije Cie !  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 oooh ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 10
+{
+event macro 1 0 przyjde nad Twoj grob! GIN!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 dusze opetuje diabel ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+
+;------- gdy gracz nas atakuje ---------------------
+;
+;         czyli jesli pojawi sie na ekranie is attacking you wtedy postac cos mowi lub emotuje
+;
+;-----------------------------------------------------
+sub atak
+    if %random = 1
+{
+event macro 1 0 huh, odwazny jestes kolego   ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 podziwia ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 2
+{
+event macro 1 0 odwazny ? czy glupi ?  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 smieje sie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 3
+{
+event macro 1 0 popelniles blad   ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 usmiecha sie demonicznie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 4
+{
+event macro 1 0 chyba jestes nieswiadom co zrobiles!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 glaszcze ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 5
+{
+event macro 1 0 a wiec teraz gin!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 placze ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+    if %random = 6
+{
+event macro 1 0 niestety, to byl wielki blad  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 szykuje sie do zabojstwa ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+
+;------------------truta--------------
+;
+;
+;           czyli emocje co postac bedzie mowila badz emotowala podczas zatrucia
+;
+;-------------------------------------------
+sub truta
+    if %random = 1
+{
+event macro 1 0 Ty mnie zatrules, ja Cie zabije   ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 zamurowanie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+     if %random = 2
+{
+event macro 1 0 i co Ci to daje ?  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 lyka pomaranczowa miksture ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+     if %random = 3
+{
+event macro 1 0 trucizna Ci nie pomoze by mnie zabic!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 smieje sie ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+     if %random = 4
+{
+event macro 1 0 nie boje sie trucizny!  ;jesli nei chcesz tej linijki usun ja
+event macro 2 0 zawiedzion ;jesli nei chcesz tej linijki usun ja
+wait 1s
+}
+
+ ;-----------------------------------------------
+; emotki podczas otwierania pojemnika  ---------------------------------------------------------------------
+;---
+;--------------------------------------------------
+sub pojemnik
+    if %random = 1
+{
+event macro 2 0 podziwia skarby ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 2
+{
+event macro 2 0 patrzy na lup ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 3
+{
+event macro 2 0 mysli co wybrac ;jesli nei chcesz tej linijki usun ja
+}
+
+DELETEJOURNAL
+wait 1s
+return
+
+;-----------------------------------------------------
+;
+;                  gdy mamy mniej niz 10 stamy
+;------------------------------------------------
+sub stama
+    if %random = 1
+{
+event macro 2 0 czuje sie zmeczony ;
+}
+    if %random = 2
+{
+event macro 2 0  lyka czerwona miksture ;
+}
+    if %random = 3
+{
+event macro 2 0  opada z sil ;
+}
+    if %random = 4
+{
+event macro 2 0  bardzo zmeczony ;
+}
+    if %random = 5
+{
+event macro 2 0 regeneruje sily ;
+}
+DELETEJOURNAL
+wait 1s
+return
+
+;------------------------------emoty odczas braku many --------------
+;
+;
+;-----------------------------------------------------------------------------
+sub mana
+    if %random = 1
+{
+event macro 2 0 koncentruje sie ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 2
+{
+event macro 2 0 wycisza umysl ;jesli nei chcesz tej linijki usun ja
+}
+    if %random = 3
+{
+
+;---------------------------------------------
+;                    drzwi
+;----------------------------------------
+sub drzwi
+    if %random = 1
+{
+event macro 2 0 szuka klucza ;jesli nei chcesz tej linijki usun ja
+}
+
+;----------randomy---------------------------------------------------------
+;
+;       w  kazdej  set %random ( #random % 15 ) + 1  w miejsce 15 zmien ilosc emot jesli masz mniej lub wiecej niz 15
+;
+;--------------------------------
+sub random1                           ;ilosc emot na walce
+  set %random ( #random % 15 ) + 1
+return
+
+sub random2                               ;ilosc emot na trucie
+  set %random ( #random % 8 ) + 1
+return
+
+sub random3                              ;ilosc emot na ataku przez gracza
+  set %random ( #random % 7 ) + 1
+return
+sub random4
+  set %random ( #random % 52 ) + 1        	;;ilosc emot rzucanych co okreslony czas
+return
+sub random5                                    ;ilosc emot na otwieraniu bezpiecznego
+    set %random ( #random % 5 ) + 1
+return
+sub random6                                 ;ilosc emot po jedzeniu
+  set %random ( #random % 5 ) + 1
+return
+sub random7                                  ;ilosc emot gdy stamy brak
+  set %random ( #random % 5 ) + 1
+return
+sub random8					;ilosc emot gdy many brak
+  set %random ( #random % 5 ) + 1
+return
+sub random9 					;ilosc emot gdy otwieramy drzwi
+  set %random ( #random % 3 ) + 1
+return
+

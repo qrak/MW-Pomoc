@@ -1,0 +1,211 @@
+InitEvents
+keyloop:
+onHotKey F12
+   gosub zielona
+onHotKey F3
+   gosub zolta
+onHotKey F5
+   gosub czerwona
+onHotKey F6
+   gosub leczenie
+onHotKey F7
+  gosub fioletowa
+onHotKey F2
+  gosub pomaranczowa
+goto keyloop
+
+;Czerwona
+sub czerwona
+  stczerwona:
+  finditem ZUF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam czerwonych!
+     goto koniecczerwone
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stczerwona
+   }
+  set %iloscczerwonych #findstack
+  set #lobjectid #findid
+  event macro 17
+  wait 1s
+  if Musisz_chwile_poczekac in #sysmsg
+  {
+    set #sysmsgcol 1154
+    event sysmessage Czekaj...
+    goto koniecczerwone
+  }
+  set #sysmsgcol 1154
+  set %iloscczerwonych %iloscczerwonych - 1
+  event sysmessage Aktualna ilosc butelek odswierzenia: %iloscczerwonych
+  koniecczerwone:
+  ignoreitem reset
+return
+
+
+;Zolta
+sub zolta
+  stzolta:
+  finditem UUF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam zoltych!
+     goto konieczolta
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stzolta
+   }
+  set %ilosczoltych #findstack
+  set #lobjectid #findid
+  event macro 17
+  wait 1s
+  if Musisz_chwile_poczekac in #sysmsg
+  {
+    set #sysmsgcol 1154
+    event sysmessage Czekaj...
+    goto konieczolta
+  }
+  set #sysmsgcol 1154
+  set %ilosczoltych %ilosczoltych - 1
+  event sysmessage Aktualna ilosc butelek leczenia: %ilosczoltych
+  konieczolta:
+  ignoreitem reset
+return
+
+
+;Zielona (jak cos to male)
+sub zielona
+  stzielona:
+  finditem AVF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam zielonych!
+     goto konieczielona
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stzielona
+   }
+  set %ilosczielonych #findstack
+  set #lobjectid #findid
+  event macro 17
+  wait 1s
+  if Musisz_chwile_poczekac in #sysmsg
+  {
+    set #sysmsgcol 1154
+    event sysmessage Czekaj...
+    goto konieczielona
+  }
+  set #sysmsgcol 1154
+  set %ilosczielonych %ilosczielonych - 1
+  event sysmessage Aktualna ilosc butelek trucizny: %ilosczielonych
+  konieczielona:
+  ignoreitem reset
+return
+
+
+;Fioletowa
+sub fioletowa
+  stfiolet:
+  finditem TUF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam fioletowych!
+     goto koniecfiolet
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stfiolet
+   }
+  set %iloscfiolet #findstack
+  set #lobjectid #findid
+  event macro 17
+  wait 1s
+  if Musisz_chwile_poczekac in #sysmsg
+  {
+    set #sysmsgcol 1154
+    event sysmessage Czekaj...
+    goto koniecfiolet
+  }
+  set #sysmsgcol 1154
+  set %iloscfiolet %iloscfiolet - 1
+  event sysmessage Aktualna ilosc butelek wybuchowych: %iloscfiolet
+  koniecfiolet:
+  ignoreitem reset
+return
+
+;Leczenie
+sub leczenie
+  stleczenie:
+  finditem ZLF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam bandazy!
+     goto koniecleczenie
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stleczenie
+   }
+  set %iloscbandazy #findstack
+  set #lobjectid #findid
+  event macro 17
+  target 5s
+  if #targcurs <> 1
+   {
+    goto koniecleczenie
+   }
+  event macro 23
+  event macro 23
+  event macro 23
+  set #sysmsgcol 1154
+  set %iloscbandazy %iloscbandazy - 1
+  event sysmessage Aktualna ilosc bandazy: %iloscbandazy
+  koniecleczenie:
+  ignoreitem reset
+return
+
+;Pomaranczowa
+sub pomaranczowa
+  stpomaranczowa:
+  finditem NUF
+  if #findkind = -1
+   {
+     set #sysmsgcol 1154
+     event sysmessage Nie mam pomaranczowych!
+     goto koniecczerwone
+   }
+  if #findkind = 1
+   {
+     ignoreitem #findid
+     goto stpomaranczowa
+   }
+  set %iloscpomaranczowych #findstack
+  set #lobjectid #findid
+  event macro 17
+  wait 1s
+  if Musisz_chwile_poczekac in #sysmsg
+  {
+    set #sysmsgcol 1154
+    event sysmessage Czekaj...
+    goto koniecczerwone
+  }
+  set #sysmsgcol 1154
+  set %iloscpomaranczowych %iloscpomaranczowych - 1
+  event sysmessage Aktualna ilosc butelek odtrutki: %iloscpomaranczowych
+  koniecpomaranczowe:
+  ignoreitem reset
+return

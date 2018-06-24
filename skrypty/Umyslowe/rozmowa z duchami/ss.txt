@@ -1,0 +1,37 @@
+; Rozmowa z duchami by Raist
+; wkomentarzak podana jest linijka w ktorej trzeba
+;wpisac imie postaci
+
+initevents
+goto hid
+
+start:
+set %czas #scnt2 + 85
+czekaj:
+onhotkey F6 alt
+halt
+if %czas < #scnt2
+goto hid
+goto czekaj
+hid:
+set %jrnl #jindex
+event macro 1 0 .um rozmowa z duchami
+set %czas #scnt2 + 30
+while #true
+   {
+   if #jindex > %jrnl
+      {
+      set %jrnl %jrnl + 1
+      scanjournal %jrnl
+      if Porozumiales_sie in #journal || Nie_udalo in #journal || Your_skill in #journal
+      goto start
+      if Juz_cos in #journal
+         {
+         wait 20
+         goto hid
+         }
+      if %czas < #scnt2
+      goto hid
+      }
+   }
+

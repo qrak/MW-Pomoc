@@ -1,0 +1,103 @@
+;Autor: [nGz] & Goblin
+initevents
+loop:
+onhotkey f13   ;truty
+   gosub f6
+onhotkey f12   ;odtruty
+   gosub f5
+onhotkey f6   ;picie trutki
+   gosub f7
+onhotkey f7   ;czerwona
+   gosub f3
+onhotkey f11   ;leczenia
+   gosub f4
+onhotkey f8   ;wybuch
+   gosub f8
+onhotkey f10   ;truty
+   gosub f2
+goto loop
+sub f8
+finditem tuf C
+if #findkind = -1
+ {
+   event sysmessage Nie masz miksa wybuchowego
+   return
+ }
+set #lobjectid #findid
+event macro 17
+event sysmessage Uzyles miksa wybuchowego
+return
+sub f6
+finditem avf C
+if #findkind = -1
+ {
+   event sysmessage Nie masz miksa trutki
+   return
+ }
+set #lobjectid #findid
+event macro 17
+event sysmessage Uzyles miksa trutki
+return
+sub f5
+finditem nuf C
+if #findkind = -1
+ {
+   event sysmessage Nie masz miksa odtrutki
+   return
+ }
+set #lobjectid #findid
+event macro 17
+event sysmessage Uzyles miksa odtrutki
+return
+sub f7
+finditem avf C
+if #findkind = -1
+ {
+   event sysmessage Nie masz miksa trutki
+   return
+ }
+set #lobjectid #findid
+event macro 17 0
+event sysmessage Uzyles miksa trutki
+return
+sub f4
+finditem uuf C
+if #findkind = -1
+ {
+   event sysmessage Nie masz miksa leczenia
+   return
+ }
+set #lobjectid #findid
+event macro 17
+event sysmessage Uzyles miksa leczenia
+return
+
+sub f3
+finditem zuf C
+ if #findkind = -1
+ {
+set #sysmsgcol 1080
+ event sysmessage Nie masz miksa czerwonego
+ return
+}
+ set #lobjectid #findid
+ event macro 17
+set #sysmsgcol 1264
+event sysmessage Uzyles miksa czerwonego
+return
+
+sub f3
+finditem zlf C
+ if #findkind = -1
+ {
+set #sysmsgcol 1080
+ event sysmessage Nie masz bandazy
+ return
+}
+ set #lobjectid #findid
+ event macro 17
+ target 2s
+ event macro 23
+return
+
+

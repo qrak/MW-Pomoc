@@ -1,0 +1,243 @@
+                    ;ZMODYFIKOWANE O ODKLADANIE REGOW
+;Makro dobiera i odklada regi i butle do ustalonej
+;wartosci zdefiniowanej w skrypcie. Oba plecaki pomiedzy
+;ktorymi odbywa sie przenoszenie MUSZA byc otwarte.
+;Capslock w komentarzach oznacza koniecznosc
+;podania wartosci.
+
+
+initevents
+repeat
+onHotKey F7
+gosub uzupelniaj
+onHotKey F8
+gosub odkladaj
+until #false
+
+sub uzupelniaj
+ignoreitem reset
+ignoreitem ZXNCCBE    ;WPISZ ID WORKA WAMP DRU WILK
+                      ;JESLI TAKOWY POSIADASZ
+
+set %ziolo 0        ;Tu zawsze 0 bo tak i juz;/
+set %szafir 350        ;ILOSC STRZAL
+set %demo 350          ;ILOSC BELTY
+set %krew 10          ;ILOSC RӯOWA ;]]]]]]
+set %wrzos 5         ;ILOSC STR
+set %fiolet 5        ;ILOSC DEX
+set %zolta 15         ;ILOSC ZOLTYCH
+set %czerwona 30      ;ILOSC CZERWONYCH
+set %pomarancz 15      ;ILOSC POMARANCZY
+set %mana 100           ;ILOSC BANDAZE
+set %gdzie 0   ;start od rega 0
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z ktorego chcesz przelozyc ziolo
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+
+set %ple1 #ltargetid  ;ustawia plecak z zapasem regow
+set #lobjectid #ltargetid
+set %czas #scnt2 + 20
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+finditem CKF_ZJF C_ , #BACKPACKID ;znajduje worek lub plecakw plecaku glownym
+if #findkind = -1
+   {
+   set %ple2 #backpackid
+   goto start
+   }
+set %ple2 #findid ;ustawia plecak ktory ma uzupelniac
+
+start:
+set %gdzie %gdzie + 1  ;inkrementacja - skacze po kolejnych regach
+if %gdzie = 1      ;standardowe 8 regow maga
+   set %reg MZF
+if %gdzie = 2
+   set %reg SZF
+if %gdzie = 3
+   set %reg KZF
+if %gdzie = 4
+   set %reg JZF
+if %gdzie = 5
+   set %reg RZF
+if %gdzie = 6
+   set %reg WZF
+if %gdzie = 7
+   set %reg KUF
+if %gdzie = 8
+   set %reg JUF
+if %gdzie = 9
+   {
+   set %reg RWF
+   set %ziolo %szafir
+   }
+if %gdzie = 10
+   {
+   set %reg LNK
+   set %ziolo %demo
+   }
+if %gdzie = 11
+   {
+   set %reg TUF
+   set %ziolo %krew
+   }
+if %gdzie = 12
+   {
+   set %reg YUF
+   set %ziolo %wrzos
+   }
+if %gdzie = 13
+   {
+   set %reg XUF
+   set %ziolo %fiolet
+   }
+if %gdzie = 14
+   {
+   set %reg UUF
+   set %ziolo %zolta
+   }
+if %gdzie = 15
+   {
+   set %reg ZUF
+   set %ziolo %czerwona
+   }
+if %gdzie = 16
+   {
+   set %reg NUF
+   set %ziolo %pomarancz
+   }
+if %gdzie = 17
+   {
+   set %reg ZLF
+   set %ziolo %mana
+   }
+if %gdzie = 18
+   goto koniec
+
+przenoszenie:
+finditem %reg C_ , %ple2 ;znajduje ziolo w plecaku
+set %nies %ziolo - #findstack ;wylicza ile brakuje
+if %nies = 0 ;kiedy ma nie przenosic
+   goto start
+if %nies < 0 ;kiedy ma odlozyc
+   {
+   set %nies #findstack - %ziolo
+   exevent drag #findid %nies ;podnies
+   set %czas #scnt2 + 10
+   repeat
+   finditem %reg C_ , %ple2 ;znajduje ziola w twoim plecaku
+   until ( #findstack = %ziolo ) || ( %czas < #scnt2 )
+   finditem %reg C_ , %ple1
+   set %temp %nies + #findstack
+   exevent dropc %ple1 ;odloz
+   set %czas #scnt2 + 10
+   repeat
+   finditem %reg C_ , %ple1 ;znajduje ziola w plecaku z zapasami
+   until ( #findstack = %temp ) || ( %czas < #scnt2 )
+   goto start
+   }
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+if #findkind = -1 ;kiedy nie masz zapasow ziol
+   {
+   set #sysmsgcol 1080
+   event sysmessage Nie znalazlem ziola, pomijam
+   goto start
+   }
+set %tmp #findstack - %nies
+if %tmp < 0
+   {
+   set %tmp 0
+   set %nies #findstack
+   }
+exevent drag #findid %nies ;podnies
+set %czas #scnt2 + 10
+repeat
+finditem %reg C_ , %ple1 ;znajduje ziolo w plecaku z zapasami
+until ( #findstack = %tmp ) || ( %czas < #scnt2 )
+finditem %reg C_ , %ple2
+set %tmp #findstack + %nies
+exevent dropc %ple2 ;odloz
+set %czas #scnt2 + 10
+repeat
+finditem %reg C_ , %ple2
+until ( #findstack = %tmp ) || ( %czas < #scnt2 )
+goto start
+
+koniec:
+set #sysmsgcol 1063
+event sysmessage Skonczylem przekladac
+return
+
+sub odkladaj
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak do ktorego chcesz odlozyc ziola i kamienie
+repeat ;petla czeka az wskazesz pojemnik z regami
+onhotkey ESC
+goto wcis_esc2
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc2:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %ple #ltargetid
+set #lobjectid #ltargetid
+set %czas #scnt2 + 10
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+until ( #contid = #ltargetid )
+
+lecimy:
+finditem RWF_LNK_TUF_YUF_XUF_UUF_ZUF_NUF_ZLF C_ , #backpackid ;
+if #findkind = -1
+{
+set #sysmsgcol 1063
+event sysmessage Odlozone
+return
+}
+set %id_przen #findid
+set %stack_przen #findstack
+set %typ_przen #findtype
+exevent drag %id_przen %stack_przen ;podnies
+set %czas #scnt2 + 10
+repeat
+finditem %id_przen C_ , #backpackid ;
+until ( #findkind = -1 ) || ( %czas < #scnt2 )
+finditem %typ_przen C_ , %ple
+set %tmp #findstack
+exevent dropc %ple ;odloz
+set %czas #scnt2 + 10
+repeat
+finditem #findtype C_ , %ple
+until ( #findstack <> %tmp ) || ( %czas < #scnt2 )
+goto lecimy
+

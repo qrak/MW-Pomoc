@@ -1,0 +1,14 @@
+InitEvents
+set %czas 10s
+Event SysMessage [AA] Auto Anatomia.....ver 1.0.0
+petla:
+if #enemyid <> N/A
+{
+;Event SysMessage Anatomia....
+Event Macro 13 1
+target
+set #ltargetid #enemyid
+event Macro 22
+wait %czas
+}
+goto petla

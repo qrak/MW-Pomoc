@@ -1,0 +1,106 @@
+;Identyfikacja by Raist
+;masz duzo magikow? nie chcesz klikac?
+;wcisnij play i ogladaj TV ;)
+
+
+initevents
+set %powtorz 0
+ignoreitem reset
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z magikami
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+
+set %ple #ltargetid  ;ustawia plecak z magikami
+set #lobjectid %ple
+event macro 17 0
+set %czas #scnt2 + 20
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+until ( #contid = #ltargetid )
+
+start:
+finditem * C_ , %ple
+if #findkind = -1
+{
+   if %powtorz = 0
+   {
+   set %powtorz 1
+   ignoreitem reset
+   goto start
+   }
+set #sysmsgcol 1080
+event sysmessage KONIEC IDENTA
+sound C:\missile.wav
+halt
+}
+event property #findid
+if magiczn in #property
+gosub lecimy
+ignoreitem #findid
+goto start
+
+sub lecimy
+set #ltargetid #findid
+ident:
+event macro 1 0 .um identyfikacja
+set %czas #scnt2 + 20
+czekaj:
+scanjournal 1
+if #TARGCURS = 1
+   {
+   event macro 22 0
+   wait 6s
+   goto ident2:
+   }
+if Juz_cos in #sysmsg
+   {
+   wait 1s
+   goto ident
+   }
+if %czas < #scnt2
+   goto ident
+else
+    goto czekaj
+ident2:
+finditem #ltargetid
+if #findkind = -1
+return
+event macro 1 0 .um identyfikacja
+set %czas #scnt2 + 20
+czekaj2:
+scanjournal 1
+if #TARGCURS = 1
+   {
+   event macro 22 0
+   wait 6s
+   return
+   }
+if Juz_cos in #journal
+   {
+   wait 1s
+   goto ident2
+   }
+if %czas < #scnt2
+   goto ident2
+else
+    goto czekaj2
+
+

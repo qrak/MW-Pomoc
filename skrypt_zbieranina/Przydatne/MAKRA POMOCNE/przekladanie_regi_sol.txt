@@ -1,0 +1,176 @@
+;na MW -->rzf pajenczyna, kuf- perly, mzf-mandra, juf- mech, jzf- zenszen, kzf-czosnek, wzf wilcza
+
+;PRZEKLADANIE REGOW 1.0   by  SOLINARI
+; Skrypt przeklada wskazana liczbe regow z dowolnego otwartego pojemnika w rog plecaka
+;
+;Jak uzywac:
+;wpisujemy komende .ziola xxx  gdzie "x" to liczba 0-9
+;             UWAGA!!!!!!!
+;  jesli chcemy przelozyc np. 10 regow wpisujemy .ziola 010, 9 regow .ziola 009
+
+initEvents
+start:
+scanjournal 1
+if Unknown_command:_.ziola_ in #journal  ;24 z spacja przed liczba
+   {
+   set %string #journal
+   str Mid %string 25 1
+   set %ile1 #strres
+
+   set %string #journal
+   str Mid %string 26 1
+   set %ile2 #strres
+
+   set %string #journal
+   str Mid %string 27 1
+   if #strres = 1 || #strres = 2 || #strres = 3 || #strres = 4 || #strres = 5 || #strres = 6 || #strres = 7 || #strres = 8 || #strres = 9 || #strres = 0 ||
+      set %ile3 #strres
+   else
+       {
+        event sysmessage JESLI PODAJESZ LICZBE 2CYFROWA 1SZA CYFRA MA BYC 0 !!!
+        goto start
+       }
+
+
+   event sysmessage KLIKNIJ W PLECAK
+   goto petla
+   }
+goto start
+
+petla:
+if #contid = #backpackid
+   {
+    set %x #contposx + 170
+    set %y #contposy + 150
+   goto przekladanie
+   }
+wait 10
+goto petla
+
+
+przekladanie:
+finditem szf ;siarka
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK SIARKI
+
+finditem rzf ;pajenczyna
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK PAJECZYNY
+
+finditem kuf ;perly
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK PEREL
+
+finditem mzf ;mandra
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK MANDRAGORY
+
+finditem juf ;mech
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK MCHU
+
+finditem jzf ;zenszen
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK ZENSZENIA
+
+finditem kzf ;czosnek
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK CZOSNKU
+
+finditem wzf ;wilcza
+if #findkind <> -1
+{
+	event Drag #findid
+  wait 10
+  key %ile1
+  key %ile2
+  key %ile3
+  key enter
+  click %x %y
+	wait 10
+}
+       else
+       event sysmessage  BRAK WILCZEJ
+
+event sysmessage REGI PRZEPAKOWANE
+goto start
+;set %x #findx
+;set %y #findy
+

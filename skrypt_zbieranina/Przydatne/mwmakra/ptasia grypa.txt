@@ -1,0 +1,28 @@
+;makro co poltory minuty kicha lub kaszle
+;bedzie przeszkadzalo w rozmowach ale jebac
+
+
+initevents
+
+start:
+set %c #random % 2
+
+if %c = 0
+   goto kichanie
+if %c = 1
+   goto kaszel
+
+
+kaszel:
+
+event macro 1 0 khy khy
+event macro 2 0 kaszle
+wait 90s
+goto start
+
+kichanie:
+event macro 1 0 apsik
+event macro 2 0 kicha
+wait 90s
+goto start
+

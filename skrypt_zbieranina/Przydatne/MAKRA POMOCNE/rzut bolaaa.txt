@@ -1,0 +1,14 @@
+start:
+onhotkey F4
+goto unmount
+goto start
+unmount:
+event macro 6 0
+set #LOBJECTID #CharID
+wait 1
+event macro 17 0
+wait 1
+finditem kto c
+set #lobjectid  #findid
+event macro 17 0
+goto start

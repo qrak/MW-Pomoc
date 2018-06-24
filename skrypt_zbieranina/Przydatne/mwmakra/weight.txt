@@ -1,0 +1,16 @@
+initevents
+
+start:
+
+if #weight > 455
+goto dzwiek
+else
+{
+wait 1s
+goto start
+}
+
+dwiek:
+sound C:\missile.wav
+wait 6s
+goto start

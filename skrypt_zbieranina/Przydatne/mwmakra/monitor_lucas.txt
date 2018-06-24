@@ -1,0 +1,182 @@
+initevents
+linespercycle 20
+menu Clear
+menu window title Lord Lucas - Pan
+menu font name times
+menu Window size 335 95
+menu Window color black
+menu Show
+menu Font color Red
+menu Font bgcolor black
+menu Font size 20
+menu Text reg010 5 0 HP
+menu Font color Yellow
+menu Text reg020 90 0 ST
+menu Font color Blue
+menu Text reg030 170 0 WG
+menu Font color White
+menu Text reg040 265 0 AR
+menu Font size 10
+menu Font color White
+menu Text reg050 20 29 max:
+menu Text reg060 100 29 max:
+menu shape linia 0 45 345 2 0 0 0 white 0 white
+menu Text reg070 5 47 Bandaze
+menu Text reg080 5 62 Strzaly
+menu Text reg090 5 77 Belty
+menu Text reg010 110 47 Biale
+menu Text reg011 110 62 Niebieskie
+menu Text reg012 110 77 Czerwone
+menu Text reg013 220 47 Zolte
+menu Text reg014 220 62 Pomarancze
+menu Text reg015 220 77 Wybuchy
+
+start:
+reg1:
+  if %reg1 = #hits
+  goto reg2
+  menu Font size 20
+  menu Font color Red
+  set %reg1 #hits
+  menu delete reg1
+  menu Text reg1 44 0 %reg1
+reg2:
+  if %reg2 = #stamina
+  goto reg3
+  menu Font size 20
+  menu Font color Yellow
+  set %reg2 #stamina
+  menu delete reg2
+  menu Text reg2 125 0 %reg2
+reg3:
+  if %reg3 = #weight
+  goto reg4
+  menu Font size 20
+  menu Font color Blue
+  set %reg3 #weight
+  menu delete reg3
+  menu Text reg3 217 0 %reg3
+reg4:
+  if %reg4 = #ar
+  goto reg5
+  menu Font size 20
+  menu Font color White
+  set %reg4 #ar
+  menu delete reg4
+  menu Text reg4 305 0 %reg4
+reg5:
+  if %reg5 = #maxhits
+  goto reg6
+  menu Font size 10
+  menu Font color White
+  set %reg5 #maxhits
+  menu delete reg5
+  menu Text reg5 50 29 %reg5
+reg6:
+  if %reg6 = #maxstam
+  goto reg7
+  menu Font color White
+  menu Font size 10
+  set %reg6 #maxstam
+  menu delete reg6
+  menu Text reg6 130 29 %reg6
+reg7:
+  finditem ZLF C_ , #backpackid ;bandaz
+  if %reg7 = #FINDSTACK
+  goto reg8
+  menu Font color Yellow
+  menu Font size 10
+  set %reg7 #FINDSTACK
+  if %reg7 < 16
+  menu Font color Red
+  menu delete reg7
+  menu Text reg7 70 47 %reg7
+reg8:
+  finditem RWF C_ , #backpackid ;strzaly
+  if %reg8 = #FINDSTACK
+  goto reg9
+  menu Font color Yellow
+  menu Font size 10
+  set %reg8 #FINDSTACK
+  if %reg8 < 16
+  menu Font color Red
+  menu delete reg8
+  menu Text reg8 70 62 %reg8
+reg9:
+  finditem LNK C_ , #backpackid ;belty
+  if %reg9 = #FINDSTACK
+  goto reg10
+  menu Font color Yellow
+  menu Font size 10
+  set %reg9 #FINDSTACK
+  if %reg9 < 16
+  menu Font color Red
+  menu delete reg9
+  menu Text reg9 70 77 %reg9
+reg10:
+  finditem XUF C_ , #backpackid ;biale
+  if %reg10 = #FINDSTACK
+  goto reg11
+  menu Font color Yellow
+  menu Font size 10
+  set %reg10 #FINDSTACK
+  if %reg10 < 2
+  menu Font color Red
+  menu delete reg10
+  menu Text reg10 180 47 %reg10
+reg11:
+  finditem YUF C_ , #backpackid ;niebieskie
+  if %reg11 = #FINDSTACK
+  goto reg12
+  menu Font color Yellow
+  menu Font size 10
+  set %reg11 #FINDSTACK
+  if %reg11 < 2
+  menu Font color Red
+  menu delete reg11
+  menu Text reg11 180 62 %reg11
+reg12:
+  finditem ZUF C_ , #backpackid ;czerwone
+  if %reg12 = #FINDSTACK
+  goto reg13
+  menu Font color Yellow
+  menu Font size 10
+  set %reg12 #FINDSTACK
+  if %reg12 < 6
+  menu Font color Red
+  menu delete reg12
+  menu Text reg12 180 77 %reg12
+reg13:
+  finditem UUF C_ , #backpackid ;zolte
+  if %reg13 = #FINDSTACK
+  goto reg14
+  menu Font color Yellow
+  menu Font size 10
+  set %reg13 #FINDSTACK
+  if %reg13 < 6
+  menu Font color Red
+  menu delete reg13
+  menu Text reg13 295 47 %reg13
+reg14:
+  finditem NUF C_ , #backpackid ;pomarancze
+  if %reg14 = #FINDSTACK
+  goto reg15
+  menu Font color Yellow
+  menu Font size 10
+  set %reg14 #FINDSTACK
+  if %reg14 < 6
+  menu Font color Red
+  menu delete reg14
+  menu Text reg14 295 62 %reg14
+reg15:
+  finditem TUF C_ , #backpackid ;wybuchy
+  if %reg15 = #FINDSTACK
+  goto start
+  menu Font color Yellow
+  menu Font size 10
+  set %reg15 #FINDSTACK
+  if %reg15 < 2
+  menu Font color Red
+  menu delete reg15
+  menu Text reg15 295 77 %reg15
+goto start

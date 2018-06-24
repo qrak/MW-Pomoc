@@ -1,0 +1,106 @@
+;================================== 
+; Script Name: Dupol's Reg Counter 
+; Author: Dupol 
+; Version: 1.2 
+; Client Tested with: 4.0.2a 
+; EUO version tested with: 1.42.0092
+; Shard FS:
+; Revision Date: 2004-27-08 
+; Public Release: 2004-27-08 
+; Purpose: Regent Counter 
+; 
+; Nothing  below this line needs to be changed 
+;======================================================================= 
+initevents
+menu Clear 
+menu window title miksty
+ menu Window size 150 120 
+ menu Window color black 
+ menu Show 
+ menu Font color green 
+ menu Font bgcolor black 
+ menu Font size 8 
+ menu Text reg010 5 0 Bandaze 
+ menu Text reg020 5 13 Brudne bandaze 
+ menu Font color white 
+ menu Text reg030 5 26 Biala mikstura
+menu Font color blue
+ menu Text reg040 5 39 Niebieska mikstura
+menu Font color red
+ menu Text reg050 5 52 Czerwona mikstura 
+menu Font color yellow 
+ menu Text reg060 5 65 Zolta mikstura
+menu Font color $2080F0
+ menu Text reg070 5 78 Pomaranczowa mikstura
+menu Font color green
+ menu Text reg080 5 91 Zielona mikstura  
+menu Font color purple
+ menu Text reg090 5 104 Fioletowa mikstura
+
+ menu Font color white
+
+start:
+reg1:
+finditem zlf C
+   set %reg1 #findstack 
+   menu delete reg1
+   menu Text reg1 130 0 %reg1
+goto reg2
+
+reg2:
+finditem amf C
+   set %reg2 #findstack 
+   menu delete reg2
+   menu Text reg2 130 13 %reg2
+goto reg3
+
+reg3:
+finditem xuf C
+   set %reg3 #findstack
+   menu delete reg3 
+   menu Text reg3 130 26 %reg3
+   goto reg4
+
+reg4:
+finditem yuf C
+   set %reg4 #findstack
+   menu delete reg4 
+   menu Text reg4 130 39 %reg4
+   goto reg5
+
+reg5:
+finditem zuf C
+   set %reg5 #findstack
+    menu delete reg5 
+    menu Text reg5 130 52 %reg5
+   goto reg6
+
+reg6:
+finditem uuf C
+   set %reg6 #findstack 
+   menu delete reg6
+   menu Text reg6 130 65 %reg6
+   goto reg7
+
+reg7:
+finditem nuf C
+   set %reg7 #findstack
+   menu delete reg7 
+   menu Text reg7 130 78 %reg7
+   goto reg8
+
+reg8:
+finditem avf c
+   set %reg8 #findstack
+   menu delete reg8 
+   menu Text reg8 130 91 %reg8
+   goto reg9
+
+reg9:
+finditem tuf C
+   set %reg9 #findstack 
+   menu delete reg9
+   menu Text reg9 130 104 %reg9
+ 
+wait 50
+goto start

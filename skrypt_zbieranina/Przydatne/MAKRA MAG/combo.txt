@@ -1,0 +1,32 @@
+initevents
+start:
+keyloop:
+onHotKey 7
+  gosub atak4
+onHotKey t alt
+gosub t alt
+goto keyloop
+sub atak4
+finditem MXGRIB ; TU WPISZ ID SWOJEJ POSTACI
+set #lobjectid #findid
+event macro 17 0
+; wait 1s
+event macro 15 50
+wait 2s
+event macro 4 0 Za mna
+event macro 4 0 Zabijcie!
+target 2s
+key w alt
+return
+sub t alt
+event macro 4 0 Podejdzcie!
+finditem AVHPLB ; TU WPISZ id ZwIERZAKA
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+}
+else
+{
+goto keyloop
+}
+

@@ -1,0 +1,105 @@
+initevents
+set %cel #ltargetid
+set %profile 350_300
+
+start:
+event macro 13 21
+wait 25
+
+finditem PBG C;
+set #lobjectid #findid
+finditem MMF C;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MAM JUZ ZWOJKOW
+sound C:\missile.wav
+halt
+}
+else
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0 
+wait 10
+
+inskr:
+if #CONTSIZE = %profile
+{
+click 105 278
+goto pat
+}
+else
+{
+goto inskr
+}
+
+pat:
+if Stworzyles_zwoj in #sysmsg
+{
+goto mana
+}
+if Nauczasz in #sysmsg
+{
+goto mana
+}
+if Nie_udalo in #sysmsg
+{
+goto mana
+}
+if Masz_za in #sysmsg
+{
+goto mana
+}
+
+else
+goto pat
+
+mana:
+if #mana < 11     ;mana na czar
+{
+event macro 13 46
+goto sprawdzmedit
+}
+else
+{
+goto sprawdzglod
+}
+
+sprawdzmedit:
+if Konczysz_medytacje in #sysmsg
+{
+wait 5
+goto sprawdzglod
+}
+if Nie_mozesz in #sysmsg
+{
+wait 6s
+goto mana
+}
+if You_must in #sysmsg
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+set #sysmsgcol 1080
+event sysmessage JEDZ
+sound C:\missile.wav
+halt
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+else
+goto petla

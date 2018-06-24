@@ -1,0 +1,22 @@
+start:
+chooseSkill Arch
+if #skill = 0
+   goto start
+if #skill <> 0
+   {
+   set %czas #scnt2
+   set sysmsgcol 1080
+   event sysmessage Odmierzam czas dru
+   goto dalej
+   }
+dalej:
+chooseSkill Arch
+if #skill = 0
+   {
+   set %czas ( #scnt2 - %czas )
+   set sysmsgcol 1080
+   event sysmessege Dru trwal %czas dziesiatych sekundy
+   goto start
+   }
+goto dalej
+   

@@ -1,0 +1,102 @@
+initevents
+
+start:
+   
+mana:
+if #mana < #maxmana ;TU WPISUJESZ ILE MANY ZABIERA CZAR
+{
+event macro 13 46
+goto sprawdzmedit
+}
+else
+{
+if #HITS < 1 ;tu wpisujesz ponizej ilu hp ma sie leczyc
+   goto heal
+if #STR = 45 ;tu wpisujesz swoje str bez blessa
+   goto bless
+goto czaruj
+}
+
+sprawdzmedit:
+scanJournal 1
+if Konczysz_medytacje in #journal
+{
+event macro 1 0 .um rozmowa z duchami
+wait 5
+goto sprawdzglod
+}
+if Your_intelligence in #journal
+{
+set #sysmsgcol 1080
+sound C:\missile.wav
+halt
+}
+if You_must in #journal
+{
+wait 3s
+goto mana
+}
+else
+{
+goto sprawdzmedit
+}
+
+bless:
+event macro 15 16
+target 10s
+event macro 23
+wait 4s
+goto mana
+
+czaruj:
+event macro 15 47
+wait 1s
+
+czekaj:
+scanjournal 1
+if Nikogo_nie in #journal
+{
+goto start
+}
+if Your_intelligence in #journal
+{
+set #sysmsgcol 1080
+sound C:\missile.wav
+halt
+}
+goto czekaj
+
+
+
+heal:
+event macro 15 28 ;in vas mani
+target 10s
+event macro 23 ;target self
+goto start
+
+sprawdzglod:
+event macro 1 0 .glod
+petla:
+if Czujesz_sie_dobrze in #sysmsg
+{
+finditem DUF C ;
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ JEDZENIA
+sound C:\missile.wav
+halt
+}
+set #lobjectid #findid
+event macro 17 0
+wait 20
+goto sprawdzglod
+}
+if Czujesz_sie_w_pelni in #sysmsg
+goto start
+if Masz_ochote in #sysmsg
+goto start
+if Your_skill in #sysmsg
+goto start
+else
+goto petla

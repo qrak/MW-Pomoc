@@ -1,0 +1,219 @@
+;Skrypt bY SabiK -remake
+;zmiana_broni
+;Wersja 1.0
+;Makro sluzy do zmieniania broni pod bindami
+;Standartowe ustawienie bindow:
+;F10 - wlocznia
+;F11 - Kris+trojkat
+;F12 - Widly+trojkat
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %bron 1 		;Tu ustaw jakim typem broni walczysz
+			;(1 - Szpady, 2 - Miecze, 3 - Luki i Kusze)
+;------------------------------------------------------------------------------------------------------------
+
+initevents
+set #sysmsgcol 1082
+event sysmessage Skrypt [zmiana_broni] odpalony (by SabiK) -remake
+wait 1
+
+if %bron <> 1 && %bron <> 2 && %bron <> 3
+{
+   set #sysmsgcol 1080
+   event sysmessage Zle wybrano rodzaj broni! Ustaw zmienna bron na 1 - Szpady, 2 - Miecze, 3 - Luki i kusze. Skrypt wylaczono!
+   halt
+}
+
+start:
+if %bron = 2
+   goto start1
+if %bron = 3
+   goto start2
+onhotkey f10 			;arm wlocznia
+   gosub bron1
+onhotkey f11 			;arm kris i trojkat
+   gosub bron2
+onhotkey f7 			;arm widly i trojkat
+   gosub bron3
+goto start
+start1:
+onhotkey f10 			;arm halabarda
+   gosub bron4
+onhotkey f11 			;arm katana i pawez
+   gosub bron5
+onhotkey f12 			;arm wielki miecz i pawez
+   gosub bron6
+goto start
+start2:
+onhotkey f10 			;arm dlugi luk
+   gosub bron7
+onhotkey f11 			;arm krotki luk
+   gosub bron8
+onhotkey f12 			;arm szybkostrzelna kusza
+   gosub bron9
+goto start
+
+sub bron1
+finditem LTF C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz wloczni
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles wlocznie
+goto start
+
+sub bron2
+finditem vrh C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz krisa
+   goto bron21
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles krisa
+bron21:
+wait 20
+finditem AIK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz trojkata
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles trojkat
+goto start
+
+sub bron3
+finditem srh C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz widel
+   goto bron31
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles widly
+bron31:
+wait 20
+finditem AIK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz trojkata
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles trojkat
+goto start
+
+sub bron4
+finditem AIK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz halabardy
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles halabarde
+goto start
+
+sub bron5
+finditem omh C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz katany
+   goto bron51
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles katane
+bron51:
+wait 20
+finditem cik C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz pawezy
+   goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles pawez
+goto start
+
+sub bron6
+finditem bph C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz wielkiego miecza
+   goto bron61
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles wielki miecz
+bron61:
+wait 20
+finditem cik C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz pawezy
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles pawez
+goto start
+
+sub bron7
+finditem DLUGILUK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz dlugiego luku
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles dlugi luk
+goto start
+
+sub bron8
+finditem KROTKILUK C
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie masz krotkiego luku
+    goto start
+}
+set #lobjectid #findid
+event macro 17
+set #sysmsgcol 1264
+event sysmessage Zalozyles krotki luk
+goto start
+

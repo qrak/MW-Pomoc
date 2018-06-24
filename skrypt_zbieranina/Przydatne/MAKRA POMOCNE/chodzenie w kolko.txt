@@ -1,0 +1,38 @@
+;Skrypt trzeba ustawic na podstawie punktupostaci
+;( 5 krokow w jedna i 5 krokow w druga za pomoca euox
+initevents
+petelka:
+event pathfind 990 518
+wait 4s
+event pathfind 989 521
+wait 4s
+event pathfind 1007 520
+wait 4s
+event pathfind 1008 507
+wait 4s
+event pathfind 996 507
+wait 4s
+event pathfind 985 507
+wait 4s
+event pathfind 977 507
+wait 4s
+event pathfind 970 507
+wait 4s
+event pathfind 970 519
+wait 4s
+event pathfind 979 519
+wait 4s
+event pathfind 988 522
+wait 4s
+goto petelka
+sub
+if attacking_you in #journal || corp_por in #journal || vas_flam in #journal
+event macro 1 0 STRAZ!! Pobudeczka!!
+event macro 2 0 drze ryja
+sub
+if Matthew in #journal || witaj in #journal || witajcie in #journal
+event macro 1 0 Witam!
+event macro 2 0 klania sie
+
+
+

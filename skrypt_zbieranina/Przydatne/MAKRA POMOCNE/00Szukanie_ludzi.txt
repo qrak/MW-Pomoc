@@ -1,0 +1,51 @@
+;Skrypt bY SabiK
+;szukanie_ludzi.txt
+;Wersja 1.4
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [szukanie_ludzi] odpalony (by SabiK)
+wait 1
+
+start:
+onhotkey f10     ;szukanie ludzi
+   gosub szuk
+goto start
+
+sub szuk
+szukaj:
+finditem hs_is_xu_av G
+if #findid = #charid
+{
+   ignoreitem #findid
+   goto szukaj
+}
+event Property #findid
+if #spc , - , #spc in #property || uzdrowiciel in #property || znachor in #property
+{
+   ignoreitem #findid
+   goto szukaj
+}
+if #findkind <> 1
+{
+   ignoreitem reset
+   event Property #ltargetid
+   finditem #ltargetid
+   set #sysmsgcol 1080
+   event sysmessage Last: [ , #property , ]
+   if #finddist <= 9
+      event exmsg #ltargetid 3 6 Last: [ , #property , ]
+   set %liczlt 0
+   wait 2
+   return
+}
+set #ltargetid #findid
+ignoreitem #findid
+set %liczlt %liczlt + 1
+set #sysmsgcol 1281
+event sysmessage LT: [ , %liczlt , ][ , #property , ! , ]
+if #finddist <= 9
+   event exmsg #ltargetid 3 149 [ , %liczlt , ] #property , !
+wait 2
+return
+

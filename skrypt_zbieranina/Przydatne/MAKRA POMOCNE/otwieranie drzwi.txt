@@ -1,0 +1,27 @@
+;Skrypt bY SabiK(poprawki Dem)
+;Skrypt otwiera drzwi drewniane, metalowe i furtki cmentarne
+
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [otwieranie drzwi] odpalony
+wait 1
+
+start:
+onhotkey F3        ;klawisz na otwieranie drzwi
+   gosub drzwi
+goto start
+
+sub drzwi
+finditem tjc_wcd_qcd_xoc_xmc_hnc_cfd_efd_ffd_ted_bcp_dcp_jqc_rjc_hqc_rqc_bqc_zpc_voc_dnc_nqc_rmc_tmc_ycd_xnc_vnc_zoc_pnc_nnc_zmc_xmc_fnc_jam_ham_boc_znc_vfd_xfd_hjc_hmc_jmc_kbd_fbd_cbd_vqc_tqc_fjc_kcd_ucd_njc_pjc_tpc_rpc_zzl_bam_lam_ued_wed_dfd_ifd_raq_paq_joc_hoc G_2
+if #findkind = -1
+{
+   set #sysmsgcol 1080
+   event sysmessage Nie znaleziono drzwi!
+   return
+}
+set #lobjectid #findid
+event exmsg #lobjectid 3 149 * , Otworzono*
+event macro 17 0
+return
+
+

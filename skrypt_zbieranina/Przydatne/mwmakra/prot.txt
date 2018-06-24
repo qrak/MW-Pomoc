@@ -1,0 +1,12 @@
+initevents
+
+start:
+if #AR < 60
+{
+set #sysmsgcol 1080
+event sysmessage Rzuc prota
+wait 2s
+goto start
+}
+else
+goto start

@@ -1,0 +1,134 @@
+initevents
+menu Clear
+menu window title Regi
+menu Window size 155 100
+menu Window color black
+menu Show
+menu Font color White
+menu Font bgcolor black
+menu Font size 13
+menu Text reg010 5 0 Mand
+menu Text reg020 5 20 Siar
+menu Text reg030 5 40 Czos
+menu Text reg040 5 60 Zens
+menu Text reg050 80 0 Siec
+menu Text reg060 80 20 Jago
+menu Text reg070 80 40 Perl
+menu Text reg080 80 60 Mech
+menu Text reg090 5 80 Szaf
+menu Text reg100 80 80 Demo
+
+start:
+
+reg1:
+  menu Font color Yellow
+  finditem MZF C_ , #backpackid ;
+  if %reg1 = #FINDSTACK
+  goto reg2
+  set %reg1 #FINDSTACK
+  if %reg1 < 16
+  menu Font color Red
+  menu delete reg1
+  menu Text reg1 50 0 %reg1
+  
+reg2:
+  menu Font color Yellow
+  finditem SZF C_ , #backpackid ;
+  if %reg2 = #FINDSTACK
+  goto reg3
+  set %reg2 #FINDSTACK
+  if %reg2 < 16
+  menu Font color Red
+  menu delete reg2
+  menu Text reg2 50 20 %reg2
+
+reg3:
+  menu Font color Yellow
+  finditem KZF C_ , #backpackid ;
+  if %reg3 = #FINDSTACK
+  goto reg4
+  set %reg3 #FINDSTACK
+  if %reg3 < 16
+  menu Font color Red
+  menu delete reg3
+  menu Text reg3 50 40 %reg3
+
+reg4:
+  menu Font color Yellow
+  finditem JZF C_ , #backpackid ;
+  if %reg4 = #FINDSTACK
+  goto reg5
+  set %reg4 #FINDSTACK
+  if %reg4 < 16
+  menu Font color Red
+  menu delete reg4
+  menu Text reg4 50 60 %reg4
+  
+reg5:
+  menu Font color Yellow
+  finditem RZF C_ , #backpackid ;
+  if %reg5 = #FINDSTACK
+  goto reg6
+  set %reg5 #FINDSTACK
+  if %reg5 < 16
+  menu Font color Red
+  menu delete reg5
+  menu Text reg5 125 0 %reg5
+  
+reg6:
+  menu Font color Yellow
+  finditem WZF C_ , #backpackid ;
+  if %reg6 = #FINDSTACK
+  goto reg7
+  set %reg6 #FINDSTACK
+  if %reg6 < 16
+  menu Font color Red
+  menu delete reg6
+  menu Text reg6 125 20 %reg6
+  
+reg7:
+  menu Font color Yellow
+  finditem KUF C_ , #backpackid ;
+  if %reg7 = #FINDSTACK
+  goto reg8
+  set %reg7 #FINDSTACK
+  if %reg7 < 16
+  menu Font color Red
+  menu delete reg7
+  menu Text reg7 125 40 %reg7
+  
+reg8:
+  menu Font color Yellow
+  finditem JUF C_ , #backpackid ;
+  if %reg8 = #FINDSTACK
+  goto reg9
+  set %reg8 #FINDSTACK
+  if %reg8 < 16
+  menu Font color Red
+  menu delete reg8
+  menu Text reg8 125 60 %reg8
+  
+reg9:
+  menu Font color Yellow
+  finditem FVF C_ , #backpackid ;
+  if %reg9 = #FINDSTACK
+  goto reg10
+  set %reg9 #FINDSTACK
+  if %reg9 < 4
+  menu Font color Red
+  menu delete reg9
+  menu Text reg9 50 80 %reg9
+  
+reg10:
+  menu Font color Yellow
+  finditem OZF C_ , #backpackid ;
+  if %reg10 = #FINDSTACK
+  goto reg1
+  set %reg10 #FINDSTACK
+  if %reg10 < 4
+  menu Font color Red
+  menu delete reg10
+  menu Text reg10 125 80 %reg10
+
+
+goto start

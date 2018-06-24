@@ -1,0 +1,27 @@
+;Skrypt bY SabiK
+;licz_gain
+;Wersja 1.1 - skrypt juz liczy gainy :P
+
+;U W A G A !!! USTAW PONIZSZE ZMIENNE PRZED WLACZENIEM SKRYPTU !!!
+set %skill wiedza_o_zwierzetach                ;Tutaj wpisz pierwszy wyraz (lub czesc) umiejetnosci (np. krawiec, alchemi, walka_obuch, walka_szpad)
+set %sciezka C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav       ;Tu ustaw sciezke do dzwieku
+;---------------------------------------------------------------------------
+
+set #scnt2 0
+initevents
+set #sysmsgcol 1281
+event sysmessage Skrypt [licz_gain] odpalony (by SabiK)
+wait 1
+
+start:
+if Your_skill_in_ , %skill in #sysmsg
+{
+   set %time #scnt2 / 600
+   set #sysmsgcol 1281
+   event sysmessage Gain trwal %time minut.
+   sound %sciezka
+   set #scnt2 0
+   wait 300
+}
+goto start
+

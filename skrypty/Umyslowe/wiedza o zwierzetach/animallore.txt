@@ -1,0 +1,45 @@
+initevents 
+set %Hiding 0 
+ignoreitem reset 
+ignoreitem #charid 
+start: 
+
+anatomia: 
+if #targCurs = 1 
+ goto anatomia 
+set %czas #scnt - %LastTime 
+if %czas > 12 
+{ 
+ finditem * G_3 
+ str Len #findtype 
+ if #strRes = 2 
+ { 
+  wait 10 
+  set %LastTime #scnt 
+  set #lTargetID #findID 
+  set #lTargetKind 1 
+  event macro 13 2
+  target 4s 
+  event macro 22 
+ } 
+ else 
+ { 
+  ignoreitem #findid 
+  if %Hiding = 1 
+  { 
+   set %hid %hid + 1 
+   if %hid = 10 
+   { 
+    set %LastTime #scnt 
+    set %hid 0 
+    event macro 13 21 
+   } 
+   else 
+    wait 1 
+  } 
+ } 
+ goto start 
+} 
+else 
+ goto start 
+} 

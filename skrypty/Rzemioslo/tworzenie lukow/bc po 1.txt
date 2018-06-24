@@ -1,0 +1,90 @@
+;SKRYPT NA TWORZENIE STRZAL PO 1
+;W plecaku musisz miec piora, kijki oraz pusty otwarty worek/plecak (bedzie tam przekladac piorka); skrypt zrobiony pod postac chlopa, jezeli grasz kobieta wystarczy zmienic koncowki w skrypcie na zenskie :
+;-"if Stworzyles in #journa"l
+;na:
+;-if Stworzylas in #journal
+;No i bedzie gicior
+
+
+
+initevents
+set %profile 296_136
+set %plecak #BACKPACKID
+finditem CKF_ZJF C_ , %plecak ;woreczek lub plecak
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ WORKA
+sound C:missile.wav
+halt
+}
+else
+set %worek #FINDID
+start:
+finditem VLK C_ , %plecak ; znajduje piora w w plecaku
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ PIOR
+sound C:missile.wav
+halt
+}
+else
+Exevent Drag #findid
+wait 1
+Exevent Dropc %worek ;rzuca jedno piorko do plecaka
+wait 1
+finditem SLK C_ , %plecak ;znajduje strzaly
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ STRZAL
+sound C:missile.wav
+halt
+}
+else
+set #lobjectid #findid
+piora:
+finditem VLK C_ , %worek ; znajduje pioro w worku
+if #findkind = -1
+goto piora
+set #ltargetid #findid
+event macro 17 0 ;last opbject
+target 100s
+event macro 22 0 ;last target
+luk:
+if #CONTSIZE = %profile
+{
+click 105 63 d
+wait 1
+goto pat
+}
+else
+{
+goto luk
+}
+
+pat:
+scanjournal 1
+if Stworzyles in #journal
+{
+wait 1
+goto hid
+}
+if Zniszczyles in #journal
+{
+wait 1
+goto hid
+}
+if Your_skill in #journal
+{
+wait 1
+goto hid
+}
+else
+goto pat
+hid:
+event macro 13 21
+wait 1
+goto start
+

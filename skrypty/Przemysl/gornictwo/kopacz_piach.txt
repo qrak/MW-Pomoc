@@ -1,0 +1,245 @@
+;Kopanie piachu by Raist
+;miejsca kopania wziete ze skryptu [nGz]
+
+initevents
+set %gdzie 0
+set %zmiana 1
+set %plecak FZJTBCE ;<---WPISZ ID PLECAKA
+
+
+start:
+set #targcurs 1
+set #sysmsgcol 1080
+event sysmessage Pokaz juczniaka
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+return
+}
+set %juka #ltargetid
+set #lobjectid #ltargetid
+
+kop:
+if #weight > #maxweight
+goto przenos
+kop2:
+finditem TWF C_ , #backpackid
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage NIE MASZ LOPATY
+halt
+}
+set #lobjectid #findid
+event macro 17 0
+target 3s
+event macro 22 0
+wait 10
+set %czas #scnt2 + 90
+
+czekaj:
+scanjournal 1
+if ( Udalo_Ci in #journal ) || ( Wykopalas in #journal ) || ( Wykopales in #journal )
+{
+wait 1s
+set %zmiana 1
+goto ustaw
+; goto kop
+}
+if ( Nie_znalazlas in #journal ) || ( Nie_znalazles in #journal ) || ( Tu_nic_nie_wykopiesz. in #journal ) || ( To_jest_za in #journal )
+{
+set %zmiana 1
+goto ustaw
+}
+if A_ha! in #journal
+{
+event macro 4 4 STRAZ STRAZ!!
+sound C:\missile.wav
+goto kop
+}
+if %czas < #scnt2
+{
+goto kop
+}
+else
+goto czekaj
+
+
+ustaw:
+if %zmiana = 0
+goto kop
+set %gdzie %gdzie + 1
+set %zmiana 0
+set #LTARGETZ #CHARPOSZ
+set #LTARGETKIND 2
+if %gdzie = 1
+ {
+   set #ltargetx #charposx
+   set #ltargety #charposy
+ }
+if %gdzie = 2
+ {
+   set #ltargetx #charposx
+   set #ltargety #charposy + 1
+ }
+if %gdzie = 3
+ {
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy
+ }
+if %gdzie = 4
+ {
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy
+ }
+if %gdzie = 5
+ {
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy + 1
+ }
+if %gdzie = 6
+ {
+   set #ltargetx #charposx
+   set #ltargety #charposy + 2
+ }
+if %gdzie = 7
+ {
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy + 1
+ }
+if %gdzie = 8
+ {
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy
+ }
+if %gdzie = 9
+ {
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy - 1
+ }
+if %gdzie = 10
+ {
+   set #ltargetx #charposx
+   set #ltargety #charposy - 2
+ }
+if %gdzie = 11
+ {
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy - 1
+ }
+if %gdzie = 12
+ {
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy
+ }
+if %gdzie = 13
+ {
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy + 1
+ }
+if %gdzie = 14
+ {
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy + 2
+ }
+if %gdzie = 15
+ {
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy + 2
+ }
+if %gdzie = 16
+ {
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy + 2
+ }
+if %gdzie = 17
+ {
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy + 2
+ }
+if %gdzie = 18
+ {
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy + 1
+ }
+if %gdzie = 19
+ {
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy - 1
+ }
+if %gdzie = 20
+ {
+   set #ltargetx #charposx - 2
+   set #ltargety #charposy - 2
+ }
+if %gdzie = 21
+ {
+   set #ltargetx #charposx - 1
+   set #ltargety #charposy - 2
+ }
+if %gdzie = 22
+ {
+   set #ltargetx #charposx + 1
+   set #ltargety #charposy - 2
+ }
+if %gdzie = 23
+ {
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy - 2
+ }
+if %gdzie = 24
+ {
+   set #ltargetx #charposx + 2
+   set #ltargety #charposy - 1
+ }
+if %gdzie = 25
+ {
+   set #ltargetx #charposx
+   set #ltargety #charposy - 1
+ }
+if %gdzie = 26
+   goto koniec
+goto kop
+
+przenos:
+finditem %juka G_1
+if #findkind = -1
+{
+set #sysmsgcol 1080
+event sysmessage JUCZNIAK STOI ZA DALEKO
+goto kop2
+}
+set #lobjectid %juka
+repeat
+event macro 17 0
+set %czas #scnt2 + 20
+ple:
+finditem %plecak C
+if #scnt2 > %czas
+{
+set #sysmsgcol 1080
+event sysmessage NIE PRZENIOSLEM PIACHU
+goto kop
+}
+if #findkind <> -1
+goto dalej
+goto ple
+dalej:
+finditem POF C_ , #backpackid
+exevent drag #findid #findstack
+wait 10
+exevent dropc %plecak
+wait 10
+goto kop
+
+koniec:
+set #sysmsgcol 1080
+event sysmessage Koniec piasku
+sound C:\missile.wav
+halt

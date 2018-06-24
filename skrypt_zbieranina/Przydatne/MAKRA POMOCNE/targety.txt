@@ -1,0 +1,34 @@
+initevents
+set %profile 436_259
+repeat
+onHotKey F5  ;next targ
+gosub targnext
+until #false
+
+
+sub targnext
+start2:
+event macro 26 0
+finditem #ltargetid
+if #ltargetid = #charid
+return
+if #ltargetid = VCAIB || #ltargetid = AYMVEB || #ltargetid = LGUMU || #ltargetid = SBEM || #ltargetid = QXMLDB || #ltargetid = CWWAKB || #ltargetid = LHK || #ltargetid = HRGJEB || #ltargetid = RAGWN || #ltargetid = HMIKR || #ltargetid = GTMAD || #ltargetid = EUUFEB || #ltargetid = XQNLU
+goto start2
+if #findrep = 4
+return
+if #findrep = 5
+return
+if ( #findtype = IS ) || ( #findtype = HS ) || ( #findtype = AV ) || ( #findtype = XU )
+{
+  if ( #findrep = 2 ) || ( #findrep = 7 ) || ( #findrep = 1 )
+  goto start2
+goto end
+}
+else
+goto start2
+end:
+event property #findid
+if ( ( #spc , - , #spc ) in #property ) || ( Uzdrowiciel in #property ) || ( pustyni in #property ) || ( ( drow , #spc ) in #property )
+goto start2
+return
+

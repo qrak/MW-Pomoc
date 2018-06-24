@@ -1,0 +1,7 @@
+if Czujesz_sie_dobrze in #sysmsg
+{
+sound C:\Program Files\EA Games\Ultima Online Mondain's Legacy\start.wav
+wait 1s
+goto start
+}
+

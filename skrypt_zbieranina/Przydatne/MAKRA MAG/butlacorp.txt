@@ -1,0 +1,22 @@
+initevents
+set %profile 436_259
+
+
+keyloop:
+onHotKey f10    butla corp
+gosub bflam
+goto keyloop
+
+sub bflam
+finditem TUF C ;wybuch
+event sysmessage #findstack
+set #lobjectid #findid
+set #sysmsgcol 1100
+event macro 17 0 ;last object
+target 1s
+event macro 22 ;last target
+wait 1
+wait 1
+event macro 15 41 ;flamestrike
+
+

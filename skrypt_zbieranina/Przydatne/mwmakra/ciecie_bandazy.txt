@@ -1,0 +1,47 @@
+initevents
+set %cel #ltargetid
+
+
+start:
+
+finditem KAG C;
+set #lobjectid #findid
+finditem CUI_OAG_ZZF_MAG_LAG
+set #ltargetid #findid
+
+event macro 17 0
+target 50s
+event macro 22 0 
+goto ciecie
+
+ciecie:
+if Pociales in #sysmsg || Pocielas in #sysmsg
+{
+goto dalej2
+}
+else
+{
+goto ciecie
+}
+
+
+dalej2:
+set #ltargetid %cel
+event macro 1 0 .um anatomia
+
+
+eval:
+scanJournal 1
+if Juz_cos in #journal
+{
+goto start
+}
+if #targcurs = 1
+{
+set #ltargetid %cel
+event macro 22 0
+wait 5
+goto start
+}
+else
+goto eval

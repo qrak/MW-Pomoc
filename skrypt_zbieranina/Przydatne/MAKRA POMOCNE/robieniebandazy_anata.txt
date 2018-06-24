@@ -1,0 +1,54 @@
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz cel anatki
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+set %cel #ltargetid  ;ustawia cel anatki
+
+ciecie:
+finditem kag C ;   znajduje nozyczki
+set #lobjectid #findid
+finditem oag_mag_lag_zzf_cui C ;    znajduje tkanine
+if #findkind = -1
+{
+sound C:\missile.wav
+wait 6s
+halt
+}
+set #ltargetid #findid
+event macro 17 0 ;lobject
+target 20s
+event macro 22 0 ;ltarget
+
+czekaj4:
+if Pocielas in #sysmsg
+{
+set #ltargetid %cel
+event macro 1 0 .um anatomia
+set %czas #scnt2 + 30
+anatka:
+scanjournal 1
+if %czas < #scnt2
+goto ciecie
+if Juz_cos in #journal
+goto ciecie
+if #targcurs = 1
+{
+event macro 22 0
+wait 5
+goto ciecie
+}
+else
+goto anatka
+}
+else
+goto czekaj4

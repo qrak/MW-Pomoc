@@ -1,0 +1,28 @@
+initevents
+set %profile 540_420
+
+start:
+finditem ZLF C ; szuka narzedzie
+set #lobjectid #findid  ; ustawia je jako lastobject
+
+finditem  XMK C  ; szuka szkla
+set #ltargetid #findid
+event macro 17 0
+target 100s
+event macro 22 0
+
+czekaj:
+if #contsize = %profile
+(
+click 510 60   ; rob ostatnie ostatnie
+goto czeka2
+}
+else
+goto czekaj
+
+czeka2:
+scanjournal 1
+if Stworzyles_przedmiot in #journal
+goto start
+else
+goto czeka2

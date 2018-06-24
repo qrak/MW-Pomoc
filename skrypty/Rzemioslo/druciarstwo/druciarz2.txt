@@ -1,0 +1,29 @@
+initevents
+finditem JTL
+if #findid = X
+{
+event sysmessage NIE MASZ NARZEDZI
+halt
+}
+set #lobjectid #findid
+set #ltargetid ZARVXJE      ;ltargetid rudy, z ktorej robimy 
+start:
+event macro 17
+wait 2
+event macro 22
+event macro 22
+wait 2
+click 139 390
+wait 7s
+event macro 17
+wait 2
+event macro 22
+event macro 22
+wait 2
+click 139 390
+wait 7s
+event macro 13 3
+wait 1
+event macro 22
+event macro 22
+wait 1

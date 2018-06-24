@@ -1,0 +1,25 @@
+start:
+keyloop:
+onHotKey F4 ; <-- TU WPISZ KLAWISZ ODPOWIADAJACY ZA COMBO ZWIERZAK+FLAM
+gosub combo
+onHotKey F3 ; <-- TU WPISZ KLAWISZ ODPOWIADAJACY ZA WSIADANIE NA ZWIERZAKA
+gosub wsiadanie
+goto keyloop
+sub combo
+event macro 1 0 Ionnsaich Sabaid Ealadh
+wait 1s
+finditem PKWD ; <-- TU WPISZ ID SWOJEJ POSTACI
+set #lobjectid #findid
+event macro 17 0 ;last object
+wait 1s
+event macro 3 0 Zabijcie
+wait 1s
+event macro 22 0
+return
+sub wsiadanie
+event macro 1 0 za mna!
+finditem RXHTBB ; <-- TU WPISZ id ZwIERZAKA (ka¿da zmiana zwierzaka = koniecznoœæ zmiany tego wpisu)
+set #lobjectid #findid
+event macro 17 0 ;last object
+return
+

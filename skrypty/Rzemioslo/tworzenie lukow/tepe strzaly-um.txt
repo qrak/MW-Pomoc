@@ -1,0 +1,203 @@
+;Autor: [nGz]
+;%Skill - defaultowo 0 - nic, 1 - Ukrywanie, 2 - Anatomia, 3 - Wiedza o Broni, 4 - Wiedza o Zwierzetach, 5 - Wykrywanie.
+;%Skill_powtorzenia - defaultowo 1 - okresla co ile powtorzen ma robic skilla.
+;============
+set %Skill 2
+set %Skill_powtorzenia 1
+;============
+if %Skill <> 0
+  set %Licznik_powtorzen %Skill_powtorzenia
+if %Skill = 1
+  set %Nazwa_skilla Ukrywanie
+if %Skill = 2
+  set %Nazwa_skilla Anatomia
+if %Skill = 3
+  set %Nazwa_skilla Armslore
+if %Skill = 4
+  set %Nazwa_skilla Animallore
+if %Skill = 5
+  set %Nazwa_skilla Wykrywanie
+set %Cel_skilla 0
+set #targcurs 1
+set #sysmsgcol 1152
+Wybierz_klody:
+event sysmessage Wybierz klody.
+set %Timer_2 #scnt2 + 90
+repeat
+if %Timer_2 < #scnt2
+  goto Wybierz_klody
+onhotkey ESC
+  goto Wybierz_klody_ESC
+until #targcurs = 0
+onhotkey ESC
+{
+  Wybierz_klody_ESC:
+  set #sysmsgcol 1080
+  event sysmessage Musisz wybrac klody.
+  halt
+}
+finditem #ltargetid
+if #findtype <> zlk
+  ;goto Wybierz_klody_ESC
+set %Id_klod #findid
+Start:
+if %Licznik_powtorzen = %Skill_powtorzenia && %Skill <> 0
+  gosub %Nazwa_skilla
+if %Skill <> 0
+  set %Licznik_powtorzen %Licznik_powtorzen - 1
+if %Licznik_powtorzen <= 0 && %Skill <> 0
+  set %Licznik_powtorzen %Skill_powtorzenia
+finditem fsf_tsf C_ , #charid
+if #findkind = -1
+{
+  set #sysmsgcol 1080
+  event sysmessage Nie znaleziono Topora/Sztyletu.
+  halt
+}
+set %Id_toporka #findid
+finditem %Id_klod
+if #findkind = -1
+{
+  set #sysmsgcol 1152
+  event sysmessage Brak klod.
+  halt
+}
+Uzyj_toporka:
+set #lobjectid %Id_toporka
+event macro 17
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Uzyj_toporka
+until #targcurs = 1
+Celuj_klody:
+set #ltargetid %Id_klod
+set #ltargetkind 1
+event macro 22
+set %Timer #scnt2 + 5
+repeat
+if %Timer < #scnt2
+  goto Celuj_klody
+until #targcurs = 0
+set %Timer #scnt2 + 20
+repeat
+until ( #contname = generic_gump && #contsize = 560_460 ) || %Timer < #scnt2
+set %Jindex #jindex
+Klikaj:
+click 137 390
+set %Timer #scnt2 + 7
+repeat
+if %Timer < #scnt2
+  goto Klikaj
+until #contname <> generic_gump || #contsize <> 560_460
+set %Timer #scnt2 + 100
+repeat
+scanjournal 1
+if Masz_za_malo_materialu in #journal
+  halt
+until ( ( _przedmiot_i_wlozyl in #journal || zniszczyl in #journal ) && %Jindex <> #jindex ) || %Timer < #scnt2
+goto Start
+
+sub Ukrywanie
+Skill_ukrywanie:
+event macro 1 0 .um ukr
+set %Timer_2 #scnt2 + 2
+repeat
+if %Timer_2 < #scnt2
+  goto Skill_ukrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until H in #charstatus || ukryl in #journal || nie_udalo_Ci_sie_ukryc in #journal || Wrog_Cie_juz in #journal
+return
+
+sub Anatomia
+if %Cel_skilla = 0
+  gosub Wskaz_Cel Anatomia
+set %Skrocona_nazwa ana
+gosub Obsluz_celownik_skilla
+return
+
+sub Armslore
+if %Cel_skilla = 0
+  gosub Wskaz_Cel Armslore
+set %Skrocona_nazwa bro
+gosub Obsluz_celownik_skilla
+return
+
+sub Animallore
+if %Cel_skilla = 0
+  gosub Wskaz_Cel Animallore
+set %Skrocona_nazwa wie
+gosub Obsluz_celownik_skilla
+return
+
+sub Wykrywanie
+Skill_wykrywanie:
+event macro 1 0 .um wyk
+set %Timer_2 #scnt2 + 2
+repeat
+if %Timer_2 < #scnt2
+  goto Skill_wykrywanie
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until Znalazl in #journal || Nie_znalazl in #journal
+return
+
+sub Obsluz_celownik_skilla
+Uzyj_skilla:
+event macro 1 0 .um %Skrocona_nazwa
+set %Timer_2 #scnt2 + 2
+repeat
+if %Timer_2 < #scnt2
+  goto Uzyj_skilla
+scanjournal 1
+if Zapisywanie_Stanu_Swiata in #journal
+  wait 120
+until #targcurs = 1
+Celownik_skilla:
+set #ltargetid %Cel_skilla
+event macro 22
+set %Timer_2 #scnt2 + 2
+repeat
+if %Timer_2 < #scnt2
+  goto Celownik_skilla
+until #targcurs = 0
+return
+
+sub Wskaz_Cel
+set #targcurs 1
+set #sysmsgcol 1152
+Wskaz_cel_skilla:
+if %1 = Anatomia
+  event sysmessage Wskaz cel dla Anatomii.
+if %1 = Armslore
+  event sysmessage Wskaz cel dla Wiedzy o broni.
+if %1 = Animallore
+  event sysmessage Wskaz cel dla Wiedzy o zwierzetach.
+set %Timer_2 #scnt2 + 90
+repeat
+if %Timer_2 < #scnt2
+  goto Wskaz_cel_skilla
+onhotkey ESC
+  goto Wcisnieto_ESC
+until #targcurs = 0
+onhotkey ESC
+{
+  Wcisnieto_ESC:
+  set #sysmsgcol 1080
+  event sysmessage Nie wskazales celu.
+  halt
+}
+set %Cel_skilla #ltargetid
+if #ltargetkind = 0
+{
+  set #sysmsgcol 1080
+  event sysmessage Zle wskazany cel.
+  halt
+}
+return
+
+
+

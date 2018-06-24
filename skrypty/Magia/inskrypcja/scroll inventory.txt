@@ -1,0 +1,142 @@
+
+
+;==================================
+; Script Name: Scroll Inventory
+; Author: Tazzman
+; Version: 1.4
+; Client Tested with: 4.0.3e
+; EUO version tested with: build 0096
+; Shard OSI / FS: OSI
+; Revision Date: 6 August 2004
+; Public Release: 1 August 2004
+; Global Variables Used: none
+; Purpose: Displays Inventory of Scribed Scrolls
+;==================================
+
+; INSTRUCTIONS:
+; Simply have any/all bags that contain the scrolls you wish to inventory
+; open on the screen somewhere.
+
+; Set your WARNING LEVEL here. (If Scrolls < Warning Level, they display in Yellow)
+; If you don't wish to use warning level, set it to 0.
+
+set %warn 10
+
+; BEGIN SCRIPT
+
+menu clear
+menu hideeuo
+menu window size 580 340
+menu show
+menu window title Scroll Inventory
+menu window color black
+menu font bgcolor black
+menu font color white
+menu font size 9
+menu font align left
+
+menu text Level1 30 1 Level 1
+gosub countResources QXL 1 20 90 20 clumsy clumsy1 Clumsy
+gosub countResources PXL 1 35 90 35 CFood CFood1 CreateFood
+gosub countResources AYL 1 50 90 50 feeble feeble1 FeebleMind
+gosub countResources ZXL 1 65 90 65 heal heal1 Heal
+gosub countResources CYL 1 80 90 80 arrow arrow1 MagicArrow
+gosub countResources BYL 1 95 90 95 nightsight nightsight1 NightSight
+gosub countResources NXL 1 110 90 110 armor armor1 ReactiveArmor
+gosub countResources WXL 1 125 90 125 weaken weaken1 Weaken
+
+menu text Level2 180 1 Level 2
+gosub countResources VXL 150 20 230 20 agility agility1 Agility
+gosub countResources YXL 150 35 230 35 cunning cunning1 Cunning
+gosub countResources XXL 150 50 230 50 cure cure1 Cure
+gosub countResources IYL 150 65 230 65 harm harm1 Harm
+gosub countResources HYL 150 80 230 80 mtrap mtrap1 MagicTrap
+gosub countResources KYL 150 95 230 95 muntrap muntrap1 MagicUntrap
+gosub countResources JYL 150 110 230 110 protection protection1 Protection
+gosub countResources EYL 150 125 230 125 str str1 Strength
+
+menu text Level3 325  1 Level 3
+gosub countResources DYL 300 20 380 20 bless bless1 Bless
+gosub countResources GYL 300 35 380 35 fireball fireball1 Fireball
+gosub countResources FYL 300 50 380 50 mlock mlock1 MagicLock
+gosub countResources STL 300 65 380 65 poison poison1 Poison
+gosub countResources RTL 300 80 380 80 tele tele1 Telekenesis
+gosub countResources UTL 300 95 380 95 teleport teleport1 Teleport
+gosub countResources TTL 300 110 380 110 unlock unlock1 Unlock
+gosub countResources OTL 300 125 380 125 wall wall1 WallofStone
+
+menu text Level4 480  1 Level 4
+gosub countResources NTL 450 20 540 20 archcure archcure1 ArchCure
+gosub countResources QTL 450 35 540 35 archprot archprot1 ArchProtection
+gosub countResources PTL 450 50 540 50 curse curse1 Curse
+gosub countResources AUL 450 65 540 65 firefield firefield1 FireField
+gosub countResources ZTL 450 80 540 80 gheal gheal1 GreaterHeal
+gosub countResources CUL 450 95 540 95 lightning lightning1 Lightning
+gosub countResources BUL 450 110 540 110 mdrain mdrain1 ManaDrain
+gosub countResources WTL 450 125 540 125 recall recall1 Recall
+
+menu text Level5 30 170 Level 5
+gosub countResources VTL 1 190 90 190 blade blade1 BladeSpirit
+gosub countResources YTL 1 205 90 205 dfield dfield1 DispellField
+gosub countResources XTL 1 220 90 220 incog incog1 Incognito
+gosub countResources IUL 1 235 90 235 mreflect mreflect MagicReflect
+gosub countResources HUL 1 250 90 250 mblast mblast1 MindBlast
+gosub countResources KUL 1 265 90 265 paralyze paralyze1 Paralyze
+gosub countResources JUL 1 280 90 280 pofield pofield1 PoisonField
+gosub countResources EUL 1 295 90 295 summon summon1 Summon
+
+menu text Level6 180 170 Level 6
+gosub countResources DUL 150 190 230 190 dispell dispell1 Dispell
+gosub countResources GUL 150 205 230 205 ebolt ebolt1 EnergyBolt
+gosub countResources FUL 150 220 230 220 exp exp1 Explosion
+gosub countResources QUL 150 235 230 235 invis invis1 Invisibility
+gosub countResources PUL 150 250 230 250 mark mark1 Mark
+gosub countResources SUL 150 265 230 265 mcurse mcurse1 MassCurse
+gosub countResources RUL 150 280 230 280 parafield parafield1 ParalyzeField
+gosub countResources MUL 150 295 230 295 reveal reveal1 Reveal
+
+menu text Level7 325 170 Level 7
+gosub countResources LUL 300 190 380 190 clight clight1 ChainLightning
+gosub countResources OUL 300 205 380 205 enerfield enerfield1 EnergyField
+gosub countResources NUL 300 220 380 220 flamestrike flamestrike1 Flamestrike
+gosub countResources YUL 300 235 380 235 gate gate1 GateTravel
+gosub countResources XUL 300 250 380 250 mvamp mvamp1 ManaVampire
+gosub countResources AVL 300 265 380 265 massdispell massdispell1 MassDispell
+gosub countResources ZUL 300 280 380 280 mswarm mswarm1 MeteorSwarm
+gosub countResources UUL 300 295 380 295 polymorph polymorph1 Polymorph
+
+menu text Level8 480 170 Level 8
+gosub countResources TUL 450 190 540 190 eq eq1 Earthquake
+gosub countResources WUL 450 205 540 205 ev ev1 EvergyVortex
+gosub countResources VUL 450 220 540 220 rez rez1 Ressurection
+gosub countResources GVL 450 235 540 235 air air1 Summon Air
+gosub countResources FVL 450 250 540 250 daemon daemon1 Daemon
+gosub countResources IVL 450 265 540 265 earth earth1 SummonEarth
+gosub countResources HVL 450 280 540 280 fire fire1 SummonFire
+gosub countResources CVL 450 295 540 295 water water1 SummonWater
+
+halt
+
+Sub countResources
+; %1 = resources to count
+set %count 0
+_crloop:
+FindItem  %1 C_
+if #findkind <> -1
+{
+   set %count %count + #findstack
+   ignoreitem #findid
+   goto _crloop
+}
+if %count < %warn
+menu font color yellow
+str lower %8
+menu text %6 %2 %3 #strres :
+menu text %7 %4 %5 %count
+menu font color white
+return
+
+; END SCRIPT
+
+
+

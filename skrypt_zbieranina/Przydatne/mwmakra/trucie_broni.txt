@@ -1,0 +1,133 @@
+;Trucie/Uodparnianie by Raist
+;Bronie/ubrania musza znajdowac sie w pojemniku, mikstury trutki
+;musza lezec luzem w plecaku gracza
+;zatrute przedmioty zostana wyjete z pojemnika
+;i polozone do plecaka glownego
+;----------------------------------------------------------
+set %uodpornij 0 ;<---- 0 - zatruwanie 1 - uodparnianie
+;----------------------------------------------------------
+initevents
+ignoreitem reset
+set %powtorz 0
+set #targcurs 1 ;ustawienie kursora
+set #sysmsgcol 1080
+event sysmessage Pokaz plecak z przedmiotami
+repeat
+onhotkey ESC
+goto wcis_esc
+until #targcurs = 0
+onhotkey ESC
+{
+wcis_esc:
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+
+set %ple #ltargetid  ;ustawia plecak z itemkami
+set #lobjectid %ple
+event macro 17 0
+set %czas #scnt2 + 20
+repeat
+event macro 17 0
+wait 5
+if %czas < #scnt2
+{
+set #sysmsgcol 1080
+event sysmessage ANULOWANO
+halt
+}
+until ( #contid = #ltargetid )
+
+start:
+finditem * C_ , %ple
+if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage KONIEC TRUCIA
+   halt
+   }
+if %uodpornij = 1
+   gosub sprawdzaj
+set %bron #findid
+
+truje:
+if %uodpornij = 0
+   finditem AVF C_ , #backpackid
+if %uodpornij = 1
+   finditem NUF C_ , #backpackid
+if #findkind = -1
+   {
+   set #sysmsgcol 1080
+   event sysmessage BRAK MIKSTUR
+   halt
+   }
+event macro 1 0 .um zatruwanie
+
+delay:
+scanjournal 1
+if #targcurs = 1
+   {
+   wait 1
+   set #ltargetid #findid
+   event macro 22 0
+   wait 1
+   wait 1
+   target 60s
+   set #ltargetid %bron
+   wait 1
+   event macro 22 0
+   wait 1
+   wait 1
+   goto czekaj
+   }
+if Juz_cos in #journal
+   {
+   wait 20
+   goto truje
+   }
+goto delay
+
+czekaj:
+scanjournal 1
+if Nie_udalo_Ci in #journal
+   {
+   goto truje
+   }
+if Tego_nie_mozesz in #journal
+   {
+   ignoreitem %bron
+   goto start
+   }
+if Udalo_Ci_sie in #journal
+   goto exdrag1
+goto czekaj
+
+exdrag1:
+if %uodpornij 1
+   goto start
+exevent drag %bron
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrag1
+finditem %bron C_ , %ple
+until #findkind = -1
+exdrop1:
+exevent dropc #backpackid
+set %czas #scnt2 + 25
+repeat
+if %czas < #scnt2
+   goto exdrop1
+finditem %bron C_ , #backpackid
+until #findkind <> -1
+goto start
+
+sub sprawdzaj
+event property #findid
+if Ochrony in #property
+   {
+   ignoreitem #findid
+   goto start
+   }
+return

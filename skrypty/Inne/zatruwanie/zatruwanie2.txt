@@ -1,0 +1,36 @@
+;Autor: [nGz]
+;Potrzebny jest sztylet do zatruwania
+set %lo #lobjectid
+initevents
+start:
+set #ltargetkind 1
+
+event macro 13 30
+finditem avf
+if #findkind = -1
+halt
+wait 1
+wait 1
+next:
+set #ltargetid #findid
+if #targcurs = 1
+goto dalej
+goto next
+dalej:
+wait 1
+event macro 22
+wait 3
+finditem fwl
+if #findkind = -1
+halt
+wait 1
+wait 1
+next2:
+set #ltargetid #findid
+if #targcurs = 1
+goto dalej2
+goto next2
+dalej2:
+event macro 22
+event macro 22
+wait 219
